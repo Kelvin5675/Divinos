@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # 1. Forçar HTTPS (SSL)
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # 2. Configurar proxy para Convites Digitais (/c/:slug)
+    # Tenta utilizar o proxy nativo do Apache (P)
+    RewriteRule ^c/(.*)$ https://divinos-backend.onrender.com/api/v1/invitations/meta/$1 [P,L]
+
+    # 3. Clean URLs: Ocultar extensão .html
+    # Se a requisição não for de uma pasta (-d) e existir o ficheiro com .html (-f)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.html -f
+    RewriteRule ^(.*)$ $1.html [L]
+</IfModule>

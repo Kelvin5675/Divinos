@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* ══════════════════════════════════════════════════════
+           DIVINOS GRAFFIC - OUT OF THIS PLANET SALES PAGE 
+           ══════════════════════════════════════════════════════ */
+        
+        :root {
+            --dg-navy: #1d3557;
+            --dg-navy-dark: #0a1118;
+            --dg-navy-light: #2a4b7a;
+            --dg-red: #e63946;
+            --dg-red-glow: rgba(230, 57, 70, 0.6);
+            --dg-gold: #d4af37;
+            --dg-gold-glow: rgba(212, 175, 55, 0.4);
+            --dg-text: #e2e8f0;
+            --dg-text-muted: #94a3b8;
+            --dg-glass-bg: rgba(29, 53, 87, 0.25);
+            --dg-glass-border: rgba(212, 175, 55, 0.15);
+            
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        .divinos-premium-page {
+            font-family: var(--font-body);
+            color: var(--dg-text);
+            background: var(--dg-navy-dark);
+            overflow-x: hidden;
+            position: relative;
+            overscroll-behavior-y: none;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 90px;
+        }
+
+        /* ── HIDE SCROLLBARS FOR APP FEEL ── */
+        .dg-hide-scroll::-webkit-scrollbar { display: none; }
+        .dg-hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── GLOBAL BACKGROUND EFFECTS ── */
+        .divinos-premium-page::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, var(--dg-red-glow) 0%, transparent 70%);
+            filter: blur(120px);
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .divinos-premium-page::after {
+            content: '';
+            position: fixed;
+            bottom: -20%;
+            right: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(29, 53, 87, 0.8) 0%, transparent 70%);
+            filter: blur(150px);
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .dg-section {
+            position: relative;
+            z-index: 2;
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .dg-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--dg-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dg-subtitle {
+            font-size: 1rem;
+            color: var(--dg-text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 550px;
+        }
+
+        .dg-text-center { text-align: center; margin-left: auto; margin-right: auto; }
+
+        /* ── BUTTONS ── */
+        .dg-btn-glow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--dg-red), #b92b38);
+            color: #fff;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px var(--dg-red-glow);
+            overflow: hidden;
+        }
+
+        .dg-btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+
+        .dg-btn-glow:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px var(--dg-red-glow);
+        }
+
+        .dg-btn-glow:hover::before {
+            left: 150%;
+        }
+
+        .dg-btn-outline {
+            background: transparent;
+            border: 2px solid var(--dg-gold);
+            color: var(--dg-gold);
+            box-shadow: 0 0 15px var(--dg-gold-glow);
+        }
+
+        .dg-btn-outline:hover {
+            background: var(--dg-gold);
+            color: var(--dg-navy-dark);
+            box-shadow: 0 0 30px var(--dg-gold-glow);
+        }
+
+        /* ── HERO SECTION ── */
+        .dg-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+        }
+
+        .dg-hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .dg-kicker {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dg-gold);
+            margin-bottom: 15px;
+            padding: 6px 16px;
+            border: 1px solid var(--dg-gold);
+            border-radius: 30px;
+            box-shadow: 0 0 15px var(--dg-gold-glow) inset;
+        }
+
+        .dg-hero-3d {
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .dg-phone {
+            width: 260px;
+            height: 540px;
+            background: #000;
+            border-radius: 35px;
+            border: 2px solid #333;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px var(--dg-glass-border);
+            position: relative;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .dg-phone::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;
+            opacity: 0.8;
+            filter: brightness(0.8) contrast(1.2);
+            transition: 0.5s;
+        }
+
+        .dg-phone-content {
+            position: absolute;
+            bottom: 40px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            background: rgba(10, 17, 24, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transform: translateZ(30px);
+        }
+
+        .dg-phone-names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 28px;
+            color: var(--dg-gold);
+            margin-bottom: 5px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(5deg) rotateY(-10deg); }
+            50% { transform: translateY(-20px) rotateX(0deg) rotateY(-5deg); }
+        }
+
+        /* ── GLASSMORPHISM CARDS (Features) ── */
+        .dg-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .dg-glass-card {
+            background: var(--dg-glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--dg-glass-border);
+            border-radius: 32px;
+            padding: 30px 20px;
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+            user-select: none;
+        }
+
+        .dg-glass-card:hover {
+            border-color: var(--dg-gold);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px var(--dg-gold-glow);
+        }
+
+        .dg-icon-wrapper {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(230,57,70,0.2), rgba(29,53,87,0.5));
+            border: 1px solid rgba(230,57,70,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--dg-red);
+            margin-bottom: 20px;
+            transform: translateZ(15px);
+            transition: 0.3s;
+        }
+        
+        .dg-glass-card:hover .dg-icon-wrapper {
+            background: var(--dg-red);
+            color: #fff;
+            box-shadow: 0 0 15px var(--dg-red-glow);
+        }
+
+        .dg-card-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            font-weight: normal;
+            color: #fff;
+            margin-bottom: 10px;
+            transform: translateZ(10px);
+        }
+
+        .dg-card-text {
+            color: var(--dg-text-muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            transform: translateZ(5px);
+        }
+
+        /* ── PRICING SECTION ── */
+        .dg-pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+            align-items: stretch; /* Garante que todos têm a mesma altura */
+        }
+
+        .dg-plan-card {
+            background: rgba(15, 23, 34, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 32px;
+            padding: 30px 25px;
+            position: relative;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        .dg-plan-popular {
+            background: linear-gradient(180deg, rgba(29,53,87,0.8), rgba(10,17,24,0.9));
+            border: 2px solid var(--dg-red);
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px var(--dg-red-glow);
+            z-index: 2;
+        }
+
+        .dg-plan-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dg-red);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px var(--dg-red-glow);
+        }
+
+        .dg-plan-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            font-weight: normal;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .dg-plan-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dg-gold);
+            font-family: var(--font-display);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .dg-plan-price span {
+            font-size: 1.2rem;
+            margin-top: 8px;
+            margin-right: 5px;
+            color: var(--dg-text-muted);
+        }
+
+        .dg-plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0 25px;
+        }
+
+        .dg-plan-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dg-text);
+            font-size: 0.85rem;
+        }
+
+        .dg-plan-features li i {
+            color: var(--dg-gold);
+            font-size: 1.1rem;
+        }
+
+        /* ── TESTIMONIALS (MARQUEE) ── */
+        .dg-marquee-wrapper {
+            overflow: hidden;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .dg-marquee-wrapper::before, .dg-marquee-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; width: 15%; height: 100%;
+            z-index: 2;
+        }
+        .dg-marquee-wrapper::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--dg-navy-dark), transparent);
+        }
+        .dg-marquee-wrapper::after {
+            right: 0;
+            background: linear-gradient(-90deg, var(--dg-navy-dark), transparent);
+        }
+
+        .dg-marquee {
+            display: flex;
+            gap: 30px;
+            animation: scroll 40s linear infinite;
+            width: max-content;
+        }
+
+        .dg-testimonial-card {
+            width: 400px;
+            background: rgba(29, 53, 87, 0.15);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .dg-stars {
+            color: var(--dg-gold);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .dg-test-text {
+            font-size: 1.05rem;
+            font-style: italic;
+            color: var(--dg-text);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .dg-test-author {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--dg-red);
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── REVEAL ANIMATIONS ── */
+        .dg-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .dg-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── MUSIC CONTROLS ── */
+        .dg-music-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--dg-navy-light);
+            border: 2px solid var(--dg-gold);
+            border-radius: 50%;
+            color: var(--dg-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+        .dg-music-btn:hover {
+            transform: scale(1.1);
+            background: var(--dg-gold);
+            color: var(--dg-navy-dark);
+        }
+
+        /* ── MOBILE BOTTOM BAR ── */
+        .dg-mobile-bottom-bar {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(10, 17, 24, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--dg-glass-border);
+            padding: 15px 20px;
+            z-index: 10000;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
+        }
+
+        .dg-bb-price {
+            font-family: var(--font-display);
+            color: var(--dg-gold);
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .dg-bb-sub {
+            color: var(--dg-text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .dg-hero-grid { grid-template-columns: 1fr; text-align: center; }
+            .dg-subtitle { margin: 0 auto 30px; }
+            .dg-hero-3d { margin-top: 40px; }
+            
+            /* Horizontal Swipe Apps Feel */
+            .dg-features-grid, .dg-pricing-grid { 
+                display: flex; 
+                flex-wrap: nowrap;
+                overflow-x: auto; 
+                scroll-snap-type: x mandatory; 
+                padding-bottom: 20px;
+                gap: 15px;
+                margin-left: -20px; /* Bleed edge to edge */
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+                scroll-padding-left: 20px;
+            }
+            .dg-glass-card, .dg-plan-card {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
+            }
+            .dg-plan-popular { transform: scale(1); }
+            
+            /* Show Mobile Bottom Bar */
+            .dg-mobile-bottom-bar { display: flex; }
+            
+            /* Hide the floating music button if bottom bar is present, or move it up */
+            .dg-music-btn { bottom: 90px; }
+        }
+        @media (max-width: 768px) {
+            .dg-title { font-size: 2.5rem; }
+            .dg-hero { padding-top: 80px; }
+            .dg-phone { width: 280px; height: 580px; }
+        }
+    </style>
+</head>
+<body data-template-id="__page-root">
+
+    <div class="divinos-premium-page">
+        
+        <!-- MUSIC PLAYER & CONTROLS -->
+        <audio id="dg-background-music" loop autoplay>
+            <source src="https://cdn.pixabay.com/download/audio/2022/02/10/audio_fc8cb70a1a.mp3?filename=romantic-piano-10874.mp3" type="audio/mpeg">
+        </audio>
+        <button id="dg-music-toggle" class="dg-music-btn" title="Pausar/Tocar Música">
+            <i class="fa-solid fa-pause"></i>
+        </button>
+        
+        <!-- HERO SECTION -->
+        <section class="dg-section dg-hero">
+            <div class="dg-hero-grid">
+                <div class="dg-hero-content dg-reveal">
+                    <span class="dg-kicker">O Futuro dos Convites</span>
+                    <h1 class="dg-title">Convites Digitais de Outro Planeta</h1>
+                    <p class="dg-subtitle">Esqueça o papel. Impressione os seus convidados com uma experiência interativa deslumbrante, RSVP inteligente e design de alta costura diretamente no smartphone.</p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button onclick="document.getElementById('quickOrderModal').classList.add('show')" class="dg-btn-glow">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Criar Meu Convite
+                        </button>
+                        <a href="#planos" class="dg-btn-glow dg-btn-outline">
+                            Ver Planos
+                        </a>
+                    </div>
+                </div>
+                <div class="dg-hero-3d dg-reveal" style="transition-delay: 0.2s;">
+                    <div class="dg-phone" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5">
+                        <div class="dg-phone-content">
+                            <div class="dg-phone-names">Ana & Carlos</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem; letter-spacing: 2px;">VÃO CASAR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES SECTION -->
+        <section class="dg-section" id="features">
+            <div class="dg-text-center dg-reveal">
+                <span class="dg-kicker">Tecnologia Premium</span>
+                <h2 class="dg-title">Uma Experiência Imersiva</h2>
+                <p class="dg-subtitle">Cada detalhe foi pensado para criar impacto e facilitar a gestão do seu grande dia.</p>
+            </div>
+            
+            <div class="dg-features-grid dg-hide-scroll">
+                <!-- Card 1 -->
+                <div class="dg-glass-card dg-reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                    <div class="dg-icon-wrapper"><i class="fa-regular fa-envelope-open"></i></div>
+                    <h3 class="dg-card-title">Design Exclusivo</h3>
+                    <p class="dg-card-text">Templates de luxo personalizados com a vossa identidade visual. Cores, tipografia e elementos que contam a vossa história.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="dg-glass-card dg-reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="transition-delay: 0.1s;">
+                    <div class="dg-icon-wrapper"><i class="fa-solid fa-check-double"></i></div>
+                    <h3 class="dg-card-title">RSVP Inteligente</h3>
+                    <p class="dg-card-text">Confirmações de presença diretas para o seu WhatsApp. Controlo total da lista de convidados sem stress.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="dg-glass-card dg-reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="transition-delay: 0.2s;">
+                    <div class="dg-icon-wrapper"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <h3 class="dg-card-title">Navegação GPS</h3>
+                    <p class="dg-card-text">Integração com Google Maps e Waze para que nenhum convidado se perca a caminho da cerimónia ou copo-d'água.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="dg-glass-card dg-reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                    <div class="dg-icon-wrapper"><i class="fa-solid fa-gift"></i></div>
+                    <h3 class="dg-card-title">Lista de Presentes</h3>
+                    <p class="dg-card-text">Receba presentes diretamente via M-Pesa, E-Mola ou IBAN. Sem taxas escondidas, 100% seguro.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="dg-glass-card dg-reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="transition-delay: 0.1s;">
+                    <div class="dg-icon-wrapper"><i class="fa-regular fa-images"></i></div>
+                    <h3 class="dg-card-title">Galeria de Memórias</h3>
+                    <p class="dg-card-text">Uma galeria fotográfica lindíssima do vosso percurso, noivado ou sessão de solteiros para encantar os convidados.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="dg-glass-card dg-reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="transition-delay: 0.2s;">
+                    <div class="dg-icon-wrapper"><i class="fa-solid fa-music"></i></div>
+                    <h3 class="dg-card-title">Música Ambiente</h3>
+                    <p class="dg-card-text">A vossa música especial a tocar no momento em que o convite é aberto, criando um impacto emocional único.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRICING SECTION -->
+        <section class="dg-section" id="planos">
+            <div class="dg-text-center dg-reveal">
+                <span class="dg-kicker">Investimento</span>
+                <h2 class="dg-title">Planos Perfeitos Para Si</h2>
+                <p class="dg-subtitle">Transparência total. Sem custos escondidos. A tecnologia premium que o seu casamento merece.</p>
+            </div>
+
+            <div class="dg-pricing-grid dg-hide-scroll">
+                <!-- Essencial -->
+                <div class="dg-plan-card dg-reveal">
+                    <h3 class="dg-plan-name">Essencial</h3>
+                    <p style="color: var(--dg-text-muted); font-size: 0.9rem; min-height: 45px; margin: 0 0 10px 0;">Elegância digital prática</p>
+                    <div class="dg-plan-price"><span>MT</span>4.900</div>
+                    <ul class="dg-plan-features">
+                        <li><i class="fa-solid fa-check"></i> Design Base Exclusivo</li>
+                        <li><i class="fa-solid fa-check"></i> RSVP WhatsApp Integrado</li>
+                        <li><i class="fa-solid fa-check"></i> Mapas Múltiplos (Igreja/Copod'água)</li>
+                        <li><i class="fa-solid fa-check"></i> Contagem Regressiva</li>
+                        <li><i class="fa-solid fa-check"></i> Música de Fundo</li>
+                        <li style="color: rgba(255,255,255,0.2);"><i class="fa-solid fa-xmark" style="color: rgba(255,255,255,0.2);"></i> Galeria de Fotos</li>
+                        <li style="color: rgba(255,255,255,0.2);"><i class="fa-solid fa-xmark" style="color: rgba(255,255,255,0.2);"></i> Lista de Presentes</li>
+                    </ul>
+                    <button onclick="document.getElementById('quickOrderModal').classList.add('show')" class="dg-btn-glow dg-btn-outline" style="width:100%; margin-top: auto;">Selecionar Essencial</button>
+                </div>
+
+                <!-- Premium -->
+                <div class="dg-plan-card dg-plan-popular dg-reveal" style="transition-delay: 0.2s;">
+                    <div class="dg-plan-badge">O Mais Escolhido</div>
+                    <h3 class="dg-plan-name" style="color: var(--dg-gold);">Premium</h3>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; min-height: 45px; margin: 0 0 10px 0;">A experiência imersiva completa</p>
+                    <div class="dg-plan-price"><span>MT</span>8.900</div>
+                    <ul class="dg-plan-features">
+                        <li><i class="fa-solid fa-check"></i> <strong>Tudo do Essencial +</strong></li>
+                        <li><i class="fa-solid fa-check"></i> Dress Code & Lista de Presentes</li>
+                        <li><i class="fa-solid fa-check"></i> Galeria de Fotos (Até 15)</li>
+                        <li><i class="fa-solid fa-check"></i> Mural de Mensagens</li>
+                        <li><i class="fa-solid fa-check"></i> Partilha Facilitada</li>
+                    </ul>
+                    <button onclick="document.getElementById('quickOrderModal').classList.add('show')" class="dg-btn-glow" style="width:100%; margin-top: auto;">Quero o Premium</button>
+                </div>
+
+                <!-- Exclusive -->
+                <div class="dg-plan-card dg-reveal" style="transition-delay: 0.4s;">
+                    <h3 class="dg-plan-name">Exclusive</h3>
+                    <p style="color: var(--dg-text-muted); font-size: 0.9rem; min-height: 45px; margin: 0 0 10px 0;">O suprassumo do luxo digital</p>
+                    <div class="dg-plan-price"><span>MT</span>16.900</div>
+                    <ul class="dg-plan-features">
+                        <li><i class="fa-solid fa-star"></i> <strong>Tudo do Premium +</strong></li>
+                        <li><i class="fa-solid fa-star"></i> Galeria de Fotos Ilimitada</li>
+                        <li><i class="fa-solid fa-star"></i> Cápsula do Tempo Interativa</li>
+                        <li><i class="fa-solid fa-star"></i> Live Streaming Integrado</li>
+                        <li><i class="fa-solid fa-star"></i> Acompanhamento Prioritário</li>
+                        <li><i class="fa-solid fa-star"></i> Save The Date Animado Oferta</li>
+                    </ul>
+                    <button onclick="document.getElementById('quickOrderModal').classList.add('show')" class="dg-btn-glow dg-btn-outline" style="width:100%; margin-top: auto;">Selecionar Exclusive</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS -->
+        <section class="dg-section">
+            <div class="dg-text-center dg-reveal">
+                <h2 class="dg-title">O que dizem os nossos casais</h2>
+            </div>
+            
+            <div class="dg-marquee-wrapper dg-reveal">
+                <div class="dg-marquee">
+                    <!-- Duplicamos os cards para o efeito infinito -->
+                    <div class="dg-testimonial-card">
+                        <div class="dg-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="dg-test-text">"Os nossos convidados ficaram de boca aberta! O convite é tão elegante e inovador. O RSVP facilitou-nos a vida a 100%."</p>
+                        <div class="dg-test-author">Mariana & João</div>
+                    </div>
+                    <div class="dg-testimonial-card">
+                        <div class="dg-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="dg-test-text">"Serviço impecável da Divinos. A lista de presentes com M-pesa direto foi a melhor invenção de sempre para o nosso casamento."</p>
+                        <div class="dg-test-author">Sara & Ricardo</div>
+                    </div>
+                    <div class="dg-testimonial-card">
+                        <div class="dg-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="dg-test-text">"O design superou todas as expectativas. Parecia uma app feita de propósito para nós. Recomendo de olhos fechados!"</p>
+                        <div class="dg-test-author">Helena & Marcos</div>
+                    </div>
+                    
+                    <!-- Repetição -->
+                    <div class="dg-testimonial-card">
+                        <div class="dg-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="dg-test-text">"Os nossos convidados ficaram de boca aberta! O convite é tão elegante e inovador. O RSVP facilitou-nos a vida a 100%."</p>
+                        <div class="dg-test-author">Mariana & João</div>
+                    </div>
+                    <div class="dg-testimonial-card">
+                        <div class="dg-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="dg-test-text">"Serviço impecável da Divinos. A lista de presentes com M-pesa direto foi a melhor invenção de sempre para o nosso casamento."</p>
+                        <div class="dg-test-author">Sara & Ricardo</div>
+                    </div>
+                    <div class="dg-testimonial-card">
+                        <div class="dg-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="dg-test-text">"O design superou todas as expectativas. Parecia uma app feita de propósito para nós. Recomendo de olhos fechados!"</p>
+                        <div class="dg-test-author">Helena & Marcos</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA FINAL -->
+        <section class="dg-section dg-text-center" style="padding-bottom: 120px;">
+            <div class="dg-reveal" style="background: linear-gradient(135deg, rgba(29,53,87,0.4), rgba(230,57,70,0.1)); border: 1px solid var(--dg-glass-border); padding: 80px 40px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+                <h2 class="dg-title" style="font-size: 3rem;">Prontos para impressionar?</h2>
+                <p class="dg-subtitle" style="margin: 0 auto 40px;">Não deixem a primeira impressão do vosso casamento ao acaso. Criem uma experiência inesquecível.</p>
+                <button onclick="document.getElementById('quickOrderModal').classList.add('show')" class="dg-btn-glow" style="transform: scale(1.1);">
+                    Iniciar o Meu Projeto <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- MOBILE BOTTOM ACTION BAR -->
+        <div class="dg-mobile-bottom-bar">
+            <div>
+                <div class="dg-bb-sub">A partir de</div>
+                <div class="dg-bb-price">4.900 MT</div>
+            </div>
+            <button onclick="document.getElementById('quickOrderModal').classList.add('show')" class="dg-btn-glow" style="padding: 10px 20px; font-size: 0.85rem;">
+                Criar Convite
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ── SCRIPTS PARA ANIMAÇÕES E MÚSICA ── -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Reveal Animations on Scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.dg-reveal');
+            
+            const revealOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealObserver.observe(reveal);
+            });
+
+            // Music Control
+            const musicBtn = document.getElementById('dg-music-toggle');
+            const audio = document.getElementById('dg-background-music');
+            const icon = musicBtn.querySelector('i');
+
+            // Autoplay workaround: browsers often block autoplay, so we listen to first interaction if needed
+            document.body.addEventListener('click', function() {
+                if(audio.paused && icon.classList.contains('fa-pause')) {
+                    audio.play().catch(e => console.log("Autoplay bloqueado pelo browser"));
+                }
+            }, { once: true });
+
+            musicBtn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevenir o click do body
+                if (audio.paused) {
+                    audio.play();
+                    icon.classList.remove('fa-play');
+                    icon.classList.add('fa-pause');
+                } else {
+                    audio.pause();
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-play');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

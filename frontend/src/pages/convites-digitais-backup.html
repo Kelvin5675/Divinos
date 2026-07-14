@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convites Digitais Premium | Divinos Graffic</title>
+    <meta name="description" content="Convites digitais únicos e personalizados para o seu grande momento. RSVP integrado, música, animações e muito mais.">
+
+    <!-- Site CSS (navbar, footer, cart) -->
+    <link rel="stylesheet" href="/css/style.css?v=16">
+    <link rel="stylesheet" media="(max-width: 767px)" href="/css/breakpoints/mobile.css">
+    <link rel="stylesheet" media="(min-width: 768px) and (max-width: 1023px)" href="/css/breakpoints/tablet.css">
+    <link rel="stylesheet" media="(min-width: 1024px)" href="/css/breakpoints/desktop.css">
+    <link rel="stylesheet" href="/css/cart.css?v=12">
+    <link rel="stylesheet" href="/css/premium-preloader.css?v=12">
+
+    <!-- Landing Page CSS isolado (V2) -->
+    <link rel="stylesheet" href="/invitation/css/convites-digitais.v2.css?v=1">
+
+    <link rel="shortcut icon" href="/assets/images/logo-official.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="lp-convites">
+    <!-- Preloader do site -->
+    <div id="preloader">
+        <div class="loader-content">
+            <svg class="loader-svg" viewBox="0 0 100 100">
+                <path class="path-d" d="M30,20 L30,80 C30,80 75,80 75,50 C75,20 30,20 30,20 Z" />
+            </svg>
+            <div class="loader-text">Divinos</div>
+        </div>
+    </div>
+
+    <!-- Navbar do Site (igual ao index.html) -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="/index.html"><img src="/assets/images/logo-official.png" alt="Logo Divinos Graffic" class="logo-img"></a>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li class="nav-item"><a href="/index.html" class="nav-link" data-pt="Início" data-en="Home">Início</a></li>
+                    <li class="nav-item"><a href="/index.html#services" class="nav-link" data-pt="Serviços" data-en="Services">Serviços</a></li>
+                    <li class="nav-item"><a href="/index.html#momentos" class="nav-link" data-pt="Momentos" data-en="Moments">Momentos</a></li>
+                    <li class="nav-item"><a href="/pages/products.html" class="nav-link" data-pt="Produtos" data-en="Products">Produtos</a></li>
+                    <li class="nav-item"><a href="/pages/about.html" class="nav-link" data-pt="Sobre Nós" data-en="About Us">Sobre Nós</a></li>
+                    <li class="nav-item"><a href="/pages/contact.html" class="nav-link" data-pt="Contato" data-en="Contact">Contato</a></li>
+                    <li class="nav-item"><a href="/pages/convites-digitais.html" class="nav-link active" data-pt="Convites Digitais" data-en="Digital Invitations">Convites Digitais</a></li>
+                </ul>
+                <div class="nav-extras">
+                    <div class="language-selector">
+                        <button id="lang-toggle" class="lang-btn">
+                            <span id="current-lang">PT</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-dropdown" id="lang-dropdown">
+                            <button data-lang="pt">Português</button>
+                            <button data-lang="en">English</button>
+                        </div>
+                    </div>
+                    <div id="cart-trigger" class="cart-trigger" title="Ver Carrinho">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </div>
+                    <div class="hamburger" id="hamburger">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="lp">
+        <!-- ============================================
+             HERO (V2)
+        ============================================ -->
+        <section class="lp-hero" id="lp-home">
+            <div class="lp-container">
+                <div class="lp-hero-grid">
+                    <div>
+                        <span class="lp-hero-kicker">
+                            <i class="fas fa-sparkles" aria-hidden="true"></i>
+                            Novidade Divinos Graffic
+                        </span>
+                        <h1 class="lp-hero-title" id="lp-hero-title-text">
+                            Convites Digitais<br><span class="accent">Únicos & Inesquecíveis</span>
+                        </h1>
+                        <p class="lp-hero-desc" id="lp-hero-desc-text">
+                            Celebre os seus momentos especiais com convites digitais personalizados,
+                            com RSVP integrado, música de fundo e animações exclusivas. Modernos, elegantes e acessíveis.
+                        </p>
+                        <div class="lp-hero-actions">
+                            <a href="#planos" class="lp-btn-primary" id="lp-btn1">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Ver Planos</span>
+                            </a>
+                            <a href="https://wa.me/258828800311?text=Olá!%20Quero%20saber%20mais%20sobre%20os%20convites%20digitais."
+                                target="_blank" class="lp-btn-secondary" id="lp-btn2" rel="noopener noreferrer">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>Falar Connosco</span>
+                            </a>
+                        </div>
+
+                        <div class="lp-hero-metrics">
+                            <div class="lp-metric">
+                                <strong id="stat-invitations">50+</strong>
+                                <span>Convites criados</span>
+                            </div>
+                            <div class="lp-metric">
+                                <strong>100%</strong>
+                                <span>Personalizado</span>
+                            </div>
+                            <div class="lp-metric">
+                                <strong>24h</strong>
+                                <span>Entrega rápida</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lp-hero-panel" aria-hidden="true">
+                        <div class="lp-floats">
+                            <div class="lp-float-card lp-float-1">
+                                <div class="t">RSVP Integrado</div>
+                                <div class="s">Confirmações organizadas directamente no convite.</div>
+                            </div>
+                            <div class="lp-float-card lp-float-3">
+                                <div class="t">Música & Galeria</div>
+                                <div class="s">Experiência premium no telemóvel, em segundos.</div>
+                            </div>
+                            <div class="lp-float-card lp-float-2">
+                                <div class="t">Link Partilhável</div>
+                                <div class="s">Envie via WhatsApp e surpreenda os convidados.</div>
+                            </div>
+                        </div>
+
+                        <div class="lp-phone-wrap">
+                            <div class="lp-phone">
+                                <video id="mockup-video" autoplay muted loop playsinline style="display:none;"></video>
+                                <div class="lp-phone-placeholder" id="mockup-placeholder">
+                                    <div>
+                                        <div style="font-size:2.2rem;opacity:0.92;">💌</div>
+                                        <div style="margin-top:10px;font-size:0.95rem;">Convite Interactivo</div>
+                                        <div style="margin-top:6px;font-size:0.75rem;opacity:0.8;">Pré-visualização</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             FUNCIONALIDADES
+        ============================================ -->
+        <section class="lp-section lp-section-purple" id="funcionalidades">
+            <div class="lp-container">
+                <div class="lp-section-head">
+                    <div>
+                        <div class="lp-eyebrow" id="lp-features-eyebrow-text">O que incluímos</div>
+                        <h2 class="lp-section-title" id="lp-features-title-text">Tudo o que precisa para o seu grande dia</h2>
+                        <p class="lp-section-desc" id="lp-features-desc-text">Cada convite digital é criado com cuidado e atenção aos detalhes para impressionar os seus convidados.</p>
+                    </div>
+                </div>
+
+                <div class="lp-grid" id="lp-features-grid">
+                    <!-- Fallback estático (pode ser substituído pelo Supabase) -->
+                    <div class="lp-card">
+                        <div class="lp-icon">🎵</div>
+                        <h3>Música de Fundo</h3>
+                        <p>A música favorita do casal a tocar automaticamente ao abrir o convite.</p>
+                    </div>
+                    <div class="lp-card">
+                        <div class="lp-icon">✅</div>
+                        <h3>RSVP Integrado</h3>
+                        <p>Os convidados confirmam a presença directamente pelo convite. Sem papelada.</p>
+                    </div>
+                    <div class="lp-card">
+                        <div class="lp-icon">🎁</div>
+                        <h3>Lista de Presentes</h3>
+                        <p>Crie e partilhe a sua lista de presentes dentro do próprio convite digital.</p>
+                    </div>
+                    <div class="lp-card">
+                        <div class="lp-icon">✨</div>
+                        <h3>Animações Premium</h3>
+                        <p>Efeitos visuais sofisticados que fazem o convite destacar-se em qualquer ecrã.</p>
+                    </div>
+                    <div class="lp-card">
+                        <div class="lp-icon">📱</div>
+                        <h3>100% Mobile</h3>
+                        <p>Perfeito em qualquer dispositivo. Partilhe via WhatsApp em segundos.</p>
+                    </div>
+                    <div class="lp-card">
+                        <div class="lp-icon">📸</div>
+                        <h3>Galeria de Fotos</h3>
+                        <p>Inclua as suas fotos favoritas numa galeria elegante dentro do convite.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             PLANOS (dinâmico)
+        ============================================ -->
+        <section class="lp-section" id="planos">
+            <div class="lp-container">
+                <div class="lp-section-head">
+                    <div>
+                        <div class="lp-eyebrow" id="lp-plans-eyebrow-text">Nossos pacotes</div>
+                        <h2 class="lp-section-title" id="lp-plans-title-text">Escolha o plano ideal para si</h2>
+                        <p class="lp-section-desc" id="lp-plans-desc-text">Preços transparentes, sem surpresas. O plano certo para cada celebração.</p>
+                    </div>
+                </div>
+                <div class="lp-plans-grid" id="lp-plans-grid">
+                    <div style="grid-column:1/-1;text-align:center;padding:2.5rem;color:rgba(18,18,42,0.55);">
+                        <i class="fas fa-spinner fa-spin" style="font-size:1.6rem;"></i>
+                        <p style="margin-top:0.9rem;">A carregar planos...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             COMO FUNCIONA
+        ============================================ -->
+        <section class="lp-section lp-how" id="como-funciona">
+            <div class="lp-container">
+                <div class="lp-section-head">
+                    <div>
+                        <div class="lp-eyebrow" id="lp-how-eyebrow-text">Processo simples</div>
+                        <h2 class="lp-section-title" id="lp-how-title-text">Como funciona?</h2>
+                        <p class="lp-section-desc" id="lp-how-desc-text">Um processo rápido, claro e sem stress — do plano ao envio do link.</p>
+                    </div>
+                </div>
+
+                <div class="lp-how-grid">
+                    <div class="lp-how-stage" aria-hidden="true">
+                        <div class="lp-how-panel">
+                            <div class="lp-how-floats">
+                                <div class="lp-how-bubble lp-how-b1">
+                                    <div class="t">Escolha o Plano</div>
+                                    <div class="s">Selecione o pacote ideal.</div>
+                                </div>
+                                <div class="lp-how-bubble lp-how-b2">
+                                    <div class="t">Envie os Detalhes</div>
+                                    <div class="s">Fotos, texto e música.</div>
+                                </div>
+                                <div class="lp-how-bubble lp-how-b3">
+                                    <div class="t">Criamos o Convite</div>
+                                    <div class="s">Receba o link em até 24h.</div>
+                                </div>
+                            </div>
+
+                            <div class="lp-how-phone-wrap">
+                                <div class="lp-phone">
+                                    <video id="how-mockup-video" autoplay muted loop playsinline style="display:none;"></video>
+                                    <div class="lp-phone-placeholder" id="how-mockup-placeholder">
+                                        <div>
+                                            <div style="font-size:2.2rem;opacity:0.92;">📱</div>
+                                            <div style="margin-top:10px;font-size:0.95rem;">Pré-visualização</div>
+                                            <div style="margin-top:6px;font-size:0.75rem;opacity:0.8;">Como funciona</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lp-how-steps" id="lp-how-steps">
+                        <div class="lp-how-step">
+                            <div class="lp-how-step-num">01</div>
+                            <div>
+                                <div class="lp-how-step-title">Escolha o Plano</div>
+                                <div class="lp-how-step-desc">Selecione o pacote que melhor se adapta ao seu evento.</div>
+                            </div>
+                        </div>
+                        <div class="lp-how-step">
+                            <div class="lp-how-step-num">02</div>
+                            <div>
+                                <div class="lp-how-step-title">Envie os Detalhes</div>
+                                <div class="lp-how-step-desc">Partilhe connosco as informações, fotos e músicas do seu evento.</div>
+                            </div>
+                        </div>
+                        <div class="lp-how-step">
+                            <div class="lp-how-step-num">03</div>
+                            <div>
+                                <div class="lp-how-step-title">Criamos o Convite</div>
+                                <div class="lp-how-step-desc">A nossa equipa cria o seu convite personalizado em até 24h.</div>
+                            </div>
+                        </div>
+                        <div class="lp-how-step">
+                            <div class="lp-how-step-num">04</div>
+                            <div>
+                                <div class="lp-how-step-title">Partilhe</div>
+                                <div class="lp-how-step-desc">Envie o link via WhatsApp e impressione os seus convidados.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             FAQ (dinâmico)
+        ============================================ -->
+        <section class="lp-section" id="faq">
+            <div class="lp-container">
+                <div class="lp-section-head">
+                    <div>
+                        <div class="lp-eyebrow" id="lp-faq-eyebrow-text">Dúvidas</div>
+                        <h2 class="lp-section-title" id="lp-faq-title-text">Perguntas Frequentes</h2>
+                        <p class="lp-section-desc" id="lp-faq-desc-text">Respostas rápidas para as perguntas mais comuns.</p>
+                    </div>
+                </div>
+
+                <div class="lp-faq-list" id="lp-faq-list">
+                    <!-- FAQ estático (fallback) + dinâmico via Supabase -->
+                    <div class="lp-faq-item open">
+                        <div class="lp-faq-question" onclick="toggleFAQ(this)">
+                            Por quanto tempo o link fica activo?
+                            <i class="fas fa-chevron-down arrow"></i>
+                        </div>
+                        <div class="lp-faq-answer">
+                            Dependendo do plano escolhido, o convite fica activo entre 30 dias a 1 ano após a data do evento.
+                        </div>
+                    </div>
+                    <div class="lp-faq-item">
+                        <div class="lp-faq-question" onclick="toggleFAQ(this)">
+                            Posso alterar informações após a criação?
+                            <i class="fas fa-chevron-down arrow"></i>
+                        </div>
+                        <div class="lp-faq-answer">
+                            Sim! Alterações simples de texto são feitas em até 24h sem custo adicional no primeiro mês.
+                        </div>
+                    </div>
+                    <div class="lp-faq-item">
+                        <div class="lp-faq-question" onclick="toggleFAQ(this)">
+                            O convite funciona em qualquer telemóvel?
+                            <i class="fas fa-chevron-down arrow"></i>
+                        </div>
+                        <div class="lp-faq-answer">
+                            Sim! Os convites são desenvolvidos para funcionar perfeitamente em todos os telemóveis e navegadores modernos (Android, iPhone, etc.).
+                        </div>
+                    </div>
+                    <div class="lp-faq-item">
+                        <div class="lp-faq-question" onclick="toggleFAQ(this)">
+                            Como faço para pagar?
+                            <i class="fas fa-chevron-down arrow"></i>
+                        </div>
+                        <div class="lp-faq-answer">
+                            Aceitamos M-Pesa, e-Mola e transferência bancária. Após escolher o plano, receberá as instruções de pagamento via WhatsApp.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             CTA FINAL
+        ============================================ -->
+        <section class="lp-cta">
+            <div class="lp-container">
+                <div class="lp-cta-box">
+                    <div class="lp-cta-inner">
+                        <div>
+                            <h2 class="lp-cta-title" id="lp-cta-title-text">Pronto para criar o seu convite?</h2>
+                            <p class="lp-cta-desc" id="lp-cta-desc-text">Entre em contacto connosco e transformemos o seu momento especial em algo inesquecível.</p>
+                        </div>
+                        <div class="lp-cta-actions">
+                            <a href="#planos" class="lp-btn-primary">
+                                <i class="fas fa-layer-group"></i> Ver Planos
+                            </a>
+                            <a href="https://wa.me/258828800311?text=Quero%20criar%20um%20convite%20digital!"
+                                target="_blank" class="lp-btn-secondary" rel="noopener noreferrer">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer do Site (igual ao index.html) -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <h3>Divinos Graffic</h3>
+                        <p>Criatividade que transforma momentos especiais em memórias eternas</p>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="/index.html">Início</a></li>
+                        <li><a href="/index.html#services">Serviços</a></li>
+                        <li><a href="/pages/products.html">Produtos</a></li>
+                        <li><a href="/pages/convites-digitais.html">Convites Digitais</a></li>
+                        <li><a href="/pages/contact.html">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-phone"></i> +258 82 880 0311</li>
+                        <li><i class="fas fa-phone"></i> +258 84 880 0311</li>
+                        <li><i class="fas fa-envelope"></i> info.divinosgraffic@gmail.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Maputo Central B, Pandora</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Redes Sociais</h4>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/Divinosgraffic" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/divinos_graffic" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/258828800311" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Divinos Graffic. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer do site -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Meu Carrinho</h3>
+            <button id="cart-close-btn" class="cart-close">&times;</button>
+        </div>
+        <div id="cart-items-container" class="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total Estimado:</span>
+                <span id="cart-total-value">0 MT</span>
+            </div>
+            <a href="/pages/checkout.html" class="checkout-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <i class="fas fa-credit-card"></i> Finalizar Pedido
+            </a>
+        </div>
+    </div>
+
+    <!-- WhatsApp Float -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/258828800311?text=Olá!%20Quero%20saber%20mais%20sobre%20os%20convites%20digitais." target="_blank" class="whatsapp-btn">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Scripts do site -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js?v=12"></script>
+    <script src="/js/data-loader.js?v=15"></script>
+    <script src="/js/script.js?v=12"></script>
+    <script src="/js/cart.js?v=12"></script>
+
+    <!-- Script da Landing Page -->
+    <script>
+        // ============================================
+        // FAQ TOGGLE
+        // ============================================
+        function toggleFAQ(el) {
+            const item = el.closest('.lp-faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.lp-faq-item.open').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+
+        // ============================================
+        // CARREGAR CONTEÚDO DINÂMICO DO SUPABASE
+        // ============================================
+        async function loadDynamicContent() {
+            const supabase = window.supabaseClient;
+            if (!supabase) return;
+
+            // Carregar configurações da landing page
+            try {
+                const { data: settings } = await supabase.from('site_settings').select('*').like('key', 'inv_lp_%');
+                if (settings && settings.length > 0) {
+                    settings.forEach(s => {
+                        if (s.key === 'inv_lp_hero_badge' && s.value) {
+                            const badge = document.querySelector('.lp-hero-kicker');
+                            if (badge) badge.lastChild.nodeValue = ' ' + s.value;
+                        }
+                        if (s.key === 'inv_lp_hero_title' && s.value) {
+                            document.getElementById('lp-hero-title-text').innerHTML = s.value;
+                        }
+                        if (s.key === 'inv_lp_hero_subtitle' && s.value) {
+                            document.getElementById('lp-hero-desc-text').textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_features_eyebrow' && s.value) {
+                            const el = document.getElementById('lp-features-eyebrow-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_features_title' && s.value) {
+                            const el = document.getElementById('lp-features-title-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_features_subtitle' && s.value) {
+                            const el = document.getElementById('lp-features-desc-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_plans_eyebrow' && s.value) {
+                            const el = document.getElementById('lp-plans-eyebrow-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_plans_title' && s.value) {
+                            const el = document.getElementById('lp-plans-title-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_plans_subtitle' && s.value) {
+                            const el = document.getElementById('lp-plans-desc-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_how_eyebrow' && s.value) {
+                            const el = document.getElementById('lp-how-eyebrow-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_how_title' && s.value) {
+                            const el = document.getElementById('lp-how-title-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_how_subtitle' && s.value) {
+                            const el = document.getElementById('lp-how-desc-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_how_mockup_video' && s.value) {
+                            loadHowMockupVideo(s.value);
+                        }
+                        if (s.key === 'inv_lp_how_steps' && s.value) {
+                            try {
+                                const steps = JSON.parse(s.value);
+                                if (steps && steps.length > 0) renderHowSteps(steps);
+                            } catch (e) {}
+                        }
+                        if (s.key === 'inv_lp_faq_eyebrow' && s.value) {
+                            const el = document.getElementById('lp-faq-eyebrow-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_faq_title' && s.value) {
+                            const el = document.getElementById('lp-faq-title-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_faq_subtitle' && s.value) {
+                            const el = document.getElementById('lp-faq-desc-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_cta_title' && s.value) {
+                            const el = document.getElementById('lp-cta-title-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_cta_subtitle' && s.value) {
+                            const el = document.getElementById('lp-cta-desc-text');
+                            if (el) el.textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_btn1_text' && s.value) {
+                            const btn = document.getElementById('lp-btn1');
+                            if (btn) btn.querySelector('span').textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_btn1_link' && s.value) {
+                            const btn = document.getElementById('lp-btn1');
+                            if (btn) btn.href = s.value;
+                        }
+                        if (s.key === 'inv_lp_btn2_text' && s.value) {
+                            const btn = document.getElementById('lp-btn2');
+                            if (btn) btn.querySelector('span').textContent = s.value;
+                        }
+                        if (s.key === 'inv_lp_btn2_link' && s.value) {
+                            const btn = document.getElementById('lp-btn2');
+                            if (btn) btn.href = s.value;
+                        }
+                        if (s.key === 'inv_lp_mockup_video' && s.value) {
+                            loadMockupVideo(s.value);
+                        }
+                        if (s.key === 'inv_lp_features' && s.value) {
+                            try {
+                                const features = JSON.parse(s.value);
+                                if (features && features.length > 0) {
+                                    renderFeatures(features);
+                                }
+                            } catch (e) {}
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Configurações da LP não carregadas:', e);
+            }
+
+            // Carregar planos do Supabase
+            try {
+                const { data: plans } = await supabase.from('invitation_plans').select('*').order('price');
+                if (plans && plans.length > 0) {
+                    renderPlans(plans);
+                } else {
+                    renderPlansEmpty();
+                }
+            } catch (e) {
+                console.warn('Planos não carregados:', e);
+                renderPlansEmpty();
+            }
+
+            // Carregar FAQ do Supabase
+            try {
+                const { data: faqData } = await supabase.from('invitation_faq').select('*').order('display_order');
+                if (faqData && faqData.length > 0) {
+                    renderFAQ(faqData);
+                }
+            } catch (e) {
+                console.warn('FAQ não carregado:', e);
+            }
+
+            // Carregar estatísticas
+            try {
+                const { count } = await supabase.from('invitations').select('*', { count: 'exact', head: true });
+                if (count && count > 0) {
+                    document.getElementById('stat-invitations').textContent = count + '+';
+                }
+            } catch (e) {}
+        }
+
+        function loadMockupVideo(url) {
+            const video = document.getElementById('mockup-video');
+            const placeholder = document.getElementById('mockup-placeholder');
+            if (!video || !url) return;
+            try {
+                video.src = url;
+                video.muted = true;
+                video.autoplay = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.setAttribute('muted', '');
+                video.setAttribute('playsinline', '');
+                video.setAttribute('autoplay', '');
+                video.setAttribute('loop', '');
+                video.load();
+                video.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+                const p = video.play();
+                if (p && typeof p.catch === 'function') p.catch(() => {});
+            } catch (e) {
+                console.warn('Vídeo do mockup não carregado:', e);
+            }
+        }
+
+        function loadHowMockupVideo(url) {
+            const video = document.getElementById('how-mockup-video');
+            const placeholder = document.getElementById('how-mockup-placeholder');
+            if (!video || !url) return;
+            try {
+                video.src = url;
+                video.muted = true;
+                video.autoplay = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.setAttribute('muted', '');
+                video.setAttribute('playsinline', '');
+                video.setAttribute('autoplay', '');
+                video.setAttribute('loop', '');
+                video.load();
+                video.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+                const p = video.play();
+                if (p && typeof p.catch === 'function') p.catch(() => {});
+            } catch (e) {
+                console.warn('Vídeo do mockup (como funciona) não carregado:', e);
+            }
+        }
+
+        function renderHowSteps(steps) {
+            const wrap = document.getElementById('lp-how-steps');
+            if (!wrap || !steps.length) return;
+            wrap.innerHTML = steps.map((st, idx) => `
+                <div class="lp-how-step">
+                    <div class="lp-how-step-num">${String(idx + 1).padStart(2, '0')}</div>
+                    <div>
+                        <div class="lp-how-step-title">${st.title || ''}</div>
+                        <div class="lp-how-step-desc">${st.desc || ''}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFeatures(features) {
+            const grid = document.getElementById('lp-features-grid');
+            if (!grid || !features.length) return;
+            grid.innerHTML = features.map((f, i) => `
+                <div class="lp-card">
+                    <div class="lp-icon">${f.icon || '✨'}</div>
+                    <h3>${f.text || ''}</h3>
+                    <p>${f.desc || ''}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderPlans(plans) {
+            const grid = document.getElementById('lp-plans-grid');
+            if (!grid) return;
+            const midIndex = Math.floor(plans.length / 2);
+            grid.innerHTML = plans.map((plan, i) => {
+                const isFeatured = i === midIndex && plans.length > 1;
+                const featuresList = plan.features_list
+                    ? plan.features_list.split('\n').filter(l => l.trim())
+                    : getDefaultFeatures(plan.features);
+                return `
+                    <div class="lp-plan-card ${isFeatured ? 'featured' : ''}">
+                        <h3 class="lp-plan-name">${plan.name}</h3>
+                        <p class="lp-plan-desc">${plan.description || 'O perfeito para o seu evento.'}</p>
+                        <div class="lp-plan-price">
+                            <span class="currency">MT</span>
+                            <span class="amount">${Number(plan.price).toLocaleString('pt')}</span>
+                        </div>
+                        <ul class="lp-plan-features">
+                            ${featuresList.map(f => `<li>${f.trim()}</li>`).join('')}
+                        </ul>
+                        <a href="#" onclick="contactPlan('${plan.name}', '${plan.id}')" class="lp-plan-btn ${isFeatured ? 'primary' : 'secondary'}">
+                            ${isFeatured ? '⭐ Escolher Este Plano' : 'Começar Agora'}
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getDefaultFeatures(features) {
+            if (!features) return ['Convite digital personalizado', 'Link partilhável'];
+            const feats = typeof features === 'string' ? JSON.parse(features) : features;
+            const map = {
+                has_music: '🎵 Música de Fundo',
+                has_rsvp: '✅ Sistema de RSVP',
+                has_gift_list: '🎁 Lista de Presentes',
+                is_animated: '✨ Animações Premium',
+                has_gallery: '📸 Galeria de Fotos'
+            };
+            const result = Object.keys(feats).filter(k => feats[k] && map[k]).map(k => map[k]);
+            if (feats.max_photos > 0) result.push(`📷 Até ${feats.max_photos} fotos`);
+            return result.length ? result : ['Convite digital personalizado', 'Link partilhável'];
+        }
+
+        function renderPlansEmpty() {
+            const grid = document.getElementById('lp-plans-grid');
+            if (grid) grid.innerHTML = `<p style="color:rgba(226,212,245,0.5);text-align:center;grid-column:1/-1;padding:3rem;font-family:'Poppins',sans-serif;">Entre em contacto para conhecer os nossos planos.</p>`;
+        }
+
+        function renderFAQ(faqData) {
+            const list = document.getElementById('lp-faq-list');
+            if (!list || !faqData.length) return;
+            list.innerHTML = faqData.map((f, i) => `
+                <div class="lp-faq-item ${i === 0 ? 'open' : ''}">
+                    <div class="lp-faq-question" onclick="toggleFAQ(this)">
+                        ${f.question}
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </div>
+                    <div class="lp-faq-answer">${f.answer}</div>
+                </div>
+            `).join('');
+        }
+
+        function contactPlan(planName, planId) {
+            const params = new URLSearchParams({
+                plan_name: planName,
+                plan_id: planId || ''
+            });
+            window.location.href = `/pages/pedido-convite.html?${params.toString()}`;
+            return false;
+        }
+
+        // Smooth scroll para âncoras internas da LP
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', e => {
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Iniciar quando DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDynamicContent();
+            // Navbar glass effect on scroll
+            const header = document.querySelector('.header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    header.classList.toggle('scrolled', window.scrollY > 40);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

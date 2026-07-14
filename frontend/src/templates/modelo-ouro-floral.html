@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite de Casamento</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <!-- Divinos Core -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --cream: #fbf8f1;
+            --paper: #fffdf9;
+            --sage: #6f836f;
+            --sage-dark: #2e4a3a;
+            --forest: #21392d;
+            --gold: #b89664;
+            --gold-soft: #d9c7a4;
+            --blush: #e7d8cf;
+            --text: #5d574f;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+            overflow: hidden;
+            background: var(--cream);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Liberar scroll quando o envelope sai */
+        body.envelope-dismissed {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .font-display {
+            font-family: 'Cormorant Garamond', serif
+        }
+
+        .scriptish {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic
+        }
+
+        .section-reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: all .9s ease
+        }
+
+        .section-reveal.visible {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .envelope.opening .envelope.opening .envelope.opening .thin-rule {
+            width: 72px;
+            height: 1px;
+            background: var(--gold)
+        }
+
+        .hero-photo-wrap {
+            position: relative
+        }
+
+        .hero-photo-wrap::before {
+            content: "";
+            position: absolute;
+            inset: 28px -22px -22px 22px;
+            border: 1px solid rgba(184, 150, 100, .45);
+            border-radius: 240px 240px 24px 24px;
+            z-index: 0;
+        }
+
+        .hero-photo-wrap::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 44%;
+            background: linear-gradient(to top, rgba(33, 57, 45, .52), rgba(33, 57, 45, 0));
+            border-radius: 220px 220px 24px 24px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hero-photo-wrap img {
+            position: relative;
+            z-index: 1;
+            border-radius: 220px 220px 24px 24px;
+            box-shadow: 0 24px 60px rgba(43, 58, 45, .16);
+        }
+
+        .memory-frame {
+            position: relative
+        }
+
+        .memory-frame::before {
+            content: "";
+            position: absolute;
+            inset: 18px 18px -18px -18px;
+            border: 1px solid rgba(184, 150, 100, .45);
+            border-radius: 28px;
+            z-index: 0;
+        }
+
+        .memory-frame img {
+            position: relative;
+            z-index: 1;
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(55, 47, 36, .12)
+        }
+
+        .place-card {
+            background: rgba(255, 255, 255, .76);
+            border: 1px solid rgba(184, 150, 100, .22);
+            border-radius: 24px;
+            transition: all .3s ease;
+            box-shadow: 0 8px 30px rgba(56, 45, 30, .04);
+        }
+
+        .place-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(56, 45, 30, .1);
+            border-color: rgba(184, 150, 100, .45)
+        }
+
+        .ornament {
+            position: absolute;
+            width: 180px;
+            height: 280px;
+            opacity: .36;
+            pointer-events: none;
+        }
+
+        .ornament svg {
+            width: 100%;
+            height: 100%
+        }
+
+        .petal {
+            position: fixed;
+            top: -20px;
+            z-index: 2;
+            width: 12px;
+            height: 18px;
+            background: linear-gradient(135deg, #f0ddd7, #d8bab1);
+            border-radius: 70% 20% 70% 30%;
+            opacity: .72;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-20px) rotate(0deg) translateX(0);
+                opacity: 0
+            }
+
+            10% {
+                opacity: .7
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg) translateX(80px);
+                opacity: 0
+            }
+        }
+
+        .music-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 40;
+            width: 54px;
+            height: 54px;
+            border-radius: 999px;
+            background: rgba(46, 74, 58, .94);
+            color: white;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, .25);
+            box-shadow: 0 12px 28px rgba(28, 45, 35, .24);
+            backdrop-filter: blur(8px);
+            transition: .25s;
+        }
+
+        .music-btn:hover {
+            transform: translateY(-2px)
+        }
+
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: 0;
+            border-bottom: 1px solid rgba(46, 74, 58, .25);
+            padding: 13px 2px;
+            color: var(--sage-dark);
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .form-input:focus {
+            border-color: var(--gold)
+        }
+
+        .form-input::placeholder {
+            color: rgba(86, 78, 68, .52)
+        }
+
+        .btn-outline {
+            transition: .25s ease;
+            border-radius: 999px;
+        }
+
+        .btn-outline:hover {
+            background: var(--sage-dark);
+            color: white;
+            transform: translateY(-2px)
+        }
+
+        @media(max-width:768px) {
+            .hero-photo-wrap::before {
+                inset: 16px -10px -12px 10px
+            }
+
+            .hero-photo-wrap img,
+            .hero-photo-wrap::after {
+                border-radius: 150px 150px 20px 20px
+            }
+
+            .ornament {
+                width: 120px;
+                height: 210px;
+                opacity: .24
+            }
+        }
+    
+
+/* ── ENVELOPE PINTEREST EXACT REPLICA (Vertical) ── */
+        #envelope-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: #fdf5e6;
+            /* Creme/Bege */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        #envelope-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            width: 50.5%;
+            /* Pequena sobreposição no meio */
+            height: 100%;
+            background: #fdf5e6;
+            z-index: 5;
+            transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .flap-left {
+            left: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.08);
+            transform-origin: left;
+            justify-content: flex-end;
+            box-shadow: inset -10px 0 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .flap-right {
+            right: 0;
+            border-left: 1px solid rgba(0, 0, 0, 0.08);
+            transform-origin: right;
+            justify-content: flex-start;
+            box-shadow: inset 10px 0 20px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Ramos Florais (SVG Externo do Usuário) */
+        .floral-ornament {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 1;
+            background-image: url('../assets/images/two-flowers-svgrepo-com.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .flap-left .floral-ornament {
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-10deg);
+            background-position: center;
+        }
+
+        .flap-right .floral-ornament {
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%) rotate(10deg) scaleX(-1);
+            background-position: center;
+        }
+
+        /* Wax Seal Central */
+        .envelope-seal-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .wax-seal {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 30% 30%, #D4AF37 0%, #B8860B 100%);
+            border-radius: 48% 52% 50% 50% / 51% 49% 51% 49%;
+            /* Forma orgânica irregular */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.3),
+                inset 0 4px 10px rgba(255, 255, 255, 0.4),
+                inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: pulse-seal 2.5s infinite ease-in-out;
+            border: 3px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .wax-seal::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .seal-initials {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: rgba(0, 0, 0, 0.45);
+            /* Cor de profundidade */
+            font-weight: 700;
+            font-style: italic;
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+            letter-spacing: -2px;
+            opacity: 0.8;
+        }
+
+        .seal-instruction {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: #8B6B38;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+            animation: floatText 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-seal {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes floatText {
+
+            0%,
+            100% {
+                transform: translate(-50%, 0);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translate(-50%, -10px);
+                opacity: 1;
+            }
+        }
+
+        /* Animação de Abertura */
+        .envelope-open .flap-left {
+            transform: translateX(-100%);
+        }
+
+        .envelope-open .flap-right {
+            transform: translateX(100%);
+        }
+
+        .envelope-open .envelope-seal-container {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            pointer-events: none;
+        }
+
+        .envelope-content-reveal {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .open-invitation-btn {
+            background: #94A684;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 1rem 2rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s;
+        }
+
+        .open-invitation-btn {
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 1.8rem;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3);
+            margin-top: 1rem;
+        }
+
+        .open-invitation-btn:hover {
+            background: #A6864A;
+            transform: translateY(-2px);
+        }
+
+        
+</style>
+</head>
+
+<body data-template-id="__page-root" class="w-full" style="background: rgb(251, 248, 241);"> 
+
+    <!-- ═══════════ ENVELOPE OFICIAL DA DIVINOS ═══════════ -->
+<div id="envelope-screen">
+        <div class="flap-left envelope-flap">
+            <div class="floral-ornament"></div>
+        </div>
+        <div class="flap-right envelope-flap">
+            <div class="floral-ornament"></div>
+        </div>
+
+        <div class="envelope-seal-container" id="btn-open-envelope">
+            <div class="wax-seal">
+                <span class="seal-initials" id="env-seal-initials">L&J</span>
+            </div>
+            <div class="seal-instruction">Clique para abrir</div>
+        </div>
+    </div>
+
+     
+
+    <!-- ═══════════ AUDIO NATIVO DA DIVINOS ═══════════ -->
+    <audio id="wedding-audio" loop></audio>
+
+
+    
+    <div class="petal" style="left:8%;animation-duration:11s;animation-delay:0s;"></div>
+    <div class="petal" style="left:22%;animation-duration:13s;animation-delay:2s;"></div>
+    <div class="petal" style="left:38%;animation-duration:12s;animation-delay:4s;"></div>
+    <div class="petal" style="left:58%;animation-duration:14s;animation-delay:1s;"></div>
+    <div class="petal" style="left:77%;animation-duration:12s;animation-delay:3s;"></div>
+    <div class="petal" style="left:91%;animation-duration:15s;animation-delay:5s;"></div>
+    <button id="musicButton" class="music-btn" aria-label="Controlar música"> <i id="musicIcon"
+            data-lucide="volume-2" class="w-5 h-5"></i> </button>
+    <main class="w-full">
+        <section data-template-id="hero-section" class="canva-section relative overflow-hidden"
+            style="background: rgb(251, 248, 241);">
+            <div class="ornament hidden md:block" style="left:-28px;top:8%;">
+                <svg viewBox="0 0 180 280" fill="none">
+                    <path d="M70 275C80 220 64 170 75 118C83 80 106 52 143 18" stroke="#81917f" stroke-width="2"></path>
+                    <path d="M77 177C40 169 24 145 13 118C43 124 64 139 77 177Z" fill="#a9b7a4"></path>
+                    <path d="M80 138C113 126 129 103 136 74C107 82 89 103 80 138Z" fill="#90a08d"></path>
+                    <circle cx="142" cy="19" r="12" fill="#ddc7bf"></circle>
+                </svg>
+            </div>
+            <div
+                class="max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-28 grid md:grid-cols-2 gap-14 md:gap-20 items-center">
+                <div class="section-reveal order-2 md:order-1">
+                    <p data-template-id="hero-eyebrow" class="canva-text uppercase tracking-[0.34em] mb-5"
+                        style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 11px; letter-spacing: 0.2rem;">
+                        O NOSSO GRANDE DIA</p>
+                    <h2 data-template-id="hero-title"
+                        class="canva-text font-display leading-[0.95] mb-6 whitespace-pre-line"
+                        style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 78px; line-height: 0.95;">
+                        Lívia
+                        &amp; Miguel</h2>
+                    <p data-template-id="hero-subtitle" class="canva-text leading-8 max-w-md mb-8"
+                        style="color: rgb(95, 88, 79); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.8;">
+                        Com o coração cheio de amor, convidamos você para celebrar conosco o início da nossa nova
+                        história.</p>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="thin-rule"></div><span class="font-display text-[#b89664] text-2xl">✦</span>
+                    </div>
+                    <p data-template-id="hero-quote" class="canva-text scriptish leading-snug max-w-lg"
+                        style="color: rgb(110, 92, 67); font-weight: 400; font-style: italic; font-size: 30px; line-height: 1.2;">
+                        “O amor é a soma de pequenos instantes que se tornam eternos.”</p>
+                </div>
+                <div class="section-reveal hero-photo-wrap order-1 md:order-2"><img data-template-id="hero-photo"
+                        loading="lazy" class="canva-image w-full h-[470px] md:h-[650px] object-cover"
+                        src="https://images.pexels.com/photos/32604025/pexels-photo-32604025.jpeg"
+                        alt="Beautiful outdoor wedding portrait of a bride and groom in a lush garden setting.">
+        <div id="live-player-container" data-invite="livestream-player"
+                style="display:none; position:absolute; inset:0; z-index:15; background:#000; border-radius: 220px 220px 24px 24px;">
+                <!-- Player Nativo WebRTC (clique para tela cheia) -->
+                <video id="live-video-player" width="100%" height="100%" style="object-fit:cover; cursor:pointer;"
+                    autoplay playsinline muted onclick="toggleLiveFullscreen()"></video>
+                <audio id="live-audio-player" autoplay playsinline muted></audio>
+
+                <button id="btn-exit-fullscreen"
+                    style="display:none; position:absolute; top:2rem; left:2rem; background:rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:30px; padding: 8px 16px; cursor:pointer; font-size:14px; align-items:center; gap:8px; z-index:10;"
+                    onclick="toggleLiveFullscreen()">
+                    <i class="fas fa-compress"></i> Sair da Tela Cheia
+                </button>
+
+                <div style="position:absolute; top:2rem; right:2rem; display:flex; gap:10px; z-index:10;">
+                    <div
+                        style="background:rgba(0,0,0,0.6); color:#fff; padding:.5rem 1rem; border-radius:30px; font-size:.7rem; font-weight:700; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-eye"></i> <span id="viewers-count">0</span>
+                    </div>
+                    <div
+                        style="background:rgba(239,68,68,0.9); color:#fff; padding:.5rem 1rem; border-radius:30px; font-size:.7rem; font-weight:700; letter-spacing:2px; display:flex; align-items:center; gap:8px;">
+                        <span
+                            style="width:8px; height:8px; background:#fff; border-radius:50%; animation: pulse 1.5s infinite;"></span>
+                        AO VIVO
+                    </div>
+                </div>
+
+                <button id="btn-unmute-live"
+                    style="position:absolute; bottom:3rem; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); color:#fff; padding:12px 24px; border-radius:30px; border:1px solid rgba(255,255,255,0.3); font-size:14px; cursor:pointer;"
+                    onclick="unmuteLive()">
+                    <i class="fas fa-volume-up"></i> Clique para ligar o som
+                </button>
+
+                <button id="btn-live-like"
+                    style="position:absolute; bottom:3rem; right:2rem; background:linear-gradient(135deg, #ef4444, #f43f5e); color:#fff; border:none; border-radius:50%; width:50px; height:50px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 15px rgba(239,68,68,0.5); z-index:10; transition: transform 0.2s;"
+                    onclick="sendLiveLike()" onmousedown="this.style.transform='scale(0.9)';"
+                    onmouseup="this.style.transform='scale(1)';">
+                    <i class="fas fa-heart"></i>
+                </button>
+
+                <div id="hearts-container"
+                    style="position:absolute; bottom:5rem; right:3rem; width:50px; height:300px; pointer-events:none; z-index:9; overflow:visible;">
+                </div>
+            </div>
+            
+                </div>
+            </div>
+        </section>
+        <section data-template-id="invitation-section"
+            class="canva-section relative py-24 md:py-32 px-6 overflow-hidden" style="background: rgb(255, 253, 249);">
+            <div class="ornament" style="right:-30px;top:8%;">
+                <svg viewBox="0 0 180 280" fill="none">
+                    <path d="M70 275C80 220 64 170 75 118C83 80 106 52 143 18" stroke="#81917f" stroke-width="2"></path>
+                    <path d="M77 177C40 169 24 145 13 118C43 124 64 139 77 177Z" fill="#a9b7a4"></path>
+                    <path d="M80 138C113 126 129 103 136 74C107 82 89 103 80 138Z" fill="#90a08d"></path>
+                    <circle cx="142" cy="19" r="12" fill="#ddc7bf"></circle>
+                </svg>
+            </div>
+            <div class="max-w-3xl mx-auto text-center section-reveal">
+                <p data-template-id="invitation-kicker" class="canva-text uppercase tracking-[0.36em] mb-6"
+                    style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.22rem;">
+                    COM ALEGRIA</p>
+                <h2 data-template-id="invitation-title" class="canva-text font-display mb-7"
+                    style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 56px;">Convidamos
+                    você</h2>
+                <div class="thin-rule mx-auto mb-8"></div>
+                <p data-template-id="invitation-text" class="canva-text leading-8 max-w-2xl mx-auto"
+                    style="color: rgb(95, 88, 79); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.8;">
+                    Ao lado das nossas famílias, celebraremos o amor, a cumplicidade e o início de uma nova jornada. Sua
+                    presença tornará este momento ainda mais especial.</p>
+                <p data-template-id="invitation-signature" class="canva-text scriptish mt-10"
+                    style="color: rgb(161, 132, 88); font-weight: 400; font-style: italic; font-size: 34px;">Com amor,
+                    Lívia e Miguel</p>
+            </div>
+        </section>
+        <section data-template-id="date-section"
+            class="canva-section relative py-20 md:py-24 px-6 text-center overflow-hidden"
+            style="background: rgb(46, 74, 58);">
+            <div
+                class="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_center,_#ffffff_1px,_transparent_1px)] [background-size:26px_26px]">
+            </div>
+            <div class="relative z-10 section-reveal">
+                <p data-template-id="date-kicker" class="canva-text uppercase tracking-[0.36em] mb-5"
+                    style="color: rgb(221, 207, 180); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.22rem;">
+                    RESERVE ESTA DATA</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-8">
+                    <p data-template-id="date-day" class="canva-text font-display leading-none"
+                        style="color: rgb(255, 250, 241); font-weight: 500; font-style: normal; font-size: 112px;">14
+                    </p>
+                    <div class="hidden md:block w-px h-20 bg-[#c7ab78]"></div>
+                    <div class="flex flex-col items-center md:items-start">
+                        <p data-template-id="date-month" class="canva-text uppercase tracking-[0.28em] mb-2"
+                            style="color: rgb(221, 207, 180); font-weight: 500; font-style: normal; font-size: 13px; letter-spacing: 0.18rem;">
+                            SETEMBRO</p>
+                        <p data-template-id="date-year" class="canva-text font-display"
+                            style="color: rgb(255, 250, 241); font-weight: 500; font-style: normal; font-size: 42px;">
+                            2026</p>
+                    </div>
+                </div>
+                <p data-template-id="date-time" class="canva-text uppercase tracking-[0.24em] mt-8"
+                    style="color: rgb(221, 207, 180); font-weight: 500; font-style: normal; font-size: 11px; letter-spacing: 0.16rem;">
+                    SÁBADO • ÀS 16H30</p>
+            </div>
+        </section>
+        <section data-template-id="places-section" class="canva-section relative py-24 md:py-28 px-6 overflow-hidden"
+            style="background: rgb(251, 248, 241);">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-14 section-reveal">
+                    <p data-template-id="places-kicker" class="canva-text uppercase tracking-[0.34em] mb-4"
+                        style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.22rem;">
+                        ONDE ESTAREMOS</p>
+                    <h2 data-template-id="places-title" class="canva-text font-display"
+                        style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 52px;">Momentos
+                        do nosso dia</h2>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 section-reveal">
+                    <article data-template-id="church-card" class="canva-card place-card p-8 text-center"
+                        style="background: rgba(255, 255, 255, 0.77);">
+                        <div
+                            class="mx-auto mb-6 w-12 h-12 rounded-full border border-[#b89664] flex items-center justify-center text-[#b89664]">
+                            <i data-lucide="church" class="w-5 h-5"></i>
+                        </div>
+                        <p data-template-id="church-label" class="canva-text uppercase tracking-[0.24em] mb-3"
+                            style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 9px; letter-spacing: 0.16rem;">
+                            CERIMÔNIA RELIGIOSA</p>
+                        <h3 data-template-id="church-title" class="canva-text font-display mb-3"
+                            style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 30px;">
+                            Igreja São Miguel</h3>
+                        <p data-template-id="church-address" class="canva-text leading-6 mb-7 whitespace-pre-line"
+                            style="color: rgb(104, 97, 88); font-weight: 400; font-style: normal; font-size: 12px; line-height: 1.6;">
+                            Av. das Flores, 120
+                            Jardim Imperial</p><a data-template-id="church-button"
+                            class="canva-button inline-flex rounded-full border border-[#2e4a3a] px-5 py-3 uppercase tracking-[0.18em] btn-outline"
+                            href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer"
+                            style="background: transparent; color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.14rem;">VER
+                            LOCAL</a>
+                    </article>
+                    <article data-template-id="registry-card" class="canva-card place-card p-8 text-center"
+                        style="background: rgba(255, 255, 255, 0.77);">
+                        <div
+                            class="mx-auto mb-6 w-12 h-12 rounded-full border border-[#b89664] flex items-center justify-center text-[#b89664]">
+                            <i data-lucide="landmark" class="w-5 h-5"></i>
+                        </div>
+                        <p data-template-id="registry-label" class="canva-text uppercase tracking-[0.24em] mb-3"
+                            style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 9px; letter-spacing: 0.16rem;">
+                            CIVIL</p>
+                        <h3 data-template-id="registry-title" class="canva-text font-display mb-3"
+                            style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 30px;">
+                            Cartório Central</h3>
+                        <p data-template-id="registry-address" class="canva-text leading-6 mb-7 whitespace-pre-line"
+                            style="color: rgb(104, 97, 88); font-weight: 400; font-style: normal; font-size: 12px; line-height: 1.6;">
+                            Rua do Paço, 84
+                            Centro Histórico</p><a data-template-id="registry-button"
+                            class="canva-button inline-flex rounded-full border border-[#2e4a3a] px-5 py-3 uppercase tracking-[0.18em] btn-outline"
+                            href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer"
+                            style="background: transparent; color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.14rem;">VER
+                            LOCAL</a>
+                    </article>
+                    <article data-template-id="party-card" class="canva-card place-card p-8 text-center"
+                        style="background: rgba(255, 255, 255, 0.77);">
+                        <div
+                            class="mx-auto mb-6 w-12 h-12 rounded-full border border-[#b89664] flex items-center justify-center text-[#b89664]">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <p data-template-id="party-label" class="canva-text uppercase tracking-[0.24em] mb-3"
+                            style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 9px; letter-spacing: 0.16rem;">
+                            RECEPÇÃO</p>
+                        <h3 data-template-id="party-title" class="canva-text font-display mb-3"
+                            style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 30px;">Villa
+                            Toscana</h3>
+                        <p data-template-id="party-address" class="canva-text leading-6 mb-7 whitespace-pre-line"
+                            style="color: rgb(104, 97, 88); font-weight: 400; font-style: normal; font-size: 12px; line-height: 1.6;">
+                            Estrada da Serra, 580
+                            Vale dos Ipês</p><a data-template-id="party-button"
+                            class="canva-button inline-flex rounded-full border border-[#2e4a3a] px-5 py-3 uppercase tracking-[0.18em] btn-outline"
+                            href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer"
+                            style="background: transparent; color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.14rem;">VER
+                            LOCAL</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <section data-template-id="memory-section" class="canva-section py-24 md:py-28 px-6"
+            style="background: rgb(255, 253, 249);">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                <div class="section-reveal memory-frame"><img data-template-id="memory-photo" loading="lazy"
+                        class="canva-image w-full h-[420px] md:h-[560px] object-cover"
+                        src="https://images.pexels.com/photos/13586332/pexels-photo-13586332.jpeg"
+                        alt="Delicate cream and white roses arranged in a bouquet, placed on a textured cushion indoors.">
+                </div>
+                <div class="section-reveal">
+                    <p data-template-id="memory-kicker" class="canva-text uppercase tracking-[0.34em] mb-5"
+                        style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.22rem;">
+                        UMA HISTÓRIA DE AMOR</p>
+                    <h2 data-template-id="memory-title" class="canva-text font-display leading-tight mb-6"
+                        style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 50px; line-height: 1.08;">
+                        Cada detalhe foi sonhado com amor</h2>
+                    <div class="thin-rule mb-7"></div>
+                    <p data-template-id="memory-text" class="canva-text leading-8 max-w-lg"
+                        style="color: rgb(95, 88, 79); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.8;">
+                        Queremos compartilhar com você um dia leve, cheio de afeto, sorrisos e memórias inesquecíveis.
+                        Será uma honra ter sua presença nessa celebração tão especial.</p>
+                </div>
+            </div>
+        </section>
+        <section data-template-id="rsvp-section" class="canva-section relative py-24 md:py-28 px-6 overflow-hidden"
+            style="background: rgb(46, 74, 58);">
+            <div
+                class="absolute inset-0 opacity-[0.07] bg-[radial-gradient(circle_at_center,_#ffffff_1px,_transparent_1px)] [background-size:24px_24px]">
+            </div>
+            <div class="relative z-10 max-w-3xl mx-auto section-reveal">
+                <div class="text-center mb-12">
+                    <p data-template-id="rsvp-kicker" class="canva-text uppercase tracking-[0.36em] mb-5"
+                        style="color: rgb(221, 207, 180); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.22rem;">
+                        R.S.V.P.</p>
+                    <h2 data-template-id="rsvp-title" class="canva-text font-display mb-5"
+                        style="color: rgb(255, 250, 241); font-weight: 500; font-style: normal; font-size: 54px;">
+                        Confirme sua presença</h2>
+                    <p data-template-id="rsvp-text" class="canva-text leading-7 max-w-xl mx-auto"
+                        style="color: rgb(231, 220, 199); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.7;">
+                        Sua presença é muito importante para nós. Confirme até o dia 20 de agosto.</p>
+                </div>
+                <form id="rsvpForm"
+                    class="bg-[#fffdf9] rounded-[28px] p-7 md:p-10 shadow-[0_24px_60px_rgba(0,0,0,.16)]">
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div><label data-template-id="guest-name-label" for="guestName"
+                                class="canva-text block uppercase tracking-[0.18em] mb-2"
+                                style="color: rgb(141, 120, 82); font-weight: 500; font-style: normal; font-size: 9px; letter-spacing: 0.14rem;">SEU
+                                NOME</label> <input data-template-id="guest-name-input" id="guestName"
+                                class="canva-input form-input" type="text" required=""
+                                placeholder="Digite seu nome completo"
+                                style="color: rgb(46, 74, 58); font-weight: 400; font-style: normal; font-size: 14px;">
+                        </div>
+                        <div><label data-template-id="guest-count-label" for="guestCount"
+                                class="canva-text block uppercase tracking-[0.18em] mb-2"
+                                style="color: rgb(141, 120, 82); font-weight: 500; font-style: normal; font-size: 9px; letter-spacing: 0.14rem;">NÚMERO
+                                DE CONVIDADOS</label> <input data-template-id="guest-count-input" id="guestCount"
+                                class="canva-input form-input" type="number" min="1" max="10" required=""
+                                placeholder="Ex.: 2"
+                                style="color: rgb(46, 74, 58); font-weight: 400; font-style: normal; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div id="formMessage" class="hidden mb-5 text-center text-sm"></div><button id="submitRsvp"
+                        data-template-id="rsvp-submit-button" type="submit"
+                        class="canva-button w-full py-4 rounded-full uppercase tracking-[0.2em] transition focus:outline-none focus:ring-2 focus:ring-[#b89664] focus:ring-offset-2"
+                        style="background: rgb(46, 74, 58); color: rgb(255, 255, 255); font-weight: 500; font-style: normal; font-size: 10px; letter-spacing: 0.16rem;">CONFIRMAR
+                        PRESENÇA</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer class="py-14 px-6 text-center bg-[#fbf8f1]">
+        <p data-template-id="footer-monogram" class="canva-text font-display mb-4"
+            style="color: rgb(46, 74, 58); font-weight: 500; font-style: normal; font-size: 42px;">L &amp; M</p>
+        <p data-template-id="footer-text" class="canva-text uppercase tracking-[0.24em]"
+            style="color: rgb(161, 132, 88); font-weight: 500; font-style: normal; font-size: 9px; letter-spacing: 0.18rem;">
+            COM AMOR • 14.09.2026</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Animações de Scroll do Canva
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: .16 });
+        document.querySelectorAll('.section-reveal').forEach(el => observer.observe(el));
+
+        // Impedir submissão do formulário do Canva e abrir o Popup da Divinos
+        const form = document.getElementById('rsvpForm');
+        if (form) {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                if(window.divinosEngine) {
+                    window.divinosEngine.showRsvpModal();
+                }
+            });
+        }
+    </script>
+
+    <script src="/js/invite-engine.js"></script>
+</body>
+
+</html>

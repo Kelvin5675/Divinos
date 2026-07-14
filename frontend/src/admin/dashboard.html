@@ -211,6 +211,9 @@
             <a onclick="switchTab('orders')" class="nav-item" id="nav-orders">
                 <i class="fas fa-shopping-cart"></i> Pedidos (Web)
             </a>
+            <a onclick="switchTab('convite-orders')" class="nav-item" id="nav-convite-orders">
+                <i class="fas fa-envelope-open-text"></i> Pedidos de Convites
+            </a>
             <a onclick="switchTab('categories')" class="nav-item" id="nav-categories">
                 <i class="fas fa-tags"></i> Categorias
             </a>
@@ -799,6 +802,75 @@
                             <tr>
                                 <td colspan="7" style="text-align: center; padding: 2rem;">
                                     <i class="fas fa-spinner fa-spin"></i> Carregando pedidos...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONVITE ORDERS TAB -->
+        <section id="convite-orders" class="section">
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid #eee; padding: 1.5rem;">
+                    <h3 class="card-title" style="margin: 0;"><i class="fas fa-envelope-open-text"></i> Pedidos de Convites (Landing Page)</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary btn-sm" onclick="openCreateConviteModal()">
+                            <i class="fas fa-plus"></i> Criar Novo Convite
+                        </button>
+                    </div>
+                </div>
+
+                <div style="padding: 1.5rem;">
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, #c5a059, #b89664); padding: 20px; border-radius: 16px; color: white; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.9; font-weight: 500;">Total Pedidos</p>
+                                    <h3 id="convites-total-count" style="margin: 5px 0 0; font-size: 1.8rem; font-weight: 700;">0</h3>
+                                </div>
+                                <i class="fas fa-envelope" style="font-size: 2rem; opacity: 0.2;"></i>
+                            </div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 20px; border-radius: 16px; color: white; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.9; font-weight: 500;">Pendentes</p>
+                                    <h3 id="convites-pending-count" style="margin: 5px 0 0; font-size: 1.8rem; font-weight: 700;">0</h3>
+                                </div>
+                                <i class="fas fa-clock" style="font-size: 2rem; opacity: 0.2;"></i>
+                            </div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 16px; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.9; font-weight: 500;">Concluídos</p>
+                                    <h3 id="convites-completed-count" style="margin: 5px 0 0; font-size: 1.8rem; font-weight: 700;">0</h3>
+                                </div>
+                                <i class="fas fa-check-circle" style="font-size: 2rem; opacity: 0.2;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="overflow-x: auto;">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Nº Pedido</th>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>WhatsApp</th>
+                                <th>Plano</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="convite-orders-table-body">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    <i class="fas fa-spinner fa-spin"></i> Carregando pedidos de convites...
                                 </td>
                             </tr>
                         </tbody>
@@ -1495,6 +1567,58 @@
     </div>
 
 
+
+    <div id="createConviteModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 25px;">
+                <h3 id="convite-modal-title" style="margin: 0; font-size: 1.5rem; color: #333;"><i class="fas fa-envelope-open-text" style="color: #c5a059; margin-right: 10px;"></i>Criar Novo Convite</h3>
+                <button type="button" onclick="closeCreateConviteModal()" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #888;">&times;</button>
+            </div>
+            
+            <form id="create-convite-form">
+                <input type="hidden" id="convite-order-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #444; margin-bottom: 5px; display: block;">Nome do Cliente</label>
+                        <input type="text" id="convite-client-name" class="form-control" required placeholder="Ex: João & Maria" style="width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #444; margin-bottom: 5px; display: block;">WhatsApp</label>
+                        <input type="text" id="convite-client-phone" class="form-control" required placeholder="Ex: +258 84 000 0000" style="width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="font-weight: 600; color: #444; margin-bottom: 5px; display: block;">Plano Selecionado</label>
+                    <select id="convite-plan-select" class="form-control" required style="width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
+                        <option value="">Selecione um plano...</option>
+                        <!-- Planos serão carregados via JS -->
+                    </select>
+                </div>
+
+                <div style="background: #fdf8f0; border-left: 4px solid #c5a059; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #2e4a3a; font-size: 1rem;"><i class="fas fa-info-circle"></i> Instruções para o Cliente</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: #6f836f;">Após criar o pedido, um link exclusivo será gerado. Envie esse link para o cliente via WhatsApp para que ele possa preencher os dados do convite (data, local, fotos, etc).</p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label style="font-weight: 600; color: #444; margin-bottom: 5px; display: block;">Status do Pedido</label>
+                    <select id="convite-status" class="form-control" style="width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
+                        <option value="pendente">Pendente</option>
+                        <option value="em_producao">Em Produção</option>
+                        <option value="concluido">Concluído</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button type="submit" class="btn" style="flex: 1; background: #c5a059; color: white; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 1rem; border: none;"><i class="fas fa-save"></i> Salvar Pedido</button>
+                    <button type="button" class="btn" onclick="closeCreateConviteModal()" style="flex: 1; background: #f1f5f9; color: #475569; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 1rem; border: none;">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Notification Toast -->
     <div id="toast" class="notification">
