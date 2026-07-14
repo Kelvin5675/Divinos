@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/c/:slug",
-      "destination": "https://divinos-backend.onrender.com/api/v1/invitations/meta/:slug"
+      "source": "/(.*)",
+      "destination": "/api/proxy"
     }
   ]
 }

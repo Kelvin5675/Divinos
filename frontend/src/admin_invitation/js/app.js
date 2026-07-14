@@ -284,7 +284,7 @@ async function startCreateInvitation(orderId) {
     const slug = (order.couple_names || 'convite').toLowerCase().replace(/&/g, 'e').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-');
     const pwd = Math.random().toString(36).slice(-8).toUpperCase();
     const origin = window.location.origin;
-    const guestLink = `https://divinos.vercel.app/c/${slug}`;
+    const guestLink = `https://divinosgraffic.co.mz/c/${slug}`;
 
     const { data: inv, error } = await sbClient.from('invitations').insert({
         customer_name: order.couple_names,
@@ -315,7 +315,7 @@ async function showGeneratedLinks(orderId) {
     if (!inv) return;
     currentOrderForLinks = { order, inv, pwd: inv.couple_password };
     document.getElementById('generated-access-code').textContent = inv.couple_password || '—';
-    document.getElementById('generated-guest-link').value = `https://divinos.vercel.app/c/${inv.slug}`;
+    document.getElementById('generated-guest-link').value = `https://divinosgraffic.co.mz/c/${inv.slug}`;
     document.getElementById('generated-couple-link').value = `${window.location.origin}/pages/dashboard-noivos.html`;
     showModal('inviteLinksModal');
 }
@@ -533,7 +533,7 @@ function setupForms() {
                 data.couple_password = pwd;
                 data.status = 'active';
                 data.is_public = true;
-                data.guest_link = `https://divinos.vercel.app/c/${data.slug}`;
+                data.guest_link = `https://divinosgraffic.co.mz/c/${data.slug}`;
                 const { error } = await sbClient.from('invitations').insert([data]);
                 if (error) throw error;
             }

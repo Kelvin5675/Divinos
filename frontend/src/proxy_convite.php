@@ -11,8 +11,10 @@ if ($content === FALSE) {
     http_response_code(404);
     echo "Convite não encontrado.";
 } else {
-    // Passar o Content-Type correto se possível (opcional, por padrão é text/html)
     header("Content-Type: text/html; charset=utf-8");
+    // Correção mágica: O backend tem a URL da Vercel "hardcoded". 
+    // Em vez de alterar o backend, nós reescrevemos a URL aqui no proxy antes de entregar ao cliente!
+    $content = str_replace("https://divinos.vercel.app", "https://divinosgraffic.co.mz", $content);
     echo $content;
 }
 ?>

@@ -7,7 +7,7 @@
 
     # 2. Configurar proxy para Convites Digitais (/c/:slug)
     # Tenta utilizar o proxy nativo do Apache (P)
-    RewriteRule ^c/(.*)$ https://divinos-backend.onrender.com/api/v1/invitations/meta/$1 [P,L]
+    RewriteRule ^c/(.*)$ proxy_convite.php?slug=$1 [L,QSA]
 
     # 3. Clean URLs: Ocultar extensão .html
     # Se a requisição não for de uma pasta (-d) e existir o ficheiro com .html (-f)
