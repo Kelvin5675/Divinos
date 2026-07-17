@@ -1355,8 +1355,8 @@ function setupAutoLogout() {
 async function handlePasswordChange(e) {
     e.preventDefault();
     const newEmail = document.getElementById('new-email') ? document.getElementById('new-email').value.trim() : '';
-    const newPass = document.getElementById('new-password').value;
-    const confirmPass = document.getElementById('confirm-password').value;
+    const newPass = document.getElementById('new-password').value.trim();
+    const confirmPass = document.getElementById('confirm-password').value.trim();
 
     if (newPass && newPass !== confirmPass) {
         showToast('As senhas não coincidem!', 'error');
@@ -1371,8 +1371,8 @@ async function handlePasswordChange(e) {
     showToast('Atualizando credenciais...', 'info');
     
     let updates = {};
-    if (newEmail) updates.email = newEmail;
-    if (newPass) updates.password = newPass;
+    if (newEmail !== '') updates.email = newEmail;
+    if (newPass !== '') updates.password = newPass;
 
     const { error } = await supabaseClient.auth.updateUser(updates);
 
