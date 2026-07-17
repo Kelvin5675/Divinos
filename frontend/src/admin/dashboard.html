@@ -1392,21 +1392,26 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Alterar Senha</h3>
+                    <h3 class="card-title">Alterar Acesso (Email e Senha)</h3>
                 </div>
                 <form id="change-password-form">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label>Novo Email (Opcional)</label>
+                        <input type="email" id="new-email" class="form-control" placeholder="Deixe em branco para manter o atual">
+                        <small style="color: #666; font-size: 0.8rem;">O Supabase poderá enviar um email de confirmação para o novo endereço antes de a alteração entrar em vigor.</small>
+                    </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Nova Senha</label>
-                            <input type="password" id="new-password" class="form-control" required minlength="6">
+                            <label>Nova Senha (Opcional)</label>
+                            <input type="password" id="new-password" class="form-control" placeholder="Deixe em branco para manter a atual" minlength="6">
                         </div>
                         <div class="form-group">
                             <label>Confirmar Nova Senha</label>
-                            <input type="password" id="confirm-password" class="form-control" required minlength="6">
+                            <input type="password" id="confirm-password" class="form-control" placeholder="Repita se inserir nova senha" minlength="6">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary"
-                        style="background-color: #f1c40f; border-color: #f1c40f;">Mudar Senha</button>
+                        style="background-color: #f1c40f; border-color: #f1c40f;">Mudar Credenciais</button>
                 </form>
             </div>
 

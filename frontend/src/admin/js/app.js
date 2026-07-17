@@ -1351,24 +1351,35 @@ function setupAutoLogout() {
     resetTimer(); // Start initially
 }
 
-// 2. Password Change
+// 2. Credentials Change (Email / Password)
 async function handlePasswordChange(e) {
     e.preventDefault();
+    const newEmail = document.getElementById('new-email') ? document.getElementById('new-email').value.trim() : '';
     const newPass = document.getElementById('new-password').value;
     const confirmPass = document.getElementById('confirm-password').value;
 
-    if (newPass !== confirmPass) {
+    if (newPass && newPass !== confirmPass) {
         showToast('As senhas não coincidem!', 'error');
         return;
     }
 
-    showToast('Atualizando senha...', 'info');
-    const { error } = await supabaseClient.auth.updateUser({ password: newPass });
+    if (!newEmail && !newPass) {
+        showToast('Preencha o email ou a senha para alterar.', 'error');
+        return;
+    }
+
+    showToast('Atualizando credenciais...', 'info');
+    
+    let updates = {};
+    if (newEmail) updates.email = newEmail;
+    if (newPass) updates.password = newPass;
+
+    const { error } = await supabaseClient.auth.updateUser(updates);
 
     if (error) {
         showToast('Erro: ' + error.message, 'error');
     } else {
-        showToast('Senha alterada com sucesso!');
+        showToast('Credenciais atualizadas com sucesso! (Se mudou o email, verifique a caixa de entrada)', 'success');
         document.getElementById('change-password-form').reset();
     }
 }

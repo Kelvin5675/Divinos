@@ -411,7 +411,8 @@
                     }
 
                     // Aumentar janela para 2 (30s antes/depois) para compensar drift de horário
-                    const isValid = lib.authenticator.check(code, secret, { window: 2 });
+                    lib.authenticator.options = { window: 2 };
+                    const isValid = lib.authenticator.check(code, secret);
                     if (isValid) {
                         sessionStorage.removeItem('admin_2fa_pending');
                         window.location.href = '/admin/dashboard.html';
