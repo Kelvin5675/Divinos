@@ -412,8 +412,10 @@
                     }
 
                     // Aumentar janela para 2 (30s antes/depois) para compensar drift de horário
-                    lib.authenticator.options = { window: 2 };
+                    const originalOptions = Object.assign({}, lib.authenticator.options);
+                    lib.authenticator.options = Object.assign({}, originalOptions, { window: 2 });
                     const isValid = lib.authenticator.check(code, secret);
+                    lib.authenticator.options = originalOptions; // Restaurar opções originais
                     if (isValid) {
                         sessionStorage.removeItem('admin_2fa_pending');
                         sessionStorage.setItem('admin_2fa_verified', 'true');
