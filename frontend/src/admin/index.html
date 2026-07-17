@@ -415,6 +415,7 @@
                     const isValid = lib.authenticator.check(code, secret);
                     if (isValid) {
                         sessionStorage.removeItem('admin_2fa_pending');
+                        sessionStorage.setItem('admin_2fa_verified', 'true');
                         window.location.href = '/admin/dashboard.html';
                     } else {
                         throw new Error("Código 2FA incorreto ou expirado.");
@@ -441,11 +442,24 @@
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             
-            // SECURITY FIX: Só redireciona se tiver sessão E NÃO estiver pendente de 2FA
-            const is2FAPending = sessionStorage.getItem('admin_2fa_pending') === 'true';
-            
-            if (session && !is2FAPending) {
-                // Se já tem sessão de uma aba aberta e passou pelo 2FA (ou não precisa), manda pro dashboard
+            if (session) {
+                // Verificar se MFA está habilitado
+                const { data: mfaSet } = await window.supabaseClient.from('site_settings').select('value').eq('key', 'admin_2fa_enabled').maybeSingle();
+                
+                if (mfaSet && mfaSet.value === 'true') {
+                    const isVerified = sessionStorage.getItem('admin_2fa_verified') === 'true';
+                    if (!isVerified) {
+                        // Sessão existe, mas falta verificar 2FA (ex: reabriu o browser)
+                        sessionStorage.setItem('admin_2fa_pending', 'true');
+                        step1.style.display = 'none';
+                        step2.style.display = 'block';
+                        backBtn.style.display = 'none'; // Sem voltar, tem que validar ou deslogar
+                        submitBtn.innerHTML = '<span>Verificar Código</span> <i class="fas fa-check"></i>';
+                        return;
+                    }
+                }
+                
+                // Se não tem 2FA ou já foi verificado, redireciona
                 window.location.href = '/admin/dashboard.html';
             }
         }
