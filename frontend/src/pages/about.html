@@ -97,7 +97,8 @@
         <div class="hero-content">
             <div class="container">
                 <div class="hero-text">
-                    <h1 data-pt="Sobre a Divinos Graffic" data-en="About Divinos Graffic">Sobre a Divinos Graffic</h1>
+                    <h1 data-pt="Sobre a Divinos Graffic" data-en="About Divinos Graffic">Sobre a Divinos Graffic
+                    </h1>
                     <p data-pt="Transformando momentos especiais em memórias eternas através da arte, criatividade e paixão pelo que fazemos."
                         data-en="Transforming special moments into eternal memories through art, creativity and passion for what we do.">
                         Transformando momentos especiais em memórias eternas através da arte, criatividade e paixão pelo
@@ -163,8 +164,8 @@
                     </div>
                 </div>
                 <div class="story-image">
-                    <img src="../images/Equipe Divinos Graffic.jpg" alt="Nossa Equipe Criativa">
-
+                    <img data-key="about_team_image" src="../images/Equipe Divinos Graffic.jpg"
+                        alt="Nossa Equipe Criativa">
                 </div>
             </div>
         </div>
@@ -188,7 +189,8 @@
                     </div>
                     <div class="card-content">
                         <h3 data-pt="Missão" data-en="Mission">Missão</h3>
-                        <p data-pt="Oferecer serviços de gráfica, serigrafia que atendam com excelência às necessidades dos clientes, respeitando os princípios de qualidade, ética e responsabilidade social."
+                        <p data-key="about_mission_text"
+                            data-pt="Oferecer serviços de gráfica, serigrafia que atendam com excelência às necessidades dos clientes, respeitando os princípios de qualidade, ética e responsabilidade social."
                             data-en="To offer graphic and screen printing services that meet the needs of clients with excellence, respecting the principles of quality, ethics, and social responsibility.">
                             Oferecer serviços de gráfica, serigrafia que atendam com excelência às necessidades dos
                             clientes, respeitando os princípios de qualidade, ética e responsabilidade social.
@@ -203,7 +205,8 @@
                     </div>
                     <div class="card-content">
                         <h3 data-pt="Visão" data-en="Vision">Visão</h3>
-                        <p data-pt="Ser uma empresa de referência no mercado gráfico e de serigrafia, reconhecida pela sustentabilidade, inovação e qualidade dos serviços prestados."
+                        <p data-key="about_vision_text"
+                            data-pt="Ser uma empresa de referência no mercado gráfico e de serigrafia, reconhecida pela sustentabilidade, inovação e qualidade dos serviços prestados."
                             data-en="To be a reference company in the graphic and screen printing market, recognized for sustainability, innovation, and quality of services provided.">
                             Ser uma empresa de referência no mercado gráfico e de serigrafia, reconhecida pela
                             sustentabilidade, inovação e qualidade dos serviços prestados.
@@ -221,19 +224,23 @@
                         <div class="values-list">
                             <div class="value-item">
                                 <i class="fas fa-check"></i>
-                                <span data-pt="Excelência" data-en="Excellence">Excelência</span>
+                                <span data-key="about_value_1" data-pt="Excelência"
+                                    data-en="Excellence">Excelência</span>
                             </div>
                             <div class="value-item">
                                 <i class="fas fa-check"></i>
-                                <span data-pt="Criatividade" data-en="Creativity">Criatividade</span>
+                                <span data-key="about_value_2" data-pt="Criatividade"
+                                    data-en="Creativity">Criatividade</span>
                             </div>
                             <div class="value-item">
                                 <i class="fas fa-check"></i>
-                                <span data-pt="Honestidade" data-en="Honesty">Honestidade</span>
+                                <span data-key="about_value_3" data-pt="Honestidade"
+                                    data-en="Honesty">Honestidade</span>
                             </div>
                             <div class="value-item">
                                 <i class="fas fa-check"></i>
-                                <span data-pt="Comprometimento" data-en="Commitment">Comprometimento</span>
+                                <span data-key="about_value_4" data-pt="Comprometimento"
+                                    data-en="Commitment">Comprometimento</span>
                             </div>
                         </div>
                     </div>
@@ -495,19 +502,20 @@
                 <span>Total Estimado:</span>
                 <span id="cart-total-value">0 MT</span>
             </div>
-            <a href="/pages/checkout.html" class="checkout-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <a href="/pages/checkout.html" class="checkout-btn"
+                style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
                 <i class="fas fa-credit-card"></i> Finalizar Pedido
             </a>
         </div>
     </div>
     <script>
         // Animate stat numbers from 0 to their data-target value
-        document.addEventListener("DOMContentLoaded", function () {
+        window.animateStats = function () {
             const statNumbers = document.querySelectorAll('.stat-number');
             statNumbers.forEach(stat => {
                 const target = +stat.getAttribute('data-target');
                 let count = 0;
-                const increment = Math.max(1, Math.ceil(target / 100));
+                const increment = Math.max(1, Math.ceil(target / 50));
                 function updateCount() {
                     count += increment;
                     if (count < target) {
@@ -519,7 +527,9 @@
                 }
                 updateCount();
             });
-        });
+        };
+        // Initial call in case data loader is fast or fails
+        document.addEventListener("DOMContentLoaded", window.animateStats);
     </script>
 </body>
 

@@ -129,14 +129,14 @@
                     <button class="nav-arrow left">‹</button>
                     <div class="carousel-track1" id="carousel-track">
                         <!-- Carregado dinamicamente via Supabase (carousel_items) -->
-                        <div class="card center" data-name="Divinos Graffic" data-role="Qualidade e Inovação">
-                            <img src="assets/images/Exposição principal/exposição (1).jpg" alt="">
+                        <div class="card center skeleton" data-name="Divinos Graffic" data-role="Qualidade e Inovação">
+                            <img src="assets/images/Exposição principal/exposição (1).jpg" alt="" onload="this.parentElement.classList.remove('skeleton'); this.classList.add('loaded');">
                         </div>
-                        <div class="card right-1" data-name="Brindes Personalizados" data-role="Destaque">
-                            <img src="assets/images/Exposição principal/exposição (2).jpg" alt="">
+                        <div class="card right-1 skeleton" data-name="Brindes Personalizados" data-role="Destaque">
+                            <img src="assets/images/Exposição principal/exposição (2).jpg" alt="" onload="this.parentElement.classList.remove('skeleton'); this.classList.add('loaded');">
                         </div>
-                        <div class="card right-2" data-name="Quadros Exclusivos" data-role="Tendência">
-                            <img src="assets/images/Exposição principal/exposição (3).jpg" alt="">
+                        <div class="card right-2 skeleton" data-name="Quadros Exclusivos" data-role="Tendência">
+                            <img src="assets/images/Exposição principal/exposição (3).jpg" alt="" onload="this.parentElement.classList.remove('skeleton'); this.classList.add('loaded');">
                         </div>
                     </div>
                     <div class="member-info" style="display: none;">

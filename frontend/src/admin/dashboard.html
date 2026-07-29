@@ -611,12 +611,18 @@
                             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Galeria de Imagens
                                 (Opcional)</label>
                             <div id="gallery-container"
-                                style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                                style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
                                 <!-- Gallery items thumb via JS -->
                             </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <input type="text" id="gallery-url-input" class="form-control" placeholder="Cole o link da imagem (ex: terminando em .jpg, .png)" style="flex: 1;">
+                                <button type="button" class="btn btn-primary" onclick="addGalleryUrl()">Adicionar URL</button>
+                            </div>
+
                             <button type="button" class="btn btn-secondary"
                                 onclick="document.getElementById('file-upload-gallery').click()">
-                                <i class="fas fa-images"></i> Adicionar Foto à Galeria
+                                <i class="fas fa-upload"></i> Fazer Upload do Computador
                             </button>
                             <input type="file" id="file-upload-gallery" style="display: none;" accept="image/*"
                                 onchange="handleGalleryUpload(this)">
@@ -938,12 +944,20 @@
                 </div>
                 <form id="hero-form">
                     <div class="form-group">
-                        <label>Título Principal</label>
+                        <label>Título Principal (PT)</label>
                         <input type="text" name="hero_title" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>Subtítulo</label>
+                        <label>Título Principal (EN)</label>
+                        <input type="text" name="hero_title_en" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Subtítulo (PT)</label>
                         <textarea name="hero_subtitle" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Subtítulo (EN)</label>
+                        <textarea name="hero_subtitle_en" class="form-control" rows="2"></textarea>
                     </div>
                     <!-- Future: Hero Background Image Upload -->
                     <button type="submit" class="btn btn-primary">Salvar Alterações</button>
@@ -1133,6 +1147,35 @@
                         <div class="form-group">
                             <label>% de Satisfação</label>
                             <input type="number" name="stats_satisfaction" class="form-control">
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #e63946; padding-bottom: 10px;">Equipe & Imagem</h4>
+                    <div class="form-group">
+                        <label>Imagem da Equipe (Você pode colar um link direto ou link de imagem de alguma pasta do seu painel)</label>
+                        <input type="text" name="about_team_image" class="form-control" placeholder="URL da imagem (ex: https://...)">
+                    </div>
+
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #e63946; padding-bottom: 10px;">Pilares da Empresa</h4>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Missão</label>
+                            <textarea name="about_mission_text" class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Visão</label>
+                            <textarea name="about_vision_text" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Valores (4 Principais)</label>
+                        <div class="form-grid">
+                            <input type="text" name="about_value_1" class="form-control" placeholder="Valor 1 (ex: Excelência)">
+                            <input type="text" name="about_value_2" class="form-control" placeholder="Valor 2 (ex: Criatividade)">
+                            <input type="text" name="about_value_3" class="form-control" placeholder="Valor 3 (ex: Honestidade)">
+                            <input type="text" name="about_value_4" class="form-control" placeholder="Valor 4 (ex: Comprometimento)">
                         </div>
                     </div>
 
@@ -1501,10 +1544,52 @@
         </div>
     </div>
 
-    <!-- Notification Toast -->
+    <!-- Premium Toast Notification -->
     <div id="toast" class="notification">
-        <i class="fas fa-check-circle"></i>
-        <span id="toast-msg">Salvo com sucesso!</span>
+        <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="toast-body">
+            <div class="toast-title">Sucesso</div>
+            <div id="toast-msg">Salvo com sucesso!</div>
+        </div>
+        <button class="toast-close" onclick="document.getElementById('toast').classList.remove('show')">&times;</button>
+        <div class="toast-progress"></div>
+    </div>
+
+    <!-- Upload Progress Overlay -->
+    <div id="upload-overlay" class="upload-overlay">
+        <div class="upload-progress-card">
+            <div class="upload-progress-ring">
+                <svg viewBox="0 0 140 140">
+                    <defs>
+                        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1d3557"/>
+                            <stop offset="100%" style="stop-color:#457b9d"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="ring-bg" cx="70" cy="70" r="60"/>
+                    <circle class="ring-fill" id="upload-ring-fill" cx="70" cy="70" r="60"/>
+                </svg>
+                <div class="upload-progress-percent" id="upload-percent">0<span>%</span></div>
+            </div>
+            <div class="upload-progress-label" id="upload-label">Enviando arquivo...</div>
+            <div class="upload-progress-filename" id="upload-filename"></div>
+        </div>
+    </div>
+
+    <!-- Beautiful Popup / Confirm Dialog -->
+    <div id="dvn-popup-overlay" class="dvn-popup-overlay">
+        <div class="dvn-popup">
+            <div class="dvn-popup-icon" id="dvn-popup-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3 id="dvn-popup-title">Confirmação</h3>
+            <p id="dvn-popup-message">Tem certeza que deseja continuar?</p>
+            <div id="dvn-popup-input-wrapper" style="display:none;">
+                <input type="text" class="dvn-popup-input" id="dvn-popup-input" placeholder="">
+            </div>
+            <div class="dvn-popup-actions" id="dvn-popup-actions">
+                <button class="btn-popup-cancel" id="dvn-popup-cancel">Cancelar</button>
+                <button class="btn-popup-confirm" id="dvn-popup-confirm">Confirmar</button>
+            </div>
+        </div>
     </div>
 
     <!-- Additional Styles -->
@@ -1590,10 +1675,12 @@
 
 
     <!-- Scripts -->
+    <!-- TUS Client for Large Resumable Uploads -->
+    <script src="https://cdn.jsdelivr.net/npm/tus-js-client@latest/dist/tus.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase-config.js?v=21"></script>
 
-    <script src="js/app.js?v=24"></script>
+    <script src="js/app.js?v=25"></script>
 </body>
 
 </html>

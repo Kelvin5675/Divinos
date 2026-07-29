@@ -43,16 +43,15 @@ async function loadProductDetails() {
 
         // Buscar produto pelo ID na API Node.js
         console.log("DEBUG: Buscando detalhes do produto...", productId);
-        const response = await fetch(`${API_BASE_URL}/products/${productId}`);
+        console.log("DEBUG: Buscando detalhes do produto no Supabase...", productId);
+        const { data: product, error: prodError } = await window.supabaseClient.from('products').select('*').eq('id', productId).single();
 
-        if (!response.ok) {
-            console.error('Erro na requisição HTTPS:', response.status);
+        if (prodError || !product) {
+            console.error('Erro na requisição do Supabase:', prodError);
             alert('Produto não encontrado ou erro no servidor.');
             window.location.href = '../products.html';
             return;
         }
-
-        const product = await response.json();
 
         currentProduct = product;
         renderProductDetails(product);
@@ -446,10 +445,8 @@ async function loadRelatedProducts(category) {
         // We use query params in the new API
         // Currently the API only has featured and limit params, let's fetch all products
         // and filter in the client for now to avoid extending the API prematurely
-        const response = await fetch(`${API_BASE_URL}/products?limit=50`);
-        if (!response.ok) throw new Error('Falha ao carregar produtos');
-
-        let allProducts = await response.json();
+        const { data: allProducts, error: prodError } = await window.supabaseClient.from('products').select('*').limit(50);
+        if (prodError) throw new Error('Falha ao carregar produtos do Supabase: ' + prodError.message);
 
         const relatedProducts = allProducts.filter(p =>
             p.category === category && p.id.toString() !== productId.toString()

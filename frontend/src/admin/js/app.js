@@ -97,16 +97,174 @@ function toggleSidebar(force) {
     overlay.classList.toggle('active');
 }
 
+let _toastTimer = null;
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const msg = document.getElementById('toast-msg');
+    const iconEl = toast.querySelector('.toast-icon i');
+    const titleEl = toast.querySelector('.toast-title');
+    const progressEl = toast.querySelector('.toast-progress');
+
+    const config = {
+        success: { icon: 'fa-check-circle', title: 'Sucesso' },
+        error:   { icon: 'fa-times-circle', title: 'Erro' },
+        info:    { icon: 'fa-info-circle',  title: 'Info' },
+        warning: { icon: 'fa-exclamation-triangle', title: 'Atenção' }
+    };
+    const c = config[type] || config.success;
 
     msg.textContent = message;
+    iconEl.className = `fas ${c.icon}`;
+    titleEl.textContent = c.title;
     toast.className = `notification show ${type}`;
 
-    setTimeout(() => {
+    // Restart progress bar animation
+    if (progressEl) {
+        progressEl.style.animation = 'none';
+        progressEl.offsetHeight; // force reflow
+        progressEl.style.animation = 'toastProgress 3.5s linear forwards';
+    }
+
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => {
         toast.classList.remove('show');
-    }, 3000);
+    }, 3800);
+}
+
+// ==========================================
+// BEAUTIFUL POPUP SYSTEM (replaces confirm/alert/prompt)
+// ==========================================
+function dvnAlert({ title = 'Aviso', message = '', type = 'info', buttonText = 'OK' } = {}) {
+    return new Promise(resolve => {
+        const overlay = document.getElementById('dvn-popup-overlay');
+        const iconEl = document.getElementById('dvn-popup-icon');
+        const titleEl = document.getElementById('dvn-popup-title');
+        const msgEl = document.getElementById('dvn-popup-message');
+        const inputWrapper = document.getElementById('dvn-popup-input-wrapper');
+        const confirmBtn = document.getElementById('dvn-popup-confirm');
+        const cancelBtn = document.getElementById('dvn-popup-cancel');
+
+        const icons = {
+            success: 'fa-check-circle', error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle', info: 'fa-info-circle', danger: 'fa-exclamation-circle'
+        };
+
+        iconEl.className = `dvn-popup-icon ${type}`;
+        iconEl.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>`;
+        titleEl.textContent = title;
+        msgEl.innerHTML = message;
+        inputWrapper.style.display = 'none';
+        cancelBtn.style.display = 'none';
+        confirmBtn.textContent = buttonText;
+        confirmBtn.className = 'btn-popup-confirm';
+        overlay.classList.add('active');
+
+        const cleanup = () => { overlay.classList.remove('active'); confirmBtn.onclick = null; };
+        confirmBtn.onclick = () => { cleanup(); resolve(true); };
+    });
+}
+
+function dvnConfirm({ title = 'Confirmação', message = '', type = 'warning', confirmText = 'Confirmar', cancelText = 'Cancelar', danger = false } = {}) {
+    return new Promise(resolve => {
+        const overlay = document.getElementById('dvn-popup-overlay');
+        const iconEl = document.getElementById('dvn-popup-icon');
+        const titleEl = document.getElementById('dvn-popup-title');
+        const msgEl = document.getElementById('dvn-popup-message');
+        const inputWrapper = document.getElementById('dvn-popup-input-wrapper');
+        const confirmBtn = document.getElementById('dvn-popup-confirm');
+        const cancelBtn = document.getElementById('dvn-popup-cancel');
+
+        const icons = {
+            success: 'fa-check-circle', error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle', info: 'fa-info-circle', danger: 'fa-exclamation-circle'
+        };
+
+        iconEl.className = `dvn-popup-icon ${type}`;
+        iconEl.innerHTML = `<i class="fas ${icons[type] || icons.warning}"></i>`;
+        titleEl.textContent = title;
+        msgEl.innerHTML = message;
+        inputWrapper.style.display = 'none';
+        cancelBtn.style.display = '';
+        cancelBtn.textContent = cancelText;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.className = danger ? 'btn-popup-confirm danger' : 'btn-popup-confirm';
+        overlay.classList.add('active');
+
+        const cleanup = () => { overlay.classList.remove('active'); confirmBtn.onclick = null; cancelBtn.onclick = null; };
+        confirmBtn.onclick = () => { cleanup(); resolve(true); };
+        cancelBtn.onclick = () => { cleanup(); resolve(false); };
+    });
+}
+
+function dvnPrompt({ title = 'Entrada', message = '', type = 'warning', placeholder = '', confirmText = 'Confirmar', cancelText = 'Cancelar', danger = false } = {}) {
+    return new Promise(resolve => {
+        const overlay = document.getElementById('dvn-popup-overlay');
+        const iconEl = document.getElementById('dvn-popup-icon');
+        const titleEl = document.getElementById('dvn-popup-title');
+        const msgEl = document.getElementById('dvn-popup-message');
+        const inputWrapper = document.getElementById('dvn-popup-input-wrapper');
+        const inputEl = document.getElementById('dvn-popup-input');
+        const confirmBtn = document.getElementById('dvn-popup-confirm');
+        const cancelBtn = document.getElementById('dvn-popup-cancel');
+
+        const icons = {
+            success: 'fa-check-circle', error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle', info: 'fa-info-circle', danger: 'fa-exclamation-circle'
+        };
+
+        iconEl.className = `dvn-popup-icon ${type}`;
+        iconEl.innerHTML = `<i class="fas ${icons[type] || icons.warning}"></i>`;
+        titleEl.textContent = title;
+        msgEl.innerHTML = message;
+        inputWrapper.style.display = 'block';
+        inputEl.value = '';
+        inputEl.placeholder = placeholder;
+        cancelBtn.style.display = '';
+        cancelBtn.textContent = cancelText;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.className = danger ? 'btn-popup-confirm danger' : 'btn-popup-confirm';
+        overlay.classList.add('active');
+        setTimeout(() => inputEl.focus(), 100);
+
+        const cleanup = () => { overlay.classList.remove('active'); confirmBtn.onclick = null; cancelBtn.onclick = null; };
+        confirmBtn.onclick = () => { cleanup(); resolve(inputEl.value); };
+        cancelBtn.onclick = () => { cleanup(); resolve(null); };
+    });
+}
+
+// ==========================================
+// UPLOAD PROGRESS HELPERS
+// ==========================================
+function showUploadProgress(filename) {
+    const overlay = document.getElementById('upload-overlay');
+    const ring = document.getElementById('upload-ring-fill');
+    const percent = document.getElementById('upload-percent');
+    const label = document.getElementById('upload-label');
+    const fname = document.getElementById('upload-filename');
+
+    ring.style.strokeDashoffset = 377;
+    percent.innerHTML = '0<span>%</span>';
+    label.textContent = 'Enviando arquivo...';
+    fname.textContent = filename || '';
+    overlay.classList.add('active');
+}
+
+function updateUploadProgress(pct) {
+    const ring = document.getElementById('upload-ring-fill');
+    const percent = document.getElementById('upload-percent');
+    const offset = 377 - (377 * pct / 100);
+    ring.style.strokeDashoffset = offset;
+    percent.innerHTML = `${Math.round(pct)}<span>%</span>`;
+}
+
+function hideUploadProgress() {
+    document.getElementById('upload-overlay').classList.remove('active');
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
 // ==========================================
@@ -384,7 +542,14 @@ window.editCategory = (id, name) => {
 };
 
 window.deleteCategory = async (id) => {
-    if (confirm('Atenção: A exclusão de uma categoria não exclui os produtos, mas eles podem perder o vínculo. Deseja continuar?')) {
+    const confirmed = await dvnConfirm({
+        title: 'Excluir Categoria',
+        message: 'Atenção: A exclusão de uma categoria não exclui os produtos, mas eles podem perder o vínculo. Deseja continuar?',
+        type: 'danger',
+        confirmText: 'Sim, Excluir',
+        danger: true
+    });
+    if (confirmed) {
         const { error } = await supabaseClient.from('categories').delete().eq('id', id);
         if (error) showToast('Erro: ' + error.message, 'error');
         else {
@@ -634,12 +799,37 @@ function removeFromGallery(index) {
     renderGalleryUI();
 }
 
+function addGalleryUrl() {
+    const input = document.getElementById('gallery-url-input');
+    const url = input.value.trim();
+    if (!url) {
+        showToast('Por favor, insira um link válido.', 'error');
+        return;
+    }
+    
+    let gallery = JSON.parse(document.getElementById('prod-gallery').value || '[]');
+    gallery.push(url);
+    document.getElementById('prod-gallery').value = JSON.stringify(gallery);
+    
+    input.value = ''; // Limpar o campo
+    renderGalleryUI();
+    showToast('Imagem adicionada à galeria!');
+}
+
 // Globalize helper
 window.handleGalleryUpload = handleGalleryUpload;
 window.removeFromGallery = removeFromGallery;
+window.addGalleryUrl = addGalleryUrl;
 
 window.deleteProduct = async (id) => {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
+    const confirmed = await dvnConfirm({
+        title: 'Excluir Produto',
+        message: 'Tem certeza que deseja excluir este produto permanentemente?',
+        type: 'danger',
+        confirmText: 'Excluir',
+        danger: true
+    });
+    if (confirmed) {
         const { error } = await supabaseClient.from('products').delete().eq('id', id);
         if (error) showToast('Erro: ' + error.message, 'error');
         else {
@@ -913,7 +1103,14 @@ async function saveService(e) {
 }
 
 async function deleteService(id) {
-    if (confirm('Deseja realmente excluir este serviço?')) {
+    const confirmed = await dvnConfirm({
+        title: 'Excluir Serviço',
+        message: 'Deseja realmente excluir este serviço?',
+        type: 'danger',
+        confirmText: 'Excluir',
+        danger: true
+    });
+    if (confirmed) {
         const { error } = await supabaseClient.from('site_services').delete().eq('id', id);
         if (error) showToast('Erro ao excluir: ' + error.message, 'error');
         else {
@@ -1002,7 +1199,14 @@ async function saveMomento(e) {
 }
 
 async function deleteMomento(id) {
-    if (confirm('Deseja realmente remover este vídeo?')) {
+    const confirmed = await dvnConfirm({
+        title: 'Remover Vídeo',
+        message: 'Deseja realmente remover este vídeo?',
+        type: 'danger',
+        confirmText: 'Remover',
+        danger: true
+    });
+    if (confirmed) {
         const { error } = await supabaseClient.from('site_momentos').delete().eq('id', id);
         if (error) showToast('Erro ao remover: ' + error.message, 'error');
         else {
@@ -1014,32 +1218,118 @@ async function deleteMomento(id) {
 
 
 // ==========================================
-// IMAGE UPLOAD HANDLER
+// FILE UPLOAD HANDLER (with progress & validation)
 // ==========================================
+const MAX_VIDEO_SIZE_MB = 49; // Definido para 49MB para evitar bater no limite cravado de 50MB do Supabase Free Plan
+const MAX_IMAGE_SIZE_MB = 15;
+
 async function handleFileUpload(inputElement, targetUrlInputId, previewImgId) {
     const file = inputElement.files[0];
     if (!file) return;
 
-    // Store original button or indicator if needed, but let's just use toast
-    showToast('Enviando imagem principal...', 'info');
+    const isVideo = file.type.startsWith('video/');
+    const maxMB = isVideo ? MAX_VIDEO_SIZE_MB : MAX_IMAGE_SIZE_MB;
+    const fileSizeMB = file.size / (1024 * 1024);
+
+    // Validate file size
+    if (fileSizeMB > maxMB) {
+        await dvnAlert({
+            title: 'Arquivo Muito Grande',
+            message: `O arquivo <strong>${file.name}</strong> tem <strong>${formatFileSize(file.size)}</strong>.<br><br>O limite máximo para ${isVideo ? 'vídeos' : 'imagens'} é de <strong>${maxMB} MB</strong>.<br><br>Por favor, comprima o arquivo ou escolha um menor.`,
+            type: 'error',
+            buttonText: 'Entendido'
+        });
+        inputElement.value = '';
+        return;
+    }
+
+    // Validate file type
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo'];
+    const allowed = isVideo ? allowedVideoTypes : allowedImageTypes;
+
+    if (!allowed.includes(file.type)) {
+        await dvnAlert({
+            title: 'Formato Não Suportado',
+            message: `O formato <strong>${file.type || 'desconhecido'}</strong> não é suportado.<br><br>Formatos aceitos: <strong>${isVideo ? 'MP4, WebM, MOV' : 'JPG, PNG, GIF, WebP'}</strong>`,
+            type: 'warning',
+            buttonText: 'OK'
+        });
+        inputElement.value = '';
+        return;
+    }
+
+    // Show circular progress overlay
+    showUploadProgress(file.name);
 
     try {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
+        const bucket = 'products-images';
 
-        const { data, error } = await supabaseClient.storage
-            .from('products-images')
-            .upload(filePath, file);
+        const SUPABASE_URL = supabaseClient.supabaseUrl || window.SUPABASE_URL;
+        const anonKey = supabaseClient.supabaseKey || window.SUPABASE_ANON_KEY;
+        
+        let { data: { session } } = await supabaseClient.auth.getSession();
+        
+        // Ensure token is somewhat fresh to avoid expiration mid-upload for very long uploads
+        if (session) {
+            const { data: refreshData } = await supabaseClient.auth.refreshSession();
+            if (refreshData?.session) session = refreshData.session;
+        }
 
-        if (error) throw error;
+        const token = session?.access_token || anonKey;
 
-        const { data: { publicUrl } } = supabaseClient.storage.from('products-images').getPublicUrl(filePath);
+        // Perform Upload with TUS protocol for Large Files (Chunked Resumable Upload)
+        await new Promise((resolve, reject) => {
+            if (typeof tus === 'undefined') {
+                reject(new Error("Erro interno: Biblioteca TUS não foi carregada."));
+                return;
+            }
+
+            const upload = new tus.Upload(file, {
+                endpoint: `${SUPABASE_URL}/storage/v1/upload/resumable`,
+                retryDelays: [0, 3000, 5000, 10000, 20000],
+                headers: {
+                    authorization: `Bearer ${token}`,
+                    'x-upsert': 'true',
+                },
+                uploadDataDuringCreation: true,
+                removeFingerprintOnSuccess: true, // Avoids resume cache issues if uploading same file
+                metadata: {
+                    bucketName: bucket,
+                    objectName: fileName,
+                    contentType: file.type,
+                    cacheControl: 3600,
+                },
+                chunkSize: 6 * 1024 * 1024, // 6MB chunks
+                onError: (error) => {
+                    console.error("TUS Error:", error);
+                    reject(new Error(error.message || "Erro desconhecido na rede ao tentar enviar os blocos do arquivo."));
+                },
+                onProgress: (bytesUploaded, bytesTotal) => {
+                    const pct = (bytesUploaded / bytesTotal) * 100;
+                    updateUploadProgress(pct);
+                },
+                onSuccess: () => {
+                    resolve();
+                }
+            });
+
+            // Start TUS upload
+            upload.start();
+        });
+
+        // Upload finished
+        updateUploadProgress(100);
+        document.getElementById('upload-label').textContent = 'Concluído!';
+        await new Promise(r => setTimeout(r, 600));
+
+        // Get public URL
+        const { data: { publicUrl } } = supabaseClient.storage.from(bucket).getPublicUrl(fileName);
 
         const targetInput = document.getElementById(targetUrlInputId);
-        if (targetInput) {
-            targetInput.value = publicUrl;
-        }
+        if (targetInput) targetInput.value = publicUrl;
 
         const preview = document.getElementById(previewImgId);
         if (preview) {
@@ -1047,13 +1337,31 @@ async function handleFileUpload(inputElement, targetUrlInputId, previewImgId) {
             preview.style.display = 'block';
         }
 
-        showToast('Imagem enviada com sucesso!');
+        hideUploadProgress();
+        showToast(isVideo ? 'Vídeo enviado com sucesso!' : 'Imagem enviada com sucesso!');
 
     } catch (err) {
         console.error('Upload Error:', err);
-        showToast('Erro no upload: ' + err.message, 'error');
+        hideUploadProgress();
+
+        let errorMsg = err.message;
+        
+        // Tratar erro do TUS para limite de tamanho (413 Payload Too Large / Maximum size exceeded)
+        if (errorMsg.includes('413') || errorMsg.includes('Maximum size exceeded')) {
+            errorMsg = "O seu banco de dados (Supabase) bloqueou o arquivo porque ele ultrapassa o limite máximo configurado na sua pasta 'products-images'.<br><br><b>Como resolver:</b> Acesse o painel do seu Supabase > Storage > Configuration e aumente o limite de tamanho (Maximum file size) para 100MB.";
+        } else if (errorMsg.includes('Entity too large')) {
+            errorMsg = 'O arquivo excede o limite do servidor.';
+        } else if (errorMsg.includes('Failed to fetch')) {
+            errorMsg = 'Falha na conexão com a internet.';
+        }
+
+        await dvnAlert({
+            title: 'Erro no Upload',
+            message: `Não foi possível enviar o arquivo <strong>${file.name}</strong>.<br><br><strong>Motivo:</strong> ${errorMsg}`,
+            type: 'error',
+            buttonText: 'Fechar'
+        });
     } finally {
-        // Clear file input so it can be used again for same file if needed
         inputElement.value = '';
     }
 }
@@ -1141,7 +1449,14 @@ window.editCarouselItem = async (id) => {
 };
 
 window.deleteCarouselItem = async (id) => {
-    if (confirm('Tem certeza que deseja remover este item do carrossel?')) {
+    const confirmed = await dvnConfirm({
+        title: 'Remover Item',
+        message: 'Tem certeza que deseja remover este item do carrossel?',
+        type: 'danger',
+        confirmText: 'Remover',
+        danger: true
+    });
+    if (confirmed) {
         const { error } = await supabaseClient.from('carousel_items').delete().eq('id', id);
         if (error) showToast('Erro: ' + error.message, 'error');
         else {
@@ -1236,7 +1551,14 @@ window.editTrabalho = async (id) => {
 };
 
 window.deleteTrabalho = async (id) => {
-    if (confirm('Tem certeza que deseja remover este trabalho?')) {
+    const confirmed = await dvnConfirm({
+        title: 'Remover Trabalho',
+        message: 'Tem certeza que deseja remover este trabalho?',
+        type: 'danger',
+        confirmText: 'Remover',
+        danger: true
+    });
+    if (confirmed) {
         const { error } = await supabaseClient.from('nossos_trabalhos').delete().eq('id', id);
         if (error) showToast('Erro: ' + error.message, 'error');
         else {
@@ -1468,7 +1790,14 @@ async function toggle2FA() {
     }
 
     // If turning OFF
-    if (!confirm('Deseja realmente desativar o Google Authenticator? Seu login ficará menos seguro.')) return;
+    const confirmed = await dvnConfirm({
+        title: 'Desativar 2FA',
+        message: 'Deseja realmente desativar o Google Authenticator? Seu login ficará menos seguro.',
+        type: 'warning',
+        confirmText: 'Desativar',
+        danger: true
+    });
+    if (!confirmed) return;
 
     showToast('Desativando 2FA...', 'info');
 
@@ -1491,7 +1820,14 @@ window.handleFileUpload = handleFileUpload;
 window.logout = logout;
 window.toggle2FA = toggle2FA;
 window.deleteOrder = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir este pedido permanentemente?')) return;
+    const confirmed = await dvnConfirm({
+        title: 'Excluir Pedido',
+        message: 'Tem certeza que deseja excluir este pedido permanentemente?',
+        type: 'danger',
+        confirmText: 'Excluir',
+        danger: true
+    });
+    if (!confirmed) return;
     
     try {
         const { error } = await supabaseClient.from('orders').delete().eq('id', id);
@@ -1507,8 +1843,23 @@ window.deleteOrder = async (id) => {
     }
 };
 window.resetAllOrders = async () => {
-    if (!confirm('ATENÇÃO: Isso irá apagar TODO o histórico de pedidos e receita para sempre. Deseja continuar?')) return;
-    const confirmation = prompt('Digite "RESETAR" para confirmar a exclusão total:');
+    const confirmed = await dvnConfirm({
+        title: 'Atenção Extrema',
+        message: 'Isso irá apagar TODO o histórico de pedidos e receita para sempre. Deseja continuar?',
+        type: 'danger',
+        confirmText: 'Continuar',
+        danger: true
+    });
+    if (!confirmed) return;
+
+    const confirmation = await dvnPrompt({
+        title: 'Confirmação Final',
+        message: 'Digite <strong>"RESETAR"</strong> para confirmar a exclusão total:',
+        type: 'danger',
+        placeholder: 'RESETAR',
+        confirmText: 'Excluir Tudo',
+        danger: true
+    });
     if (confirmation !== 'RESETAR') return;
 
     try {
@@ -2048,7 +2399,7 @@ window.downloadInvoice = async (orderId) => {
         // Order Info
         doc.setFontSize(14);
         doc.setTextColor(0);
-        doc.text(`FATURA / RECIBO: #${order.order_code}`, 20, 45);
+        doc.text(`ORDEM DE PEDIDO: #${order.order_code}`, 20, 45);
 
         doc.setFontSize(10);
         doc.text(`Data: ${new Date(order.created_at).toLocaleString()}`, 20, 52);
@@ -2059,10 +2410,10 @@ window.downloadInvoice = async (orderId) => {
         const tableData = [];
         if (Array.isArray(order.items)) {
             order.items.forEach(item => {
-                const qty = parseInt(item.quantity) || 0;
+                const qty = parseInt(item.qty || item.quantity) || 1;
                 const priceNum = parseFloat(item.price) || 0;
                 tableData.push([
-                    item.title,
+                    item.title || item.name || 'Produto',
                     item.size || '-',
                     qty,
                     priceNum.toLocaleString('pt-MZ', { minimumFractionDigits: 2 }),

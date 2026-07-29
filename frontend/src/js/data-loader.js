@@ -129,23 +129,39 @@ async function loadSiteSettings() {
             }
 
             // Generic elements
-            const elements = document.querySelectorAll(`[data-key="${key}"]`);
-            elements.forEach(el => {
-                if (el.tagName === 'A') {
-                    if (key === 'contact_email') el.href = `mailto:${val}`;
-                    else if (key === 'contact_phone' || key === 'whatsapp_number') el.href = `tel:${val.replace(/\s/g, '')}`;
-                    else el.href = val;
-                } else if (el.tagName === 'IMG') {
-                    el.src = val;
-                } else {
-                    el.innerText = val;
-                    if (el.hasAttribute('data-pt')) el.setAttribute('data-pt', val);
-                }
-                if (key.startsWith('stats_')) {
-                    el.setAttribute('data-target', val);
-                    el.innerText = '0';
-                }
-            });
+            if (key.endsWith('_en')) {
+                const baseKey = key.replace('_en', '');
+                const baseElements = document.querySelectorAll(`[data-key="${baseKey}"]`);
+                baseElements.forEach(baseEl => {
+                    baseEl.setAttribute('data-en', val);
+                    const currentLang = document.getElementById('current-lang');
+                    if (currentLang && currentLang.innerText === 'EN') {
+                        baseEl.innerText = val;
+                    }
+                });
+            } else {
+                const elements = document.querySelectorAll(`[data-key="${key}"]`);
+                elements.forEach(el => {
+                    if (el.tagName === 'A') {
+                        if (key === 'contact_email') el.href = `mailto:${val}`;
+                        else if (key === 'contact_phone' || key === 'whatsapp_number') el.href = `tel:${val.replace(/\s/g, '')}`;
+                        else el.href = val;
+                    } else if (el.tagName === 'IMG') {
+                        el.src = val;
+                    } else {
+                        el.innerText = val;
+                        if (el.hasAttribute('data-pt')) el.setAttribute('data-pt', val);
+                        const currentLang = document.getElementById('current-lang');
+                        if (currentLang && currentLang.innerText === 'EN' && el.hasAttribute('data-en')) {
+                             el.innerText = el.getAttribute('data-en');
+                        }
+                    }
+                    if (key.startsWith('stats_')) {
+                        el.setAttribute('data-target', val || el.getAttribute('data-target') || '0');
+                        el.innerText = '0';
+                    }
+                });
+            }
 
             // Marketing & SEO
             if (key === 'marketing_fb_pixel_id' && val) injectFacebookPixel(val);
@@ -167,6 +183,11 @@ async function loadSiteSettings() {
         if (paymentConfig) {
             window.siteSettings = window.siteSettings || {};
             window.siteSettings.payment = paymentConfig;
+        }
+
+        // Re-trigger stats animation after targets are loaded
+        if (window.animateStats) {
+            window.animateStats();
         }
 
     } catch (err) { console.error('Erro ao carregar configurações:', err); }
@@ -353,10 +374,9 @@ async function loadProducts() {
             console.log("DEBUG: Menu de categorias preenchido");
         }
 
-        console.log("DEBUG: Buscando produtos da Nova API...");
-        const response = await fetch(`${API_BASE_URL}/products`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const products = await response.json();
+        console.log("DEBUG: Buscando produtos do Supabase...");
+        const { data: products, error: prodError } = await window.supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+        if (prodError) throw prodError;
 
         console.log(`DEBUG: Sucesso! Produtos encontrados: ${products ? products.length : 0}`);
 
@@ -393,10 +413,9 @@ async function loadFeaturedProducts() {
         const grid = document.getElementById('featured-products-grid');
         if (!grid) return;
 
-        console.log("DEBUG: Buscando produtos em destaque na Nova API...");
-        const response = await fetch(`${API_BASE_URL}/products?featured=true&limit=10`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const products = await response.json();
+        console.log("DEBUG: Buscando produtos em destaque no Supabase...");
+        const { data: products, error: prodError } = await window.supabaseClient.from('products').select('*').eq('is_featured', true).limit(10);
+        if (prodError) throw prodError;
 
         console.log(`DEBUG: Produtos em destaque encontrados: ${products ? products.length : 0}`);
         grid.innerHTML = '';
@@ -519,7 +538,7 @@ async function loadHeroCarousel() {
             track.innerHTML = ''; if (dots) dots.innerHTML = '';
             items.forEach((item, i) => {
                 const card = document.createElement('div');
-                card.className = 'card'; card.innerHTML = `<img src="${item.image_url}" alt="">`;
+                card.className = 'card skeleton'; card.innerHTML = `<img src="${item.image_url}" alt="" onload="this.parentElement.classList.remove('skeleton'); this.classList.add('loaded');">`;
                 track.appendChild(card);
                 if (dots) { const dot = document.createElement('span'); dot.className = 'dot'; dots.appendChild(dot); }
             });
