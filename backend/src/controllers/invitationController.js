@@ -16,6 +16,7 @@ const getPlans = async (req, res) => {
 const getPublicInvitation = async (req, res) => {
     try {
         const { slug } = req.params;
+        const { guest_name, device_id } = req.query; // Para validação do Modo Privado
         
         // 1. Busca o convite principal
         const { data: invitation, error: invError } = await supabase
@@ -27,6 +28,47 @@ const getPublicInvitation = async (req, res) => {
         if (invError || !invitation) {
             return res.status(404).json({ message: 'Convite não encontrado.' });
         }
+
+        // --- VERIFICAÇÃO DE LISTA FECHADA INTELIGENTE ---
+        if (invitation.privacy_mode) {
+            if (!guest_name || !device_id) {
+                return res.status(401).json({ 
+                    requireAuth: true, 
+                    message: 'Acesso restrito. Identifique-se para acessar.' 
+                });
+            }
+
+            // Busca na lista de forma case-insensitive
+            const { data: guestData, error: guestError } = await supabase
+                .from('invitation_smart_list')
+                .select('*')
+                .eq('invitation_id', invitation.id)
+                .ilike('guest_name', guest_name)
+                .maybeSingle();
+
+            if (guestError || !guestData) {
+                return res.status(403).json({ 
+                    blocked: true,
+                    message: 'Desculpe, não localizamos o seu nome na lista oficial de convidados.' 
+                });
+            }
+
+            // Verifica a cota de aparelho
+            if (!guestData.device_fingerprint) {
+                // Primeiro acesso: vincula o aparelho
+                await supabase
+                    .from('invitation_smart_list')
+                    .update({ device_fingerprint: device_id })
+                    .eq('id', guestData.id);
+            } else if (guestData.device_fingerprint !== device_id) {
+                // Tentativa de repasse (Aparelho diferente)
+                return res.status(403).json({
+                    blocked: true,
+                    message: 'Acesso Restrito: Este convite é intransferível e já foi aberto pelo titular em outro aparelho.'
+                });
+            }
+        }
+        // --- FIM DA VERIFICAÇÃO ---
 
         // 2. Busca Detalhes (separado para não quebrar tudo se falhar)
         const { data: details } = await supabase
@@ -352,6 +394,87 @@ const getDashboardData = async (req, res) => {
     }
 };
 
+// --- SMART LIST (LISTA FECHADA) ---
+
+// Obter a lista de convidados inteligente
+const getSmartList = async (req, res) => {
+    try {
+        const { invitation_id } = req.params;
+        const { data, error } = await supabase
+            .from('invitation_smart_list')
+            .select('*')
+            .eq('invitation_id', invitation_id)
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Importar convidados em massa
+const addToSmartListBulk = async (req, res) => {
+    try {
+        const { invitation_id } = req.params;
+        const { names } = req.body; // Array de strings
+
+        if (!names || !Array.isArray(names) || names.length === 0) {
+            return res.status(400).json({ error: 'Lista de nomes inválida.' });
+        }
+
+        const insertData = names.map(name => ({
+            invitation_id,
+            guest_name: name.trim()
+        })).filter(item => item.guest_name.length > 0);
+
+        const { data, error } = await supabase
+            .from('invitation_smart_list')
+            .insert(insertData)
+            .select();
+
+        if (error) throw error;
+        res.status(201).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Remover um convidado (ou revogar acesso)
+const removeFromSmartList = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { error } = await supabase
+            .from('invitation_smart_list')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        res.status(200).json({ message: 'Convidado removido com sucesso.' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Alternar modo privado
+const togglePrivacyMode = async (req, res) => {
+    try {
+        const { invitation_id } = req.params;
+        const { privacy_mode } = req.body;
+        
+        const { error } = await supabase
+            .from('invitations')
+            .update({ privacy_mode })
+            .eq('id', invitation_id);
+
+        if (error) throw error;
+        res.status(200).json({ message: 'Modo privado atualizado.' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 module.exports = {
     getPlans,
     getPublicInvitation,
@@ -361,5 +484,9 @@ module.exports = {
     getOrders,
     generateWithIA,
     createInvitation,
-    getDashboardData
+    getDashboardData,
+    getSmartList,
+    addToSmartListBulk,
+    removeFromSmartList,
+    togglePrivacyMode
 };

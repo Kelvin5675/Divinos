@@ -686,6 +686,7 @@
     <button class="mobile-nav-btn" onclick="switchTab('gifts', this)"><i class="fas fa-gift"></i> Presentes</button>
     <button class="mobile-nav-btn" onclick="switchTab('mural', this)"><i class="fas fa-images"></i> Galeria</button>
     <button class="mobile-nav-btn" onclick="switchTab('live', this)"><i class="fas fa-video"></i> Transmissão</button>
+    <button class="mobile-nav-btn" onclick="switchTab('smartlist', this)"><i class="fas fa-shield-alt"></i> Portaria</button>
     <button class="mobile-nav-btn" onclick="switchTab('settings', this)"><i class="fas fa-cog"></i> Definições</button>
 </div>
 
@@ -715,6 +716,9 @@
             </button>
             <button class="sidebar-btn" onclick="switchTab('live', this)">
                 <i class="fas fa-video"></i> Transmissão
+            </button>
+            <button class="sidebar-btn" onclick="switchTab('smartlist', this)">
+                <i class="fas fa-shield-alt"></i> Portaria (Segurança)
             </button>
             <button class="sidebar-btn" onclick="switchTab('settings', this)">
                 <i class="fas fa-cog"></i> Configurações
@@ -890,6 +894,59 @@
             </div>
         </div>
 
+        <!-- ── SMART LIST (PORTARIA DIGITAL) ── -->
+        <div class="section" id="tab-smartlist">
+            <div class="page-header">
+                <h1 class="page-title font-serif">Portaria Digital</h1>
+                <p class="page-subtitle">Controle de acesso e privacidade do seu convite.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title font-serif">Configurações de Segurança</div>
+                    <label class="switch">
+                        <input type="checkbox" id="privacy-toggle" onchange="togglePrivacyMode(this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="card-body">
+                    <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin-bottom: 20px;">
+                        Quando a Portaria Digital está ativada, apenas convidados com nomes presentes na sua Lista de Convidados VIP terão acesso ao convite. Intrusos ou tentativas de repasse de link serão barrados automaticamente.
+                    </p>
+                    
+                    <div style="background: #F9F9F9; padding: 20px; border-radius: 12px; border: 1px dashed var(--gold);">
+                        <h4 style="color: var(--gold); margin-bottom: 10px; font-family: 'Playfair Display', serif;">Importar Lista de Convidados</h4>
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Cole os nomes dos convidados abaixo (um nome por linha ou separados por vírgula):</p>
+                        <textarea id="bulk-guests-input" rows="5" style="width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 15px; font-family: inherit; margin-bottom: 15px; outline: none;"></textarea>
+                        <button class="save-btn" onclick="importSmartList()">
+                            <i class="fas fa-upload"></i> Importar Convidados
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title font-serif">Lista VIP de Convidados</div>
+                    <button class="action-btn" onclick="loadSmartList()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome do Convidado</th>
+                                <th>Status do Acesso</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="smartlist-tbody">
+                            <tr><td colspan="3"><div class="empty"><i class="fas fa-spinner fa-spin"></i></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- ── SETTINGS ── -->
         <div class="section" id="tab-settings">
             <div class="page-header">
@@ -1033,6 +1090,7 @@ function initDashboard() {
     loadMural();
     loadSettings();
     loadLiveSettings();
+    loadSmartList();
     setupRealtimeMural();
 
     // Determinar data do evento para exibir se mural está bloqueado ou não
@@ -1646,6 +1704,106 @@ function exportGiftsToPDF() {
     }).filter(r => r);
     doc.autoTable({ startY: 35, head: [['Convidado', 'Presente', 'Valor (MT)', 'Data']], body: rows, theme: 'striped', headStyles: { fillColor: [197,160,89] } });
     doc.save(`presentes_${invitationData.slug || 'convite'}.pdf`);
+}
+// ══ SMART LIST (PORTARIA DIGITAL) ════════════════
+async function loadSmartList() {
+    if (!invitationData) return;
+    try {
+        const toggle = document.getElementById('privacy-toggle');
+        if (toggle) toggle.checked = invitationData.privacy_mode === true;
+
+        const { data: guests } = await sb.from('invitation_smart_list')
+            .select('*')
+            .eq('invitation_id', invitationData.id)
+            .order('created_at', { ascending: false });
+
+        const tbody = document.getElementById('smartlist-tbody');
+        if (!guests?.length) { 
+            tbody.innerHTML = '<tr><td colspan="3"><div class="empty"><i class="fas fa-users-slash"></i> Nenhuma lista importada.</div></td></tr>'; 
+            return; 
+        }
+
+        tbody.innerHTML = guests.map(g => `
+            <tr>
+                <td data-label="Nome">${g.guest_name}</td>
+                <td data-label="Status">
+                    ${g.device_fingerprint 
+                        ? '<span class="badge badge-success"><i class="fas fa-lock"></i> Dispositivo Vinculado</span>' 
+                        : '<span class="badge badge-pending"><i class="fas fa-clock"></i> Aguardando Acesso</span>'}
+                </td>
+                <td data-label="Ações">
+                    <button class="action-btn danger" onclick="removeSmartGuest('${g.id}')"><i class="fas fa-trash"></i> Revogar</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { console.error(e); }
+}
+
+async function togglePrivacyMode(isChecked) {
+    if (!invitationData) return;
+    try {
+        const { error } = await sb.from('invitations')
+            .update({ privacy_mode: isChecked })
+            .eq('id', invitationData.id);
+            
+        if (error) throw error;
+        invitationData.privacy_mode = isChecked;
+        showToast(isChecked ? 'Portaria Digital Ativada!' : 'Portaria Digital Desativada.');
+    } catch(e) {
+        console.error(e);
+        showToast('Erro ao atualizar privacidade.', 'danger');
+        document.getElementById('privacy-toggle').checked = !isChecked; // revert UI
+    }
+}
+
+async function importSmartList() {
+    if (!invitationData) return;
+    const input = document.getElementById('bulk-guests-input').value;
+    if (!input.trim()) {
+        showToast('Cole a lista de convidados primeiro.', 'danger');
+        return;
+    }
+
+    const names = input.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+    if (names.length === 0) return;
+
+    const btn = document.querySelector('#tab-smartlist .save-btn');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A importar...';
+    btn.disabled = true;
+
+    try {
+        const insertData = names.map(name => ({
+            invitation_id: invitationData.id,
+            guest_name: name
+        }));
+
+        const { error } = await sb.from('invitation_smart_list').insert(insertData);
+        if (error) throw error;
+
+        showToast(`${names.length} convidados importados com sucesso!`);
+        document.getElementById('bulk-guests-input').value = '';
+        loadSmartList();
+    } catch(e) {
+        console.error(e);
+        showToast('Erro ao importar lista.', 'danger');
+    } finally {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+    }
+}
+
+async function removeSmartGuest(id) {
+    if (!confirm('Deseja realmente revogar o acesso deste convidado? Ele não conseguirá mais abrir o convite.')) return;
+    try {
+        const { error } = await sb.from('invitation_smart_list').delete().eq('id', id);
+        if (error) throw error;
+        showToast('Acesso revogado.');
+        loadSmartList();
+    } catch (e) {
+        console.error(e);
+        showToast('Erro ao revogar.', 'danger');
+    }
 }
 </script>
 </body>

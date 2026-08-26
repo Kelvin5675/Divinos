@@ -1681,22 +1681,100 @@
             }
 
             logDebug('Slug detectado: ' + slug);
-            await loadInvitation(slug);
+            const pendingGuestName = checkPendingGuestName(slug);
+            await loadInvitation(slug, pendingGuestName);
             setupRevealObserver();
         });
 
-        async function loadInvitation(slug) {
+        function showSmartLoginModal(slug) {
+            document.body.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#Fdfaf6; font-family:'Playfair Display', serif; padding: 20px; text-align:center; color:#333;">
+                    <h2 style="color:#C5A059; margin-bottom: 10px;">Acesso Restrito</h2>
+                    <p style="margin-bottom: 30px; font-family:'Montserrat', sans-serif;">Por favor, identifique-se para acessar este convite.</p>
+                    <input type="text" id="smartGuestName" placeholder="Seu Nome e Sobrenome" style="padding: 15px; width: 100%; max-width: 300px; border: 1px solid #ddd; border-radius: 8px; font-family:'Montserrat', sans-serif; font-size: 16px; margin-bottom: 20px; outline: none;">
+                    <button onclick="submitSmartName('${slug}')" style="background: #C5A059; color: #fff; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-family:'Montserrat', sans-serif; width: 100%; max-width: 300px;">Acessar Convite</button>
+                    <p id="smartErrorMsg" style="color: red; margin-top: 15px; font-family:'Montserrat', sans-serif; display:none;"></p>
+                </div>
+            `;
+        }
+
+        async function submitSmartName(slug) {
+            const nameInput = document.getElementById('smartGuestName').value.trim();
+            if (!nameInput) {
+                const errorMsg = document.getElementById('smartErrorMsg');
+                errorMsg.textContent = "Por favor, digite seu nome.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            // Recarrega a página passando o nome via query param para nosso script interceptar?
+            // Ou apenas chamamos loadInvitation novamente.
+            document.body.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100vh; background:#Fdfaf6;"><div class="loader-spinner"></div></div>'; // Fake loader
+            
+            // Restaura o DOM original não é tão fácil se já sobrescrevemos o body. 
+            // É melhor apenas recarregar a página passando o guest_name se for ok? 
+            // Na verdade, se a API der OK, precisamos renderizar o convite inteiro. 
+            // Como sobrescrevemos o body, a estrutura HTML foi perdida. A forma correta é dar um refresh com um hash ou armazenar no localStorage o nome e recarregar.
+            localStorage.setItem('divinos_pending_guest_name', nameInput);
+            window.location.reload();
+        }
+
+        function checkPendingGuestName(slug) {
+            const pendingName = localStorage.getItem('divinos_pending_guest_name');
+            if (pendingName) {
+                localStorage.removeItem('divinos_pending_guest_name');
+                return pendingName;
+            }
+            return null;
+        }
+
+        function showSmartBlockCard(message) {
+            document.body.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#Fdfaf6; font-family:'Playfair Display', serif; padding: 20px; text-align:center; color:#333;">
+                    <div style="background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 400px; border-top: 5px solid #C5A059;">
+                        <h2 style="color:#C5A059; margin-bottom: 20px; font-size: 24px;">Acesso Negado</h2>
+                        <p style="font-family:'Montserrat', sans-serif; line-height: 1.6; color:#555;">${message}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getOrCreateDeviceId() {
+            let deviceId = localStorage.getItem('divinos_device_id');
+            if (!deviceId) {
+                deviceId = crypto.randomUUID ? crypto.randomUUID() : 'dev-' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('divinos_device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        async function loadInvitation(slug, guestName = null) {
             logDebug('Iniciando loadInvitation via Backend: ' + slug);
 
             try {
-                const res = await fetch(`${window.API_BASE_URL}/invitations/public/${slug}`);
+                const deviceId = getOrCreateDeviceId();
+                let url = `${window.API_BASE_URL}/invitations/public/${slug}?device_id=${deviceId}`;
+                if (guestName) {
+                    url += `&guest_name=${encodeURIComponent(guestName)}`;
+                }
+
+                const res = await fetch(url);
+                const data = await res.json();
 
                 if (!res.ok) {
+                    if (res.status === 401 && data.requireAuth) {
+                        showSmartLoginModal(slug);
+                        hideLoader();
+                        return;
+                    }
+                    if (res.status === 403 && data.blocked) {
+                        showSmartBlockCard(data.message);
+                        hideLoader();
+                        return;
+                    }
                     logDebug('Erro na resposta do Servidor: ' + res.status);
                     throw new Error('Falha ao buscar convite no servidor');
                 }
 
-                const data = await res.json();
                 logDebug('Dados recebidos do Backend com sucesso');
 
                 if (!data) {

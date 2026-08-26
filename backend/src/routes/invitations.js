@@ -14,4 +14,10 @@ router.post('/generate-ia', invitationController.generateWithIA); // Admin: AI G
 router.post('/', invitationController.createInvitation); // Admin: Save invitation
 router.get('/dashboard/:token', invitationController.getDashboardData); // Public: Couples Dashboard
 
+// --- Smart List Routes ---
+router.get('/:invitation_id/smart-list', invitationController.getSmartList);
+router.post('/:invitation_id/smart-list/bulk', invitationController.addToSmartListBulk);
+router.delete('/smart-list/:id', invitationController.removeFromSmartList);
+router.patch('/:invitation_id/privacy', invitationController.togglePrivacyMode);
+
 module.exports = router;
