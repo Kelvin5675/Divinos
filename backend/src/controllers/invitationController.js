@@ -36,12 +36,14 @@ const getPublicInvitation = async (req, res) => {
             }
 
             // 1. Verifica se ESTE dispositivo já está vinculado a algum convidado NESTE convite
-            const { data: existingDeviceGuest } = await supabase
+            const { data: existingDeviceGuests } = await supabase
                 .from('invitation_smart_list')
                 .select('*')
                 .eq('invitation_id', invitation.id)
                 .eq('device_fingerprint', device_id)
-                .maybeSingle();
+                .limit(1);
+
+            const existingDeviceGuest = existingDeviceGuests && existingDeviceGuests.length > 0 ? existingDeviceGuests[0] : null;
 
             if (existingDeviceGuest) {
                 // O dispositivo JÁ está vinculado a alguém. 
