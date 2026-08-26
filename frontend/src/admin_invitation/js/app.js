@@ -205,6 +205,7 @@ function renderInvitationsTable(data) {
             <td><span class="badge ${inv.status === 'active' ? '' : 'badge-inactive'}">${inv.status === 'active' ? 'Ativo' : 'Inativo'}</span></td>
             <td>
                 <div style="display:flex; gap:5px;">
+                    <button class="btn btn-sm" style="background:#f59e0b;color:#fff;" onclick="showInvitationLinks('${inv.id}')" title="Senha & Links"><i class="fas fa-key"></i></button>
                     <a href="/invitation/index.html?slug=${inv.slug}" target="_blank" class="btn btn-secondary btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
                     <button class="btn btn-primary btn-sm" onclick="editInvitation('${inv.id}')" title="Editar"><i class="fas fa-edit"></i></button>
                     <button class="btn btn-danger btn-sm" onclick="deleteInvitation('${inv.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
@@ -363,6 +364,16 @@ async function deleteInvitation(id) {
     if (!confirm('Deseja eliminar este convite permanentemente?')) return;
     const { error } = await sbClient.from('invitations').delete().eq('id', id);
     if (error) alert(error.message); else loadInvitations();
+}
+
+async function showInvitationLinks(invId) {
+    const inv = allInvitations.find(i => i.id === invId);
+    if (!inv) return;
+    currentOrderForLinks = { order: { couple_names: inv.customer_name }, inv, pwd: inv.couple_password };
+    document.getElementById('generated-access-code').textContent = inv.couple_password || '—';
+    document.getElementById('generated-guest-link').value = inv.guest_link || `https://divinosgraffic.co.mz/c/${inv.slug}`;
+    document.getElementById('generated-couple-link').value = `${window.location.origin}/pages/dashboard-noivos.html?code=${inv.couple_password || ''}`;
+    showModal('inviteLinksModal');
 }
 
 async function editInvitation(id) {
@@ -529,6 +540,9 @@ function setupForms() {
                 const { error } = await sbClient.from('invitations').update(data).eq('id', id);
                 if (error) throw error;
             } else {
+                // Gerar sufixo único para evitar slug duplicado
+                const uniqueSuffix = Date.now().toString(36) + Math.random().toString(36).slice(-4);
+                data.slug = data.slug ? `${data.slug}-${uniqueSuffix}` : uniqueSuffix;
                 const pwd = Math.random().toString(36).slice(-8).toUpperCase();
                 data.couple_password = pwd;
                 data.status = 'active';
@@ -665,6 +679,7 @@ window.showGeneratedLinks = showGeneratedLinks;
 window.sendLinksViaWhatsApp = sendLinksViaWhatsApp;
 window.editInvitation = editInvitation;
 window.deleteInvitation = deleteInvitation;
+window.showInvitationLinks = showInvitationLinks;
 window.populatePlanSelects = populatePlanSelects;
 window.showModal = showModal;
 window.hideModal = hideModal;
