@@ -372,7 +372,7 @@ async function showInvitationLinks(invId) {
     currentOrderForLinks = { order: { couple_names: inv.customer_name }, inv, pwd: inv.couple_password };
     document.getElementById('generated-access-code').textContent = inv.couple_password || '—';
     document.getElementById('generated-guest-link').value = inv.guest_link || `https://divinosgraffic.co.mz/c/${inv.slug}`;
-    document.getElementById('generated-couple-link').value = `${window.location.origin}/pages/dashboard-noivos.html?code=${inv.couple_password || ''}`;
+    document.getElementById('generated-couple-link').value = `${window.location.origin}/pages/dashboard-noivos.html`;
     showModal('inviteLinksModal');
 }
 
