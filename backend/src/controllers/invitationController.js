@@ -31,41 +31,64 @@ const getPublicInvitation = async (req, res) => {
 
         // --- VERIFICAÇÃO DE LISTA FECHADA INTELIGENTE ---
         if (invitation.privacy_mode) {
-            if (!guest_name || !device_id) {
-                return res.status(401).json({ 
-                    requireAuth: true, 
-                    message: 'Acesso restrito. Identifique-se para acessar.' 
-                });
+            if (!device_id) {
+                return res.status(401).json({ requireAuth: true, message: 'Acesso restrito. Dispositivo não identificado.' });
             }
 
-            // Busca na lista de forma case-insensitive
-            const { data: guestData, error: guestError } = await supabase
+            // 1. Verifica se ESTE dispositivo já está vinculado a algum convidado NESTE convite
+            const { data: existingDeviceGuest } = await supabase
                 .from('invitation_smart_list')
                 .select('*')
                 .eq('invitation_id', invitation.id)
-                .ilike('guest_name', guest_name)
+                .eq('device_fingerprint', device_id)
                 .maybeSingle();
 
-            if (guestError || !guestData) {
-                return res.status(403).json({ 
-                    blocked: true,
-                    message: 'Desculpe, não localizamos o seu nome na lista oficial de convidados.' 
-                });
-            }
+            if (existingDeviceGuest) {
+                // O dispositivo JÁ está vinculado a alguém. 
+                if (guest_name && guest_name.toLowerCase() !== existingDeviceGuest.guest_name.toLowerCase()) {
+                    return res.status(403).json({ 
+                        blocked: true,
+                        message: \`Este aparelho já está registrado em nome de \${existingDeviceGuest.guest_name}. Não é possível acessar com outro nome.\`
+                    });
+                }
+                // Se bateu ou não passou nome, passa direto (sucesso, já logado).
+            } else {
+                // 2. O dispositivo NÃO está vinculado a ninguém. Precisamos do guest_name.
+                if (!guest_name) {
+                    return res.status(401).json({ 
+                        requireAuth: true, 
+                        message: 'Acesso restrito. Identifique-se para acessar.' 
+                    });
+                }
 
-            // Verifica a cota de aparelho
-            if (!guestData.device_fingerprint) {
-                // Primeiro acesso: vincula o aparelho
-                await supabase
+                // Busca o convidado na lista pelo nome
+                const { data: guestData, error: guestError } = await supabase
                     .from('invitation_smart_list')
-                    .update({ device_fingerprint: device_id })
-                    .eq('id', guestData.id);
-            } else if (guestData.device_fingerprint !== device_id) {
-                // Tentativa de repasse (Aparelho diferente)
-                return res.status(403).json({
-                    blocked: true,
-                    message: 'Acesso Restrito: Este convite é intransferível e já foi aberto pelo titular em outro aparelho.'
-                });
+                    .select('*')
+                    .eq('invitation_id', invitation.id)
+                    .ilike('guest_name', guest_name)
+                    .maybeSingle();
+
+                if (guestError || !guestData) {
+                    return res.status(403).json({ 
+                        blocked: true,
+                        message: 'Desculpe, não localizamos o seu nome na lista oficial de convidados.' 
+                    });
+                }
+
+                if (guestData.device_fingerprint) {
+                    // Já existe um fingerprint para este convidado, e não é o device_id atual
+                    return res.status(403).json({
+                        blocked: true,
+                        message: 'Acesso Restrito: Este convite é intransferível e já foi aberto pelo titular em outro aparelho.'
+                    });
+                } else {
+                    // Primeiro acesso deste convidado: vincula o novo aparelho
+                    await supabase
+                        .from('invitation_smart_list')
+                        .update({ device_fingerprint: device_id })
+                        .eq('id', guestData.id);
+                }
             }
         }
         // --- FIM DA VERIFICAÇÃO ---
