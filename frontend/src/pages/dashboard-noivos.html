@@ -1709,8 +1709,17 @@ function exportGiftsToPDF() {
 async function loadSmartList() {
     if (!invitationData) return;
     try {
+        // Fetch privacy_mode directly from the database to ensure we have the latest and correct state
+        const { data: invStatus } = await sb.from('invitations')
+            .select('privacy_mode')
+            .eq('id', invitationData.id)
+            .single();
+            
         const toggle = document.getElementById('privacy-toggle');
-        if (toggle) toggle.checked = invitationData.privacy_mode === true;
+        if (toggle && invStatus) {
+            toggle.checked = invStatus.privacy_mode === true;
+            invitationData.privacy_mode = invStatus.privacy_mode;
+        }
 
         const { data: guests } = await sb.from('invitation_smart_list')
             .select('*')
