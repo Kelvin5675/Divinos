@@ -48,7 +48,7 @@ const getPublicInvitation = async (req, res) => {
                 if (guest_name && guest_name.toLowerCase() !== existingDeviceGuest.guest_name.toLowerCase()) {
                     return res.status(403).json({ 
                         blocked: true,
-                        message: \`Este aparelho já está registrado em nome de \${existingDeviceGuest.guest_name}. Não é possível acessar com outro nome.\`
+                        message: `Este aparelho já está registrado em nome de ${existingDeviceGuest.guest_name}. Não é possível acessar com outro nome.`
                     });
                 }
                 // Se bateu ou não passou nome, passa direto (sucesso, já logado).
