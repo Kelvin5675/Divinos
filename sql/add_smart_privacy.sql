@@ -16,6 +16,8 @@ ALTER TABLE invitation_smart_list ENABLE ROW LEVEL SECURITY;
 -- Política de leitura pública (necessária para validar o acesso no backend sem admin key, embora o backend geralmente use role admin, é bom ter)
 CREATE POLICY "Public select smart_list" ON invitation_smart_list FOR SELECT USING (true);
 CREATE POLICY "Public update smart_list" ON invitation_smart_list FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Public insert smart_list" ON invitation_smart_list FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public delete smart_list" ON invitation_smart_list FOR DELETE USING (true);
 
 -- Política de Admin para full access
 CREATE POLICY "Admin all smart_list" ON invitation_smart_list FOR ALL USING (auth.role() = 'authenticated');

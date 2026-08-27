@@ -3,29 +3,15 @@
 
 <head>
     <script>
-        // AGGRESSIVE DEBUG - RUNS BEFORE EVERYTHING
+        // Anti-cache: garante que o browser busque sempre a versão mais recente
         (function () {
-            const currentUrl = window.location.href;
-            const hasSlug = currentUrl.includes('slug=');
-
-            console.log('!!! IMMEDIATE URL CHECK:', currentUrl);
-
-            // Try to unregister ANY service worker IMMEDIATELY
+            // Limpar Service Workers antigos
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(registrations => {
                     for (let registration of registrations) {
-                        registration.unregister().then(() => {
-                            console.log('Service Worker unregistered successfully');
-                        });
+                        registration.unregister();
                     }
                 });
-            }
-
-            // If slug is missing, alert the user IMMEDIATELY
-            if (!hasSlug) {
-                alert('DEBUG ALERTA:\nO parâmetro ?slug= desapareceu!\nURL detectada: ' + currentUrl + '\n\nSe você acabou de colar o link completo, algo (servidor ou script) removeu o final dele antes deste alerta.');
-            } else {
-                console.log('DEBUG: Slug detectado corretamente no topo do arquivo.');
             }
         })();
     </script>
