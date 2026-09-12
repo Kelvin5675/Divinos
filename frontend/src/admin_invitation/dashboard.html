@@ -147,7 +147,7 @@
             <!-- TAB: PLANOS -->
             <section id="plans" class="section">
                 <div class="card">
-                    <div class="card-header"><h3>Planos</h3><button class="btn btn-primary" onclick="showModal('planModal')">Novo Plano</button></div>
+                    <div class="card-header"><h3>Planos</h3><button class="btn btn-primary" onclick="showPlanModal()">Novo Plano</button></div>
                     <div class="table-container">
                         <table>
                             <thead><tr><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead>
@@ -291,6 +291,15 @@
 
                 <hr style="margin:1.5rem 0; border:none; border-top:1px solid #ddd;">
                 <h4 style="margin-bottom:0.5rem; color:var(--jobie-primary);">Avançado</h4>
+                
+                <div class="form-group" style="margin-top:1rem;">
+                    <label class="form-label">Modelo de Abertura</label>
+                    <select id="inv-opening-animation" class="form-control">
+                        <option value="palace">Portas de Palácio</option>
+                        <option value="envelope_vertical">Envelope Vertical</option>
+                    </select>
+                </div>
+                
                 <div class="form-group" style="margin-top:1rem;">
                     <label class="form-label">Tipo Editor</label>
                     <select id="inv-editor-type" class="form-control" onchange="toggleCodeEditor()">
@@ -337,7 +346,91 @@
 
     <!-- Modais restantes seguem o mesmo padrão simplificado -->
     <div class="modal-overlay" id="orderDetailModal"><div class="modal-box"><div class="modal-header"><h3>Pedido</h3><button class="modal-close" onclick="hideModal('orderDetailModal')">&times;</button></div><div id="order-detail-body"></div></div></div>
-    <div class="modal-overlay" id="planModal"><div class="modal-box"><div class="modal-header"><h3>Plano</h3><button class="modal-close" onclick="hideModal('planModal')">&times;</button></div><form id="plan-form"><input type="hidden" id="plan-id"><div class="form-group"><label class="form-label">Nome</label><input type="text" id="plan-name" class="form-control"></div><div style="display:flex;gap:0.75rem;margin-top:1.5rem;"><button type="submit" class="btn btn-primary">Guardar</button></div></form></div></div>
+    <div class="modal-overlay" id="planModal">
+        <div class="modal-box" style="max-width:700px; max-height:90vh; overflow-y:auto;">
+            <div class="modal-header"><h3>Plano</h3><button type="button" class="modal-close" onclick="hideModal('planModal')">&times;</button></div>
+            <form id="plan-form" onsubmit="savePlan(event)">
+                <input type="hidden" id="plan-id">
+                
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Nome *</label><input type="text" id="plan-name" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Preço (MT) *</label><input type="number" id="plan-price" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Cor de Destaque</label><input type="color" id="plan-color" class="form-control" value="#6d28d9"></div>
+                    <div class="form-group"><label class="form-label">Limite de Fotos</label><input type="number" id="plan-max-photos" class="form-control" placeholder="Ilimitado se vazio"></div>
+                </div>
+                
+                <div class="form-group" style="margin-top:1rem;">
+                    <label class="form-label">Descrição</label>
+                    <textarea id="plan-description" class="form-control" rows="2" placeholder="Breve descrição do plano..."></textarea>
+                </div>
+                
+                <hr style="margin:1.5rem 0; border:none; border-top:1px solid #ddd;">
+                <h4 style="margin-bottom:1rem; color:var(--jobie-primary);">Funcionalidades</h4>
+                
+                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:1rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-rsvp"> Confirmação (RSVP)
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-music"> Música de Fundo
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-countdown"> Contagem Decrescente
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-location"> Mapas/Localização
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-messages"> Mural de Mensagens
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-qr-code"> QR Code de Acesso
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-pre-wedding-gallery"> Galeria Pré-Casamento
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-save-the-date"> Save the Date
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-ia-story"> História por IA
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-couple-dashboard"> Dashboard do Casal
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-stats"> Estatísticas
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-pre-wedding-video"> Vídeo Pré-Casamento
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-live-stream"> Transmissão ao Vivo
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-table-map"> Mapa de Mesas
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-guest-uploads"> Convidados c/ Upload
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-custom-playlist"> Playlist Customizada
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-time-capsule"> Cápsula do Tempo
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-guest-list-security"> Segurança por Lista
+                    </label>
+                </div>
+
+                <div style="display:flex;gap:0.75rem;margin-top:1.5rem;justify-content:flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('planModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-plan">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="/admin_invitation/js/app.js?v=56"></script>
 </body>

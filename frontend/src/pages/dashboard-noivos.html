@@ -1152,28 +1152,50 @@ async function applyDashboardGating() {
         
         const features = data.plan.features || {};
         
-        if(!features.has_live_stream) {
+        const isFeatureEnabled = (featureName) => features[featureName] === true;
+
+        const renderBlockedTab = (title, message) => `
+            <div class="page-header"><h1 class="page-title font-serif">${title}</h1></div>
+            <div class="card" style="text-align: center; padding: 4rem 2rem; background: #FFFBEB; border-color: #FDE68A;">
+                <i class="fas fa-lock" style="font-size: 3rem; color: #F59E0B; margin-bottom: 1rem;"></i>
+                <h2 class="font-serif" style="color: #92400E; margin-bottom: 1rem;">Funcionalidade indisponível</h2>
+                <p style="color: #B45309; font-size: 0.95rem;">${message}</p>
+            </div>
+        `;
+
+        if(!isFeatureEnabled('has_live_stream')) {
             const liveTab = document.getElementById('tab-live');
-            if(liveTab) {
-                liveTab.innerHTML = `
-                <div class="page-header"><h1 class="page-title font-serif">Transmissão ao Vivo</h1></div>
-                <div class="card" style="text-align: center; padding: 4rem 2rem; background: #FFFBEB; border-color: #FDE68A;">
-                    <i class="fas fa-lock" style="font-size: 3rem; color: #F59E0B; margin-bottom: 1rem;"></i>
-                    <h2 class="font-serif" style="color: #92400E; margin-bottom: 1rem;">Funcionalidade disponível no plano Luxo</h2>
-                    <p style="color: #B45309; font-size: 0.95rem;">O seu plano atual não inclui a funcionalidade de Transmissão ao Vivo nativa.</p>
-                </div>`;
-            }
+            if(liveTab) liveTab.innerHTML = renderBlockedTab('Transmissão ao Vivo', 'O seu plano atual não inclui a funcionalidade de Transmissão ao Vivo nativa.');
         }
         
-        if(!features.has_guest_uploads) {
+        if(!isFeatureEnabled('has_rsvp')) {
+            const rsvpTab = document.getElementById('tab-rsvp');
+            if(rsvpTab) rsvpTab.innerHTML = renderBlockedTab('Convidados', 'O seu plano atual não inclui a gestão de confirmação de presença (RSVP).');
+        }
+
+        if(!isFeatureEnabled('has_messages')) {
+            const msgTab = document.getElementById('tab-messages');
+            if(msgTab) msgTab.innerHTML = renderBlockedTab('Mensagens', 'O seu plano atual não inclui a recepção de mensagens dos convidados.');
+        }
+
+        if(!isFeatureEnabled('has_pre_wedding_gallery')) {
+            const muralTab = document.getElementById('tab-mural');
+            if(muralTab) muralTab.innerHTML = renderBlockedTab('Galeria de Memórias', 'O seu plano atual não inclui a Galeria Pré-Casamento / Mural de Memórias.');
+        } else if(!isFeatureEnabled('has_guest_uploads')) {
+            // Se tem galeria mas não tem upload de convidados
             const muralControls = document.getElementById('mural-controls');
             if(muralControls) {
                 muralControls.innerHTML = `
                 <div style="background: #FEF2F2; color: #991B1B; padding: 1.5rem; border-radius: 12px; font-size: 0.9rem; text-align: center; border: 1px solid #FECACA;">
                     <i class="fas fa-lock" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
-                    Funcionalidade disponível no plano Ouro e Luxo: Upload de fotos e vídeos pelos convidados.
+                    Funcionalidade indisponível: Upload de fotos e vídeos pelos convidados.
                 </div>`;
             }
+        }
+
+        if(!isFeatureEnabled('has_guest_list_security')) {
+            const smartTab = document.getElementById('tab-smartlist');
+            if(smartTab) smartTab.innerHTML = renderBlockedTab('Portaria Digital', 'O seu plano atual não inclui a Portaria Digital (Segurança por Lista de Convidados).');
         }
     } catch (e) {
         console.error('Erro ao verificar limites do plano', e);

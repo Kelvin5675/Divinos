@@ -336,7 +336,15 @@ async function loadPlans() {
     const tbody = document.getElementById('plans-table-body');
     if (!tbody) return;
     const { data } = await sbClient.from('invitation_plans').select('*');
-    tbody.innerHTML = (data || []).map(p => `<tr><td><strong>${p.name}</strong></td><td>${p.price} MT</td><td><button class="btn btn-secondary btn-sm" onclick="editPlan('${p.id}')"><i class="fas fa-edit"></i></button></td></tr>`).join('') || '<tr><td colspan="3">Sem planos.</td></tr>';
+    window.allPlans = data || [];
+    tbody.innerHTML = (data || []).map(p => `<tr>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.price} MT</td>
+        <td>
+            <button class="btn btn-secondary btn-sm" onclick="editPlan('${p.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="deletePlan('${p.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+        </td>
+    </tr>`).join('') || '<tr><td colspan="3">Sem planos.</td></tr>';
 }
 
 async function loadModeration() {
@@ -436,8 +444,17 @@ async function editInvitation(id) {
     document.getElementById('inv-gallery-urls').value = (inv.gallery_urls && Array.isArray(inv.gallery_urls)) ? inv.gallery_urls.join(', ') : '';
     document.getElementById('inv-gallery-files').value = '';
 
-    document.getElementById('inv-editor-type').value = inv.editor_type || 'template';
+    let dbEditorType = inv.editor_type || 'template';
+    let dbAnimation = 'palace';
+    if (dbEditorType.includes(',')) {
+        const parts = dbEditorType.split(',');
+        dbEditorType = parts[0];
+        dbAnimation = parts[1];
+    }
+
+    document.getElementById('inv-editor-type').value = dbEditorType;
     document.getElementById('inv-custom-html').value = inv.custom_html || '';
+    document.getElementById('inv-opening-animation').value = dbAnimation;
     toggleCodeEditor();
     showModal('invitationModal');
 }
@@ -530,7 +547,7 @@ function setupForms() {
                 cover_align_mobile: document.getElementById('inv-align-mobile').value !== "" ? parseInt(document.getElementById('inv-align-mobile').value) : 50,
                 music_url: musicUrl || null,
                 gallery_urls: finalGallery,
-                editor_type: document.getElementById('inv-editor-type').value,
+                editor_type: document.getElementById('inv-editor-type').value + ',' + (document.getElementById('inv-opening-animation').value || 'palace'),
                 custom_html: document.getElementById('inv-custom-html').value || null
             };
 
@@ -666,6 +683,110 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCoverPreview();
 });
 
+// ==========================================
+// FUNÇÕES DE PLANOS
+// ==========================================
+function showPlanModal() {
+    document.getElementById('plan-form').reset();
+    document.getElementById('plan-id').value = '';
+    document.getElementById('plan-color').value = '#6d28d9';
+    showModal('planModal');
+}
+
+async function editPlan(id) {
+    if (!window.allPlans) return;
+    const plan = window.allPlans.find(p => p.id === id);
+    if (!plan) return;
+    
+    document.getElementById('plan-form').reset();
+    document.getElementById('plan-id').value = plan.id;
+    document.getElementById('plan-name').value = plan.name || '';
+    document.getElementById('plan-price').value = plan.price || '';
+    document.getElementById('plan-color').value = plan.color || '#6d28d9';
+    document.getElementById('plan-description').value = plan.description || '';
+    
+    const features = plan.features || {};
+    document.getElementById('plan-max-photos').value = features.max_photos || '';
+    
+    const boolFeats = [
+        'has_rsvp', 'has_music', 'has_countdown', 'has_location',
+        'has_messages', 'has_qr_code', 'has_pre_wedding_gallery',
+        'has_save_the_date', 'has_ia_story', 'has_couple_dashboard',
+        'has_stats', 'has_pre_wedding_video', 'has_live_stream',
+        'has_table_map', 'has_guest_uploads', 'has_custom_playlist',
+        'has_time_capsule', 'has_guest_list_security'
+    ];
+    
+    boolFeats.forEach(f => {
+        const cb = document.getElementById('feat-' + f.replace(/_/g, '-'));
+        if (cb) cb.checked = !!features[f];
+    });
+    
+    showModal('planModal');
+}
+
+window.savePlan = async function(event) {
+    event.preventDefault();
+    const btn = document.getElementById('btn-save-plan');
+    if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...'; }
+    
+    try {
+        const id = document.getElementById('plan-id').value;
+        const name = document.getElementById('plan-name').value;
+        const price = parseFloat(document.getElementById('plan-price').value || 0);
+        const maxPhotos = document.getElementById('plan-max-photos').value;
+        
+        const boolFeats = [
+            'has_rsvp', 'has_music', 'has_countdown', 'has_location',
+            'has_messages', 'has_qr_code', 'has_pre_wedding_gallery',
+            'has_save_the_date', 'has_ia_story', 'has_couple_dashboard',
+            'has_stats', 'has_pre_wedding_video', 'has_live_stream',
+            'has_table_map', 'has_guest_uploads', 'has_custom_playlist',
+            'has_time_capsule', 'has_guest_list_security'
+        ];
+        
+        const features = {};
+        if (maxPhotos) features.max_photos = parseInt(maxPhotos);
+        boolFeats.forEach(f => {
+            const cb = document.getElementById('feat-' + f.replace(/_/g, '-'));
+            // Gravar explicitamente true/false para cada feature
+            features[f] = cb ? cb.checked : false;
+        });
+        
+        const payload = {
+            name, price, features
+        };
+        
+        let error;
+        if (id) {
+            const res = await sbClient.from('invitation_plans').update(payload).eq('id', id);
+            error = res.error;
+        } else {
+            const res = await sbClient.from('invitation_plans').insert([payload]);
+            error = res.error;
+        }
+        
+        if (error) throw error;
+        hideModal('planModal');
+        loadPlans();
+    } catch (error) {
+        alert('Erro ao guardar plano: ' + error.message);
+    } finally {
+        if(btn) { btn.disabled = false; btn.innerHTML = 'Guardar'; }
+    }
+};
+
+window.deletePlan = async function(id) {
+    if (!confirm('Tem certeza que deseja eliminar este plano? Esta acção não pode ser desfeita.')) return;
+    try {
+        const { error } = await sbClient.from('invitation_plans').delete().eq('id', id);
+        if (error) throw error;
+        loadPlans();
+    } catch (e) {
+        alert('Erro ao eliminar plano: ' + e.message);
+    }
+};
+
 // EXPORTS
 window.switchTab = switchTab;
 window.toggleSidebar = toggleSidebar;
@@ -683,3 +804,5 @@ window.showInvitationLinks = showInvitationLinks;
 window.populatePlanSelects = populatePlanSelects;
 window.showModal = showModal;
 window.hideModal = hideModal;
+window.showPlanModal = showPlanModal;
+window.editPlan = editPlan;
