@@ -7,6 +7,89 @@ let allInvitations = [];
 let invChart = null;
 let currentOrderForLinks = null;
 
+// Love Story Helpers
+window.loveStoryChapters = [];
+
+window.renderLoveStoryChapters = function() {
+    const container = document.getElementById('love-story-chapters');
+    if (!container) return;
+    
+    if (window.loveStoryChapters.length === 0) {
+        container.innerHTML = '<p style="color:#999; font-size:0.85rem; text-align:center;">Nenhum capítulo adicionado. Clique abaixo para iniciar a história!</p>';
+        return;
+    }
+    
+    container.innerHTML = window.loveStoryChapters.map((ch, i) => `
+        <div style="background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem; position:relative;">
+            <button type="button" class="btn btn-danger btn-sm" style="position:absolute; top:0.5rem; right:0.5rem; padding: 0.2rem 0.5rem;" onclick="removeLoveStoryChapter(${i})"><i class="fas fa-trash"></i></button>
+            <div class="form-group" style="margin-bottom:0.5rem;">
+                <label class="form-label" style="font-size:0.8rem;">Título do Capítulo (ex: Onde tudo começou)</label>
+                <input type="text" class="form-control ls-title" value="${ch.title || ''}" onchange="updateLoveStoryChapter(${i}, 'title', this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:0.5rem;">
+                <label class="form-label" style="font-size:0.8rem;">Fotografia (URL ou Subir Ficheiro)</label>
+                <div style="display:flex; gap:0.5rem; align-items:center;">
+                    <input type="text" class="form-control ls-photo" style="flex:1;" value="${ch.photo_url || ''}" onchange="updateLoveStoryChapter(${i}, 'photo_url', this.value)" placeholder="Cole o link da foto...">
+                    <input type="file" class="form-control" accept="image/*" onchange="uploadLoveStoryPhoto(event, ${i})" style="max-width: 200px;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" style="font-size:0.8rem;">Descrição (História do momento)</label>
+                <textarea class="form-control ls-text" rows="2" onchange="updateLoveStoryChapter(${i}, 'text', this.value)">${ch.text || ''}</textarea>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.addLoveStoryChapter = function() {
+    window.loveStoryChapters.push({ title: '', photo_url: '', text: '' });
+    window.renderLoveStoryChapters();
+}
+
+window.removeLoveStoryChapter = function(index) {
+    if(confirm('Tem a certeza que deseja remover este capítulo?')) {
+        window.loveStoryChapters.splice(index, 1);
+        window.renderLoveStoryChapters();
+    }
+}
+
+window.updateLoveStoryChapter = function(index, field, value) {
+    if (window.loveStoryChapters[index]) {
+        window.loveStoryChapters[index][field] = value;
+    }
+}
+
+window.uploadLoveStoryPhoto = async function(event, index) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    let slug = document.getElementById('inv-slug')?.value || 'new_invitation';
+    
+    try {
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'upload-status';
+        statusSpan.style = 'font-size:0.75rem; color:#666; margin-top:0.25rem; display:block;';
+        statusSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A enviar foto...';
+        event.target.parentElement.appendChild(statusSpan);
+        
+        const ext = file.name.split('.').pop();
+        const path = `${slug}/lovestory_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+        const { error: uploadError } = await window.supabaseClient.storage.from('invitations').upload(path, file);
+        if (uploadError) throw uploadError;
+        
+        const { data } = window.supabaseClient.storage.from('invitations').getPublicUrl(path);
+        
+        window.loveStoryChapters[index].photo_url = data.publicUrl;
+        window.renderLoveStoryChapters();
+    } catch (err) {
+        console.error("Erro no upload:", err);
+        alert("Falha ao enviar fotografia: " + err.message);
+        
+        const status = event.target.parentElement.querySelector('.upload-status');
+        if(status) status.remove();
+    }
+}
+
 const initSupabase = () => {
     if (!sbClient) sbClient = window.supabaseClient;
     return sbClient;
@@ -387,6 +470,7 @@ async function showInvitationLinks(invId) {
 async function editInvitation(id) {
     const inv = allInvitations.find(i => i.id === id);
     if (!inv) return;
+    window.currentEditInv = inv;
     await populatePlanSelects();
     document.getElementById('inv-id').value = inv.id;
     document.getElementById('inv-customer-name').value = inv.customer_name || '';
@@ -455,17 +539,31 @@ async function editInvitation(id) {
     document.getElementById('inv-editor-type').value = dbEditorType;
     document.getElementById('inv-custom-html').value = inv.custom_html || '';
     document.getElementById('inv-opening-animation').value = dbAnimation;
+    
+    // Love Story - buscar da invitations_details
+    try {
+        const { data: detData } = await sbClient.from('invitations_details').select('tables_layout').eq('invitation_id', inv.id).single();
+        const tl = detData && detData.tables_layout ? detData.tables_layout : {};
+        window.loveStoryChapters = tl.love_story || [];
+    } catch(e) {
+        window.loveStoryChapters = [];
+    }
+    if(typeof renderLoveStoryChapters === 'function') renderLoveStoryChapters();
+
     toggleCodeEditor();
     showModal('invitationModal');
 }
 
 window.createNewInvitation = async function() {
+    window.currentEditInv = null;
     await populatePlanSelects();
     document.getElementById('invitation-form').reset();
     document.getElementById('inv-id').value = '';
     document.getElementById('inv-cover-file').value = '';
     document.getElementById('inv-music-file').value = '';
     document.getElementById('inv-gallery-files').value = '';
+    window.loveStoryChapters = [];
+    if(typeof renderLoveStoryChapters === 'function') renderLoveStoryChapters();
     toggleCodeEditor();
     showModal('invitationModal');
 }
@@ -551,8 +649,12 @@ function setupForms() {
                 custom_html: document.getElementById('inv-custom-html').value || null
             };
 
+            // Love Story é guardado em invitations_details.tables_layout (JSONB)
+            // Será tratado após salvar a invitation principal
+
             console.log('DEBUG SALVAMENTO:', data);
 
+            let savedInvId = id;
             if (id) {
                 const { error } = await sbClient.from('invitations').update(data).eq('id', id);
                 if (error) throw error;
@@ -565,8 +667,21 @@ function setupForms() {
                 data.status = 'active';
                 data.is_public = true;
                 data.guest_link = `https://divinosgraffic.co.mz/c/${data.slug}`;
-                const { error } = await sbClient.from('invitations').insert([data]);
+                const { data: inserted, error } = await sbClient.from('invitations').insert([data]).select('id').single();
                 if (error) throw error;
+                savedInvId = inserted.id;
+            }
+
+            // Salvar Love Story em invitations_details.tables_layout
+            if (window.loveStoryChapters && window.loveStoryChapters.length > 0 && savedInvId) {
+                // Verificar se já existe um registro de detalhes
+                const { data: existing } = await sbClient.from('invitations_details').select('id, tables_layout').eq('invitation_id', savedInvId).single();
+                const newLayout = existing && existing.tables_layout ? { ...existing.tables_layout, love_story: window.loveStoryChapters } : { love_story: window.loveStoryChapters };
+                if (existing) {
+                    await sbClient.from('invitations_details').update({ tables_layout: newLayout }).eq('id', existing.id);
+                } else {
+                    await sbClient.from('invitations_details').insert([{ invitation_id: savedInvId, tables_layout: newLayout }]);
+                }
             }
 
             hideModal('invitationModal');
@@ -711,7 +826,7 @@ async function editPlan(id) {
     const boolFeats = [
         'has_rsvp', 'has_music', 'has_countdown', 'has_location',
         'has_messages', 'has_qr_code', 'has_pre_wedding_gallery',
-        'has_save_the_date', 'has_ia_story', 'has_couple_dashboard',
+        'has_save_the_date', 'has_ia_story', 'has_love_story', 'has_couple_dashboard',
         'has_stats', 'has_pre_wedding_video', 'has_live_stream',
         'has_table_map', 'has_guest_uploads', 'has_custom_playlist',
         'has_time_capsule', 'has_guest_list_security'
@@ -739,7 +854,7 @@ window.savePlan = async function(event) {
         const boolFeats = [
             'has_rsvp', 'has_music', 'has_countdown', 'has_location',
             'has_messages', 'has_qr_code', 'has_pre_wedding_gallery',
-            'has_save_the_date', 'has_ia_story', 'has_couple_dashboard',
+            'has_save_the_date', 'has_ia_story', 'has_love_story', 'has_couple_dashboard',
             'has_stats', 'has_pre_wedding_video', 'has_live_stream',
             'has_table_map', 'has_guest_uploads', 'has_custom_playlist',
             'has_time_capsule', 'has_guest_list_security'

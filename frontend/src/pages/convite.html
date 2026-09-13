@@ -1584,6 +1584,350 @@
     #hero-bg {
       transition: opacity 0.5s ease;
     }
+
+    /* ═══════════ LOVE STORY CAROUSEL ═══════════ */
+    #love-story-section {
+      display: none;
+      position: relative;
+      padding: 4rem 0;
+      overflow: hidden;
+      background: #0a0a0a;
+      min-height: 85vh;
+    }
+
+    .ls-bg-blur {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px) brightness(0.5);
+      transform: scale(1.1);
+      transition: background-image 0.8s ease;
+      z-index: 0;
+    }
+
+    .ls-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
+      z-index: 1;
+    }
+
+    .ls-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .ls-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .ls-header h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 2.4rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: 2px;
+    }
+
+    .ls-header .ls-subtitle {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .ls-header .ls-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--gold, #c9a84c);
+      margin: 1rem auto 0;
+      border-radius: 2px;
+    }
+
+    .ls-body {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    /* LEFT: Text panel */
+    .ls-text-panel {
+      flex: 1;
+      min-width: 300px;
+      max-width: 500px;
+      flex-shrink: 0;
+    }
+
+    .ls-chapter-indicator {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold, #c9a84c);
+      margin-bottom: 0.75rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s ease;
+    }
+
+    .ls-chapter-indicator.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ls-chapter-title {
+      font-family: "Playfair Display", serif;
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.6s ease 0.1s;
+    }
+
+    .ls-chapter-title.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ls-chapter-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.75);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.6s ease 0.2s;
+    }
+
+    .ls-chapter-text.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ls-carousel-panel {
+      flex: 1.2;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 400px;
+      overflow: hidden;
+      padding: 35px 0;
+    }
+
+    .ls-cards-wrapper {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: flex-start;
+      perspective: 800px;
+      transition: transform 0.6s ease;
+      width: max-content;
+    }
+
+    .ls-cards-wrapper.no-transition {
+      transition: none !important;
+    }
+
+    .ls-card {
+      width: 220px;
+      height: 300px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
+      flex-shrink: 0;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .ls-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .ls-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+
+    .ls-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .ls-card:hover::after {
+      opacity: 0.3;
+    }
+
+    .ls-card.active {
+      transform: scale(1.15);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6), 0 0 0 2px var(--gold, #c9a84c);
+      opacity: 1 !important;
+      filter: brightness(1) !important;
+      z-index: 10;
+    }
+
+    .ls-card.active::after {
+      opacity: 0 !important;
+      background: transparent !important;
+    }
+
+    .ls-card:not(.active) {
+      opacity: 0.4;
+      transform: scale(0.85);
+      filter: brightness(0.4);
+    }
+
+    /* Navigation dots */
+    .ls-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .ls-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      padding: 0;
+    }
+
+    .ls-dot.active {
+      background: var(--gold, #c9a84c);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* Nav arrows */
+    .ls-nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+    }
+
+    .ls-nav-arrow:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--gold, #c9a84c);
+    }
+
+    .ls-nav-prev {
+      left: 10px;
+    }
+
+    .ls-nav-next {
+      right: 10px;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .ls-nav-arrow {
+        display: none !important;
+      }
+
+      #love-story-section {
+        padding: 2rem 0;
+        min-height: auto;
+      }
+
+      .ls-header {
+        margin-bottom: 1.5rem;
+      }
+
+      .ls-header h2 {
+        font-size: 1.6rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .ls-body {
+        flex-direction: column-reverse;
+        gap: 1.5rem;
+      }
+
+      .ls-text-panel {
+        text-align: center;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .ls-chapter-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .ls-chapter-text {
+        font-size: 0.85rem;
+        overflow-y: auto;
+        line-height: 1.5;
+        padding: 0 10px;
+      }
+
+      /* Hide scrollbar for neatness */
+      .ls-chapter-text::-webkit-scrollbar {
+        display: none;
+      }
+
+      .ls-chapter-text {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .ls-carousel-panel {
+        min-height: 280px;
+        padding: 25px 0;
+      }
+
+      .ls-card {
+        width: 160px;
+        height: 230px;
+      }
+
+      .ls-nav-arrow {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+      }
+
+      .ls-nav-prev {
+        left: 5px;
+      }
+
+      .ls-nav-next {
+        right: 5px;
+      }
+    }
   </style>
 </head>
 
@@ -1865,6 +2209,36 @@
         <div class="invitation-formal-text font-serif reveal delay-400">
           Tem a honra de convidar o senhor(a)<br />
           a testemunhar o seu elance Matrimonial
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ LOVE STORY CAROUSEL ═══════════ -->
+    <section id="love-story-section">
+      <div class="ls-bg-blur" id="ls-bg-blur"></div>
+      <div class="ls-overlay"></div>
+      <div class="ls-content">
+        <div class="ls-header">
+          <div class="ls-subtitle reveal delay-200">A Nossa História</div>
+          <!--!<h2 class="reveal delay-300">Momentos Marcantes</h2> -->
+          <div class="ls-divider reveal delay-400"></div>
+        </div>
+        <div class="ls-body" onmouseenter="stopLsAutoScroll()" onmouseleave="startLsAutoScroll()" ontouchstart="handleLsTouchStart(event)" ontouchend="handleLsTouchEnd(event)">
+          <div class="ls-text-panel" id="ls-text-panel">
+            <!-- Text injected via JS -->
+          </div>
+          <div class="ls-carousel-panel">
+            <button class="ls-nav-arrow ls-nav-prev" onclick="prevLoveStory()"><i
+                class="fas fa-chevron-left"></i></button>
+            <div class="ls-cards-wrapper" id="ls-cards-wrapper">
+              <!-- Cards injected via JS -->
+            </div>
+            <button class="ls-nav-arrow ls-nav-next" onclick="nextLoveStory()"><i
+                class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="ls-dots" id="ls-dots">
+          <!-- Dots injected via JS -->
         </div>
       </div>
     </section>
@@ -2624,10 +2998,233 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Inicializar Love Story se estiver ativada
+        initLoveStory();
+
       } catch (globalErr) {
         logDebug("Erro Global em populateStaticData: " + globalErr.message);
         console.error(globalErr);
       }
+    }
+
+    // ═══════════ LOVE STORY ═══════════
+    let loveStoryData = [];
+    let lsAutoScrollTimer = null;
+    let lsCurrentActualIndex = 0;
+    let isLsAnimating = false;
+
+    function initLoveStory() {
+      const planFeatures = invData.plan && invData.plan.features ? invData.plan.features : null;
+      const isFeatureEnabled = planFeatures && planFeatures["has_love_story"] === true;
+      const det = invData.details && invData.details[0] ? invData.details[0] : invData.details || {};
+      const tl = det.tables_layout || {};
+      loveStoryData = tl.love_story || det.love_story || [];
+
+      const sec = document.getElementById("love-story-section");
+      if (!isFeatureEnabled || loveStoryData.length === 0) {
+        if (sec) sec.style.display = "none";
+        return;
+      }
+
+      if (sec) sec.style.display = "block";
+
+      // Duplicate items to ensure at least 4 for smooth infinite loop
+      let renderArray = [...loveStoryData];
+      if (renderArray.length > 0) {
+        while (renderArray.length < 4) {
+          renderArray = renderArray.concat([...loveStoryData]);
+        }
+      }
+
+      // Move the last item to the beginning so children[1] is the first actual item
+      if (renderArray.length > 0) {
+        renderArray.unshift(renderArray.pop());
+      }
+
+      const cardsWrapper = document.getElementById("ls-cards-wrapper");
+      if (cardsWrapper) {
+        cardsWrapper.innerHTML = renderArray.map((ch, idx) => `
+            <div class="ls-card ${idx === 1 ? "active" : ""}" data-original="${loveStoryData.findIndex(orig => orig.title === ch.title && orig.text === ch.text)}">
+              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" />
+            </div>
+          `).join('');
+      }
+
+      lsCurrentActualIndex = 0;
+
+      // Initial positioning
+      setTimeout(() => {
+        const wrapper = document.getElementById("ls-cards-wrapper");
+        wrapper.classList.add('no-transition');
+        wrapper.style.transform = `translateX(${getBaseOffset()}px)`;
+        void wrapper.offsetWidth;
+        wrapper.classList.remove('no-transition');
+      }, 50);
+
+      renderLoveStoryText(0);
+      startLsAutoScroll();
+    }
+
+    function startLsAutoScroll() {
+      stopLsAutoScroll();
+      lsAutoScrollTimer = setInterval(() => {
+        nextLoveStory();
+      }, 6000); // 6 seconds for reading
+    }
+
+    function stopLsAutoScroll() {
+      if (lsAutoScrollTimer) clearInterval(lsAutoScrollTimer);
+    }
+
+    function resetLsAutoScroll() {
+      startLsAutoScroll();
+    }
+
+    let lsTouchStartX = 0;
+    let lsTouchEndX = 0;
+
+    window.handleLsTouchStart = function(e) {
+      lsTouchStartX = e.changedTouches[0].screenX;
+      stopLsAutoScroll();
+    };
+
+    window.handleLsTouchEnd = function(e) {
+      lsTouchEndX = e.changedTouches[0].screenX;
+      startLsAutoScroll();
+      handleLsGesture();
+    };
+
+    function handleLsGesture() {
+      const threshold = 50;
+      if (lsTouchEndX < lsTouchStartX - threshold) {
+        nextLoveStory();
+      }
+      if (lsTouchEndX > lsTouchStartX + threshold) {
+        prevLoveStory();
+      }
+    }
+
+    function getLsStep() {
+      const card = document.querySelector('.ls-card');
+      const cardWidth = card ? card.offsetWidth : (window.innerWidth <= 768 ? 160 : 220);
+      return cardWidth + 24; // width + 1.5rem (24px) gap
+    }
+
+    function getBaseOffset() {
+      const panel = document.querySelector('.ls-carousel-panel');
+      const card = document.querySelector('.ls-card');
+      if (!panel || !card) return 0;
+      const panelWidth = panel.offsetWidth;
+      const cardWidth = card.offsetWidth;
+      const step = cardWidth + 24;
+      return (panelWidth / 2) - (step + cardWidth / 2);
+    }
+
+    function renderLoveStoryText(dataIndex) {
+      const textPanel = document.getElementById("ls-text-panel");
+      const dotsWrapper = document.getElementById("ls-dots");
+      const bgBlur = document.getElementById("ls-bg-blur");
+
+      if (!textPanel) return;
+
+      const current = loveStoryData[dataIndex];
+      if (!current) return;
+
+      if (bgBlur) bgBlur.style.backgroundImage = `url('${current.photo_url || ""}')`;
+
+      textPanel.innerHTML = `
+        <div class="ls-chapter-indicator active">Capítulo ${dataIndex + 1}</div>
+        <h3 class="ls-chapter-title active">${current.title || "Momento Especial"}</h3>
+        <p class="ls-chapter-text active">${current.text || ""}</p>
+      `;
+
+      if (dotsWrapper) {
+        dotsWrapper.innerHTML = loveStoryData.map((_, idx) => `
+            <button class="ls-dot ${idx === dataIndex ? "active" : ""}" onclick="goToLoveStory(${idx})"></button>
+          `).join('');
+      }
+    }
+
+    window.nextLoveStory = function () {
+      if (isLsAnimating || loveStoryData.length === 0) return;
+      isLsAnimating = true;
+      resetLsAutoScroll();
+
+      const wrapper = document.getElementById("ls-cards-wrapper");
+      const step = getLsStep();
+      const baseOffset = getBaseOffset();
+
+      // Shift left by 1 step
+      wrapper.style.transform = `translateX(${baseOffset - step}px)`;
+      wrapper.children[1].classList.remove('active');
+      wrapper.children[2].classList.add('active');
+
+      const nextIndex = parseInt(wrapper.children[2].getAttribute('data-original'));
+      lsCurrentActualIndex = nextIndex;
+      renderLoveStoryText(nextIndex);
+
+      setTimeout(() => {
+        wrapper.appendChild(wrapper.firstElementChild);
+        wrapper.classList.add('no-transition');
+        wrapper.style.transform = `translateX(${baseOffset}px)`;
+        void wrapper.offsetWidth; // force reflow
+        wrapper.classList.remove('no-transition');
+        isLsAnimating = false;
+      }, 600);
+    }
+
+    window.prevLoveStory = function () {
+      if (isLsAnimating || loveStoryData.length === 0) return;
+      isLsAnimating = true;
+      resetLsAutoScroll();
+
+      const wrapper = document.getElementById("ls-cards-wrapper");
+      const step = getLsStep();
+      const baseOffset = getBaseOffset();
+
+      wrapper.insertBefore(wrapper.lastElementChild, wrapper.firstElementChild);
+      wrapper.classList.add('no-transition');
+      wrapper.style.transform = `translateX(${baseOffset - step}px)`;
+
+      wrapper.children[2].classList.remove('active');
+      wrapper.children[1].classList.add('active');
+
+      const prevIndex = parseInt(wrapper.children[1].getAttribute('data-original'));
+      lsCurrentActualIndex = prevIndex;
+      renderLoveStoryText(prevIndex);
+
+      void wrapper.offsetWidth;
+      wrapper.classList.remove('no-transition');
+      wrapper.style.transform = `translateX(${baseOffset}px)`;
+
+      setTimeout(() => {
+        isLsAnimating = false;
+      }, 600);
+    }
+
+    window.goToLoveStory = function (idx) {
+      if (isLsAnimating || idx === lsCurrentActualIndex || loveStoryData.length === 0) return;
+      resetLsAutoScroll();
+
+      const wrapper = document.getElementById("ls-cards-wrapper");
+      wrapper.classList.add('no-transition');
+
+      Array.from(wrapper.children).forEach(c => c.classList.remove('active'));
+
+      // Rotate until children[1] matches idx
+      while (parseInt(wrapper.children[1].getAttribute('data-original')) !== idx) {
+        wrapper.appendChild(wrapper.firstElementChild);
+      }
+
+      wrapper.children[1].classList.add('active');
+      wrapper.style.transform = `translateX(${getBaseOffset()}px)`;
+
+      lsCurrentActualIndex = idx;
+      renderLoveStoryText(idx);
+
+      void wrapper.offsetWidth;
+      wrapper.classList.remove('no-transition');
     }
 
     function renderMap(containerId, location) {

@@ -289,6 +289,19 @@
                     <small style="color:#666; display:block; margin-top:0.3rem;">Pode selecionar várias fotos ao mesmo tempo para o carrossel.</small>
                 </div>
 
+                <div class="form-group" style="margin-top:1rem; background:#f9f9f9; padding:1.5rem; border-radius:15px; border:1px solid #eee;" id="love-story-editor-container">
+                    <h5 style="margin-bottom:1rem; color:var(--jobie-primary); font-size:0.95rem;">A Nossa História (Capítulos)</h5>
+                    <p style="font-size:0.8rem; color:#666; margin-bottom:1rem;">Crie capítulos contando a história dos noivos.</p>
+                    
+                    <div id="love-story-chapters" style="display:flex; flex-direction:column; gap:1rem;">
+                        <!-- Capítulos injetados via JS -->
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top:1rem; width:100%; border:1px dashed #ccc;" onclick="addLoveStoryChapter()">
+                        <i class="fas fa-plus"></i> Adicionar Capítulo
+                    </button>
+                </div>
+
                 <hr style="margin:1.5rem 0; border:none; border-top:1px solid #ddd;">
                 <h4 style="margin-bottom:0.5rem; color:var(--jobie-primary);">Avançado</h4>
                 
@@ -394,6 +407,9 @@
                     </label>
                     <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
                         <input type="checkbox" id="feat-has-ia-story"> História por IA
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+                        <input type="checkbox" id="feat-has-love-story"> A Nossa História
                     </label>
                     <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
                         <input type="checkbox" id="feat-has-couple-dashboard"> Dashboard do Casal
