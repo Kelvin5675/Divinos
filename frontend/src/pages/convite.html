@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap"
     rel="stylesheet" />
 
   <!-- Supabase -->
@@ -657,6 +657,229 @@
       transform: translateY(-42vh) scale(1.1);
     }
 
+    /* ═══════════ ENVELOPE 3D REALISTA ═══════════ */
+    #envelope-3d-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
+    }
+
+    .env-3d-bg {
+      position: absolute;
+      inset: 0;
+      background: #EAE3D9; /* Fundo creme base do ecrã */
+      z-index: 0;
+    }
+
+    .env-3d-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      perspective: 2000px;
+    }
+
+    /* O fundo do envelope interno (ocupa a tela toda) */
+    .env-3d-back {
+      position: absolute;
+      inset: 0;
+      background: #dfd5c5;
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.2);
+      z-index: 1;
+      transition: opacity 1s 2s;
+    }
+
+    /* O Papel com os Nomes */
+    .env-3d-paper {
+      position: absolute;
+      top: 15%;
+      left: 10%;
+      width: 80%;
+      height: 70%;
+      background: #FDFBF7;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1) 4s, opacity 1s 9s;
+    }
+
+    .env-3d-paper-content {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .env-3d-eyebrow {
+      font-family: var(--font-secondary);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #8c8577;
+      margin-bottom: 1rem;
+    }
+
+    .env-3d-names {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      color: #c5a059;
+      line-height: 1.4;
+      padding: 0 10%;
+      word-break: break-word;
+    }
+
+    /* Frente do Envelope (Abas inferiores e laterais) */
+    .env-3d-front {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
+      transition: opacity 1s 2s;
+    }
+
+    .env-3d-flap-left,
+    .env-3d-flap-right {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(135deg, #E6DEC1 0%, #E0D6B6 100%);
+    }
+
+    .env-3d-flap-left {
+      left: 0;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+
+    .env-3d-flap-right {
+      right: 0;
+      clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    }
+
+    .env-3d-flap-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 55vh;
+      background: linear-gradient(0deg, #D4C9A8 0%, #E6DEC1 100%);
+      clip-path: polygon(0 100%, 50% 0, 100% 100%);
+      filter: drop-shadow(0 -5px 15px rgba(0,0,0,0.15));
+    }
+
+    /* Aba Superior (3D Flap) Wrapper para não cortar o selo */
+    .env-3d-flap-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50vh;
+      z-index: 4;
+      transform-origin: top center;
+      transition: transform 6s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s 5s;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.25));
+    }
+
+    .env-3d-flap-top {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #F0E8D0 0%, #EAE0C4 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    /* O Selo na aba superior */
+    .env-3d-seal-wrap {
+      position: absolute;
+      bottom: -30px; /* Metade fora do triângulo */
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.3s;
+      z-index: 5;
+    }
+
+    .env-3d-seal-wrap:hover {
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    .env-3d-seal {
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #8b6508);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+      position: relative;
+      margin: 0 auto 10px auto;
+    }
+
+    .env-3d-seal::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+    }
+
+    .env-3d-seal-initials {
+      font-family: var(--font-secondary);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .env-3d-instruction {
+      color: #fff;
+      font-family: var(--font-primary);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      animation: floatText3D 2s ease-in-out infinite;
+    }
+
+    @keyframes floatText3D {
+      0%, 100% { transform: translateY(0); opacity: 0.8; }
+      50% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── Animação de Abertura 3D ── */
+    .envelope-open-3d .env-3d-flap-wrapper {
+      transform: rotateX(160deg);
+      filter: drop-shadow(0 -10px 15px rgba(0,0,0,0.1));
+    }
+    
+    .envelope-open-3d .env-3d-seal-wrap {
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .envelope-open-3d .env-3d-paper {
+      transform: translateY(-45%) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    
+    .envelope-fade-out {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
     .envelope-content-reveal {
       position: absolute;
       inset: 0;
@@ -940,6 +1163,59 @@
 
     .carousel-item:hover img {
       transform: scale(1.05);
+    }
+
+    /* ── IMAGE LOADING SHIMMER ── */
+    .img-loading-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .img-shimmer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, #1a1a1a 30%, #2a2722 50%, #1a1a1a 70%);
+      background-size: 300% 100%;
+      animation: shimmerGold 1.8s ease-in-out infinite;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: inherit;
+      transition: opacity 0.5s ease;
+    }
+
+    .img-shimmer::after {
+      content: '';
+      width: 28px;
+      height: 28px;
+      border: 2px solid transparent;
+      border-top-color: var(--gold, #c5a059);
+      border-right-color: var(--gold, #c5a059);
+      border-radius: 50%;
+      animation: spinLoader 1s linear infinite;
+      opacity: 0.6;
+    }
+
+    .img-shimmer.loaded {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Versão clara para fundo branco (galeria) */
+    .img-shimmer.light {
+      background: linear-gradient(110deg, #f0ede8 30%, #e8e2d8 50%, #f0ede8 70%);
+      background-size: 300% 100%;
+    }
+
+    @keyframes shimmerGold {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @keyframes spinLoader {
+      to { transform: rotate(360deg); }
     }
 
     /* ── COUNTDOWN ── */
@@ -1727,8 +2003,12 @@
       align-items: center;
       justify-content: flex-start;
       perspective: 800px;
-      transition: transform 0.6s ease;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       width: max-content;
+      will-change: transform;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      transform: translateZ(0);
     }
 
     .ls-cards-wrapper.no-transition {
@@ -1742,9 +2022,12 @@
       overflow: hidden;
       position: relative;
       cursor: pointer;
-      transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
       flex-shrink: 0;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      will-change: transform, opacity, filter;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .ls-card img {
@@ -1752,6 +2035,8 @@
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .ls-card::after {
@@ -1914,10 +2199,12 @@
         height: 230px;
       }
 
-      .ls-nav-arrow {
-        width: 32px;
-        height: 32px;
-        font-size: 0.8rem;
+      .ls-cards-wrapper {
+        transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .ls-card {
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease, filter 0.6s ease, box-shadow 0.6s ease;
       }
 
       .ls-nav-prev {
@@ -2007,6 +2294,41 @@
           <span class="env-v-seal-initials" id="env-v-seal-initials">L&J</span>
         </div>
         <div class="env-v-instruction">Clique para abrir</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ ENVELOPE SCREEN (3D Realista) ═══════════ -->
+  <div id="envelope-3d-screen">
+    <div class="env-3d-bg"></div>
+    <div class="env-3d-wrapper">
+      <!-- Fundo de trás do envelope -->
+      <div class="env-3d-back"></div>
+      
+      <!-- Papel (Carta) dentro do envelope -->
+      <div class="env-3d-paper">
+        <div class="env-3d-paper-content">
+          <div class="env-3d-eyebrow">Bem vindo ao convite de casamento de</div>
+          <div class="env-3d-names" id="env-3d-couple-names">Noiva & Noivo</div>
+        </div>
+      </div>
+      
+      <!-- Abas inferiores e laterais (frente) -->
+      <div class="env-3d-front">
+        <div class="env-3d-flap-left"></div>
+        <div class="env-3d-flap-right"></div>
+        <div class="env-3d-flap-bottom"></div>
+      </div>
+      
+      <!-- Aba superior que levanta (com rotação 3D) -->
+      <div class="env-3d-flap-wrapper">
+        <div class="env-3d-flap-top"></div>
+        <div class="env-3d-seal-wrap" onclick="openInvitation3D()">
+          <div class="env-3d-seal">
+            <span class="env-3d-seal-initials" id="env-3d-seal-initials">L&J</span>
+          </div>
+          <div class="env-3d-instruction">Clique para abrir</div>
+        </div>
       </div>
     </div>
   </div>
@@ -2318,18 +2640,6 @@
           <h3 class="detail-title font-serif">Recepção</h3>
           <p class="detail-main" id="detail-location">—</p>
           <div id="map-container" class="mini-map-container"></div>
-        </div>
-
-        <div class="detail-card reveal delay-400">
-          <div class="detail-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-            </svg>
-          </div>
-          <h3 class="detail-title font-serif">Traje</h3>
-          <p class="detail-main" id="detail-dresscode">Social Elegante</p>
-          <p class="detail-sub">Passeia Completo</p>
         </div>
       </div>
     </section>
@@ -2720,17 +3030,26 @@
 
         // Selecionar o modelo de abertura
         const openingAnimation =
-          invData.editor_type && invData.editor_type.includes("envelope_vertical")
+          invData.editor_type && invData.editor_type.includes("3d_envelope")
+            ? "3d_envelope"
+            : invData.editor_type && invData.editor_type.includes("envelope_vertical")
             ? "envelope_vertical"
             : "palace";
         const screenPalace = document.getElementById("envelope-screen");
         const screenVertical = document.getElementById(
           "envelope-vertical-screen",
         );
-        if (openingAnimation === "envelope_vertical") {
+        const screen3D = document.getElementById("envelope-3d-screen");
+        
+        if (openingAnimation === "3d_envelope") {
           if (screenPalace) screenPalace.remove();
+          if (screenVertical) screenVertical.remove();
+        } else if (openingAnimation === "envelope_vertical") {
+          if (screenPalace) screenPalace.remove();
+          if (screen3D) screen3D.remove();
         } else {
           if (screenVertical) screenVertical.remove();
+          if (screen3D) screen3D.remove();
         }
 
         const bride = invData.bride_name || det.bride_name;
@@ -2752,11 +3071,17 @@
             "env-v-seal-initials",
           );
           if (sealInitialsV) sealInitialsV.textContent = initials;
+          const sealInitials3D = document.getElementById("env-3d-seal-initials");
+          if (sealInitials3D) sealInitials3D.textContent = initials;
         }
 
         // Nomes do casal no envelope vertical
         const envVNames = document.getElementById("env-v-couple-names");
         if (envVNames) envVNames.textContent = coupleName;
+        
+        // Nomes do casal no envelope 3D
+        const env3DNames = document.getElementById("env-3d-couple-names");
+        if (env3DNames) env3DNames.textContent = coupleName;
 
         // Nomes (Moved from Hero to Invitation Content per user request)
         const heroNames = document.getElementById("hero-couple-names");
@@ -3046,7 +3371,8 @@
       if (cardsWrapper) {
         cardsWrapper.innerHTML = renderArray.map((ch, idx) => `
             <div class="ls-card ${idx === 1 ? "active" : ""}" data-original="${loveStoryData.findIndex(orig => orig.title === ch.title && orig.text === ch.text)}">
-              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" />
+              <div class="img-shimmer" id="ls-shimmer-${idx}"></div>
+              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" onload="this.previousElementSibling.classList.add('loaded')" />
             </div>
           `).join('');
       }
@@ -3171,7 +3497,7 @@
         void wrapper.offsetWidth; // force reflow
         wrapper.classList.remove('no-transition');
         isLsAnimating = false;
-      }, 600);
+      }, window.innerWidth <= 768 ? 750 : 600);
     }
 
     window.prevLoveStory = function () {
@@ -3200,7 +3526,7 @@
 
       setTimeout(() => {
         isLsAnimating = false;
-      }, 600);
+      }, window.innerWidth <= 768 ? 750 : 600);
     }
 
     window.goToLoveStory = function (idx) {
@@ -3312,13 +3638,17 @@
       // Duplicate for infinite scroll
       const allImages = [...images, ...images];
 
-      allImages.forEach((src) => {
+      allImages.forEach((src, i) => {
         const item = document.createElement("div");
         item.className = "carousel-item";
+        const shimmer = document.createElement("div");
+        shimmer.className = "img-shimmer light";
+        item.appendChild(shimmer);
         const img = document.createElement("img");
         img.src = src;
         img.alt = "Momento";
         img.loading = "lazy";
+        img.onload = function() { shimmer.classList.add('loaded'); };
         item.appendChild(img);
         track.appendChild(item);
       });
@@ -3484,6 +3814,52 @@
             );
         }
       }, 2800);
+    }
+
+    function openInvitation3D() {
+      if (isOpen) return;
+
+      logDebug("Iniciando sequência de abertura Envelope 3D...");
+      const screen = document.getElementById("envelope-3d-screen");
+
+      // Passo 1: Iniciar abertura 3D (aba sobe, selo some, papel sobe)
+      screen.classList.add("envelope-open-3d");
+
+      // Passo 2: Aguardar animações iniciais terminarem e esconder envelope
+      setTimeout(() => {
+        screen.classList.add("envelope-fade-out");
+      }, 9500);
+
+      // Passo 3: Revelar convite
+      setTimeout(() => {
+        isOpen = true;
+        logDebug("Revelando conteúdo principal (3D)...");
+
+        // Esconder tela do envelope por completo
+        screen.style.display = 'none';
+
+        // Mostrar conteúdo principal
+        const inv = document.getElementById("invitation-content");
+        inv.classList.add("visible");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Ativar observador de revelação
+        setTimeout(setupRevealObserver, 200);
+
+        // Iniciar música
+        const audio = document.getElementById("wedding-audio");
+        if (audio && audio.src) {
+          audio
+            .play()
+            .then(() => {
+              isMusicPlaying = true;
+              document.getElementById("music-icon-play").style.display = "none";
+              document.getElementById("music-icon-pause").style.display = "";
+            })
+            .catch((e) => console.warn("Autoplay bloqueado pelo browser:", e));
+        }
+      }, 10500);
     }
 
     // ═══════════ REVEAL OBSERVER ═══════════

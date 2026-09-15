@@ -365,7 +365,15 @@ async function startCreateInvitation(orderId) {
     if (!order) return;
     if (!confirm(`Criar convite para ${order.couple_names}?`)) return;
     
-    const slug = (order.couple_names || 'convite').toLowerCase().replace(/&/g, 'e').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-');
+    let slug = (order.couple_names || 'convite').toLowerCase().replace(/&/g, 'e').replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    if (!slug) slug = 'convite';
+    
+    // Check for duplicates
+    const { data: existingSlug } = await sbClient.from('invitations').select('id').eq('slug', slug).maybeSingle();
+    if (existingSlug) {
+        slug = `${slug}-${Math.random().toString(36).slice(-4)}`;
+    }
+    
     const pwd = Math.random().toString(36).slice(-8).toUpperCase();
     const origin = window.location.origin;
     const guestLink = `https://divinosgraffic.co.mz/c/${slug}`;
@@ -577,7 +585,9 @@ function setupForms() {
 
         try {
             const id = document.getElementById('inv-id').value;
-            const slug = document.getElementById('inv-slug').value;
+            let rawSlug = document.getElementById('inv-slug').value;
+            let slug = rawSlug.toLowerCase().replace(/&/g, 'e').replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            if (!slug) slug = 'convite';
 
             // Função helper para upload
             async function uploadFile(file, folder) {
@@ -657,11 +667,16 @@ function setupForms() {
             let savedInvId = id;
             if (id) {
                 const { error } = await sbClient.from('invitations').update(data).eq('id', id);
-                if (error) throw error;
+                if (error) {
+                    if (error.code === '23505') throw new Error("Este slug já existe! Por favor, escolha outro.");
+                    throw error;
+                }
             } else {
-                // Gerar sufixo único para evitar slug duplicado
-                const uniqueSuffix = Date.now().toString(36) + Math.random().toString(36).slice(-4);
-                data.slug = data.slug ? `${data.slug}-${uniqueSuffix}` : uniqueSuffix;
+                // Verificar duplicado em vez de forçar um sufixo gigante
+                const { data: existingSlug } = await sbClient.from('invitations').select('id').eq('slug', data.slug).maybeSingle();
+                if (existingSlug) {
+                    data.slug = `${data.slug}-${Math.random().toString(36).slice(-4)}`;
+                }
                 const pwd = Math.random().toString(36).slice(-8).toUpperCase();
                 data.couple_password = pwd;
                 data.status = 'active';
