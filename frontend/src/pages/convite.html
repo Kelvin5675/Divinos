@@ -1145,6 +1145,7 @@
     }
 
     .carousel-item {
+      position: relative;
       width: 250px;
       aspect-ratio: 3/4;
       flex-shrink: 0;
@@ -3372,7 +3373,7 @@
         cardsWrapper.innerHTML = renderArray.map((ch, idx) => `
             <div class="ls-card ${idx === 1 ? "active" : ""}" data-original="${loveStoryData.findIndex(orig => orig.title === ch.title && orig.text === ch.text)}">
               <div class="img-shimmer" id="ls-shimmer-${idx}"></div>
-              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" onload="this.previousElementSibling.classList.add('loaded')" />
+              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" onload="this.previousElementSibling.classList.add('loaded')" onerror="this.previousElementSibling.classList.add('loaded')" />
             </div>
           `).join('');
       }
@@ -3645,10 +3646,10 @@
         shimmer.className = "img-shimmer light";
         item.appendChild(shimmer);
         const img = document.createElement("img");
+        img.onload = function() { shimmer.classList.add('loaded'); };
         img.src = src;
         img.alt = "Momento";
-        img.loading = "lazy";
-        img.onload = function() { shimmer.classList.add('loaded'); };
+        if (img.complete) { shimmer.classList.add('loaded'); }
         item.appendChild(img);
         track.appendChild(item);
       });
