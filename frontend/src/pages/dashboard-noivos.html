@@ -853,6 +853,62 @@
                 <h1 class="page-title font-serif">Presentes</h1>
                 <button class="pdf-btn" onclick="exportGiftsToPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
             </div>
+            
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-head">
+                    <div class="card-title font-serif">Configurar Dados de Recebimento</div>
+                </div>
+                <div class="card-body">
+                    <p style="font-size:.82rem; color:var(--muted); margin-bottom:1.5rem;"><i class="fas fa-info-circle"></i> Preencha os dados abaixo para os convidados saberem como enviar os presentes. Deixe em branco os que não possuir.</p>
+                    
+                    <h4 style="margin-bottom: 1rem; color: var(--gold); font-family: 'Playfair Display', serif;">Detalhes Bancários</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nome do Banco (Ex: BIM, BCI)</label>
+                            <input type="text" class="form-input" id="gift-config-bank-name" placeholder="BIM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Titular da Conta</label>
+                            <input type="text" class="form-input" id="gift-config-bank-holder" placeholder="Nome do Titular">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Número da Conta</label>
+                            <input type="text" class="form-input" id="gift-config-bank-acc" placeholder="123456789">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">NIB</label>
+                            <input type="text" class="form-input" id="gift-config-bank-nib" placeholder="0000 0000 0000 0000 0000 0">
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 1rem; margin-bottom: 1rem; color: var(--gold); font-family: 'Playfair Display', serif;">Carteiras Móveis</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" style="color: #ed1c24;">M-Pesa (Número)</label>
+                            <input type="text" class="form-input" id="gift-config-mpesa-num" placeholder="84... / 85...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">M-Pesa (Titular)</label>
+                            <input type="text" class="form-input" id="gift-config-mpesa-name" placeholder="Nome Registado">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" style="color: #f7931e;">e-Mola (Número)</label>
+                            <input type="text" class="form-input" id="gift-config-emola-num" placeholder="86... / 87...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">e-Mola (Titular)</label>
+                            <input type="text" class="form-input" id="gift-config-emola-name" placeholder="Nome Registado">
+                        </div>
+                    </div>
+
+                    <button class="save-btn" onclick="saveGiftConfig()"><i class="fas fa-save"></i> Guardar Dados</button>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-head">
                     <div class="card-title font-serif">Lista de Presentes</div>
@@ -1037,6 +1093,12 @@
 
 <!-- Supabase scripts moved to head -->
 <script>
+// Definir API_BASE_URL para chamadas ao backend
+const _hn = window.location.hostname;
+window.API_BASE_URL = (_hn === 'localhost' || _hn === '127.0.0.1' || _hn.startsWith('192.') || _hn.startsWith('10.'))
+    ? `http://${_hn}:8000/api/v1`
+    : 'https://divinos-backend.onrender.com/api/v1';
+
 let invitationData = null;
 let rsvpChart = null;
 const sb = window.supabaseClient;
@@ -1307,6 +1369,29 @@ async function deleteMsg(id) {
 async function loadGifts() {
     if (!invitationData) return;
     try {
+        // Carregar config do JSON `gift_details`
+        const { data: detArr } = await sb.from('invitations_details').select('gift_details').eq('invitation_id', invitationData.id).limit(1);
+        if (detArr && detArr.length > 0) {
+            const config = detArr[0].gift_details || {};
+            if (config.bank) {
+                document.getElementById('gift-config-bank-name').value = config.bank.name || '';
+                document.getElementById('gift-config-bank-holder').value = config.bank.account_name || '';
+                document.getElementById('gift-config-bank-acc').value = config.bank.account_number || '';
+                document.getElementById('gift-config-bank-nib').value = config.bank.nib || '';
+            }
+            if (config.mobile_wallets) {
+                if (config.mobile_wallets.mpesa) {
+                    document.getElementById('gift-config-mpesa-num').value = config.mobile_wallets.mpesa.number || '';
+                    document.getElementById('gift-config-mpesa-name').value = config.mobile_wallets.mpesa.name || '';
+                }
+                if (config.mobile_wallets.emola) {
+                    document.getElementById('gift-config-emola-num').value = config.mobile_wallets.emola.number || '';
+                    document.getElementById('gift-config-emola-name').value = config.mobile_wallets.emola.name || '';
+                }
+            }
+        }
+
+        // Carregar tabela de presentes
         const { data: gifts } = await sb.from('invitations_gifts').select('*').eq('invitation_id', invitationData.id).order('created_at', { ascending: false });
         const tbody = document.getElementById('gifts-tbody');
         if (!gifts?.length) { tbody.innerHTML = '<tr><td colspan="4"><div class="empty"><i class="fas fa-gift"></i> Nenhum presente ainda.</div></td></tr>'; return; }
@@ -1319,6 +1404,51 @@ async function loadGifts() {
             </tr>
         `).join('');
     } catch(e) { console.error(e); }
+}
+
+async function saveGiftConfig() {
+    if (!invitationData) return;
+    const btn = document.querySelector('#tab-gifts .save-btn');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    btn.disabled = true;
+
+    try {
+        const giftConfig = {
+            active: true,
+            bank: {
+                name: document.getElementById('gift-config-bank-name').value.trim(),
+                account_name: document.getElementById('gift-config-bank-holder').value.trim(),
+                account_number: document.getElementById('gift-config-bank-acc').value.trim(),
+                nib: document.getElementById('gift-config-bank-nib').value.trim(),
+            },
+            mobile_wallets: {
+                mpesa: {
+                    number: document.getElementById('gift-config-mpesa-num').value.trim(),
+                    name: document.getElementById('gift-config-mpesa-name').value.trim()
+                },
+                emola: {
+                    number: document.getElementById('gift-config-emola-num').value.trim(),
+                    name: document.getElementById('gift-config-emola-name').value.trim()
+                }
+            }
+        };
+
+        // Usar RPC com SECURITY DEFINER para ignorar RLS
+        const { error } = await sb.rpc('update_gift_details', {
+            p_invitation_id: invitationData.id,
+            p_gift_details: giftConfig
+        });
+
+        if (error) throw error;
+        showToast('Dados de recebimento atualizados!');
+    } catch (e) {
+        console.error(e);
+        showToast('Erro ao guardar os dados.', 'danger');
+    } finally {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+    }
 }
 
 // ══ MURAL ═════════════════════════════════════════

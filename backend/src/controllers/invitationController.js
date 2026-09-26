@@ -498,6 +498,40 @@ const togglePrivacyMode = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+// Atualizar configurações de presentes (bypass RLS)
+const updateGiftDetails = async (req, res) => {
+    try {
+        const { invitation_id } = req.params;
+        const { gift_details } = req.body;
+        
+        // Verifica se a tabela details tem uma linha para este convite, senão insere ou atualiza
+        const { data: existing } = await supabase
+            .from('invitations_details')
+            .select('id')
+            .eq('invitation_id', invitation_id)
+            .limit(1);
+
+        let error;
+        if (existing && existing.length > 0) {
+            const resUpdate = await supabase
+                .from('invitations_details')
+                .update({ gift_details })
+                .eq('invitation_id', invitation_id);
+            error = resUpdate.error;
+        } else {
+            const resInsert = await supabase
+                .from('invitations_details')
+                .insert({ invitation_id, gift_details });
+            error = resInsert.error;
+        }
+
+        if (error) throw error;
+        res.status(200).json({ message: 'Configurações de presentes atualizadas com sucesso.' });
+    } catch (error) {
+        console.error('Erro no updateGiftDetails:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
 module.exports = {
@@ -513,5 +547,6 @@ module.exports = {
     getSmartList,
     addToSmartListBulk,
     removeFromSmartList,
-    togglePrivacyMode
+    togglePrivacyMode,
+    updateGiftDetails
 };

@@ -844,7 +844,7 @@ async function editPlan(id) {
         'has_save_the_date', 'has_ia_story', 'has_love_story', 'has_couple_dashboard',
         'has_stats', 'has_pre_wedding_video', 'has_live_stream',
         'has_table_map', 'has_guest_uploads', 'has_custom_playlist',
-        'has_time_capsule', 'has_guest_list_security'
+        'has_time_capsule', 'has_guest_list_security', 'has_gift_list'
     ];
     
     boolFeats.forEach(f => {
@@ -872,7 +872,7 @@ window.savePlan = async function(event) {
             'has_save_the_date', 'has_ia_story', 'has_love_story', 'has_couple_dashboard',
             'has_stats', 'has_pre_wedding_video', 'has_live_stream',
             'has_table_map', 'has_guest_uploads', 'has_custom_playlist',
-            'has_time_capsule', 'has_guest_list_security'
+            'has_time_capsule', 'has_guest_list_security', 'has_gift_list'
         ];
         
         const features = {};

@@ -20,4 +20,6 @@ router.post('/:invitation_id/smart-list/bulk', invitationController.addToSmartLi
 router.delete('/smart-list/:id', invitationController.removeFromSmartList);
 router.patch('/:invitation_id/privacy', invitationController.togglePrivacyMode);
 
+router.patch('/:invitation_id/gifts', invitationController.updateGiftDetails);
+
 module.exports = router;
