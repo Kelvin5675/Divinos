@@ -1753,7 +1753,19 @@ async function toggleStream() {
         // Se o livekit-client.umd.js estiver carregado
         if (typeof LivekitClient !== 'undefined' && livekitUrl) {
             currentRoom = new LivekitClient.Room({ adaptiveStream: true, dynacast: true });
+            
+            // Listener para atualizar espectadores
+            const updateDashViewers = () => {
+                const countEl = document.getElementById('dash-viewers-count');
+                if (countEl && currentRoom) {
+                    countEl.textContent = currentRoom.remoteParticipants.size;
+                }
+            };
+            currentRoom.on(LivekitClient.RoomEvent.ParticipantConnected, updateDashViewers);
+            currentRoom.on(LivekitClient.RoomEvent.ParticipantDisconnected, updateDashViewers);
+            
             await currentRoom.connect(livekitUrl, token);
+            updateDashViewers(); // Primeira atualização
             
             // Publicar tracks locais (que já tinhamos) para o LiveKit
             if (!localStream) await requestCamera();

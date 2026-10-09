@@ -297,15 +297,40 @@ class DivinosInviteEngine {
         const msg = document.getElementById('rsvp-msg').value.trim();
 
         try {
-            const { error } = await window.supabaseClient.from('invitations_rsvp').insert({
-                invitation_id: this.invitationId,
-                guest_name: name,
-                is_attending: presence === 'yes',
-                message: msg,
-                adult_count: presence === 'yes' ? 1 : 0
-            });
+            const sb = window.supabaseClient;
 
-            if (error) throw error;
+            // Verificar se este convidado já confirmou (prevenir duplicados)
+            const { data: existing } = await sb
+                .from('invitations_rsvp')
+                .select('id')
+                .eq('invitation_id', this.invitationId)
+                .ilike('guest_name', name)
+                .limit(1);
+
+            if (existing && existing.length > 0) {
+                // Já existe — actualizar a confirmação existente
+                const { error } = await sb
+                    .from('invitations_rsvp')
+                    .update({
+                        is_attending: presence === 'yes',
+                        message: msg,
+                        adult_count: presence === 'yes' ? 1 : 0
+                    })
+                    .eq('id', existing[0].id);
+
+                if (error) throw error;
+            } else {
+                // Primeira confirmação — inserir novo registo
+                const { error } = await sb.from('invitations_rsvp').insert({
+                    invitation_id: this.invitationId,
+                    guest_name: name,
+                    is_attending: presence === 'yes',
+                    message: msg,
+                    adult_count: presence === 'yes' ? 1 : 0
+                });
+
+                if (error) throw error;
+            }
 
             document.getElementById('divinos-rsvp-form').style.display = 'none';
             document.getElementById('divinos-rsvp-success').style.display = 'block';
