@@ -1,15 +1,38 @@
 export default async function handler(req, res) {
   try {
-    // Pegar o caminho original que o cliente tentou acessar (ex: /pages/convite.html)
     const url = new URL(req.url, `http://${req.headers.host}`);
     const targetPath = url.pathname + url.search;
-    
-    // Construir a URL alvo apontando para o IP do DirectAdmin
+    const host = req.headers.host || 'divinos.vercel.app';
+
+    // 1. Rota de Metadados Open Graph para WhatsApp e Redes Sociais (/c/:slug)
+    // Permite que divinos.vercel.app/c/:slug exiba foto de capa, títulos e descrição no WhatsApp
+    // de forma 100% autônoma, mesmo se o DirectAdmin estiver com problemas de hospedagem.
+    if (url.pathname.startsWith('/c/')) {
+      const slug = url.pathname.replace(/^\/c\//, '').split('/')[0].split('?')[0];
+      if (slug) {
+        try {
+          const metaRes = await fetch(`https://divinos-backend.onrender.com/api/v1/invitations/meta/${encodeURIComponent(slug)}`);
+          if (metaRes.ok) {
+            let html = await metaRes.text();
+            
+            // Garantir que a URL de destino e og:url usem o domínio atual da requisição (Vercel)
+            html = html.replace(/https:\/\/divinosgraffic\.co\.mz/g, `https://${host}`);
+            html = html.replace(/https:\/\/divinos\.vercel\.app/g, `https://${host}`);
+            // Garantir redirecionamento preciso para o arquivo do convite
+            html = html.replace(/\/pages\/convite\?slug=/g, '/pages/convite.html?slug=');
+
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            return res.status(200).send(html);
+          }
+        } catch (metaErr) {
+          console.warn('Fallback para proxy DirectAdmin ao obter meta:', metaErr.message);
+        }
+      }
+    }
+
+    // 2. Proxy reverso para o DirectAdmin para as restantes rotas e arquivos
     const targetUrl = `http://37.27.116.83${targetPath}`;
-    
-    // A MAGIA ACONTECE AQUI:
-    // Fazemos o pedido ao DirectAdmin, mas forçamos o cabeçalho 'Host' 
-    // para que o servidor partilhado saiba qual site carregar!
     const response = await fetch(targetUrl, {
       headers: {
         'Host': 'divinosgraffic.co.mz',
@@ -18,16 +41,12 @@ export default async function handler(req, res) {
       }
     });
 
-    // Copiar o tipo de conteúdo (essencial para carregar imagens e CSS corretamente)
     const contentType = response.headers.get('content-type');
     if (contentType) {
       res.setHeader('Content-Type', contentType);
     }
 
-    // Copiar o status (ex: 200 OK, 404 Not Found)
     res.status(response.status);
-
-    // Enviar a resposta de volta ao cliente como Buffer (suporta imagens e texto)
     const buffer = await response.arrayBuffer();
     res.send(Buffer.from(buffer));
 

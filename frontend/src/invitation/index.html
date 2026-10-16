@@ -44,9 +44,13 @@
         <p>Este convite pode ter sido removido ou o link está incorreto. Verifique com quem lhe enviou.</p>
     </div>
 
+    <!-- Supabase SDK para identificação dinâmica do template -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+
     <script>
-        (function () {
-            // Extract slug from URL — supports /invitation/?slug=name OR /invitation/name
+        (async function () {
+            // Extrair slug da URL — suporta /invitation/?slug=nome OU /invitation/nome
             let slug = new URLSearchParams(window.location.search).get('slug');
 
             if (!slug) {
@@ -62,7 +66,45 @@
                 return;
             }
 
-            // Redirect to the new luxury template with the same slug
+            // Identificação dinâmica de template configurado no Supabase
+            try {
+                const sb = window.supabaseClient;
+                if (sb) {
+                    const { data, error } = await sb
+                        .from('invitations')
+                        .select('editor_type, custom_html')
+                        .eq('slug', slug)
+                        .maybeSingle();
+
+                    if (data && data.editor_type) {
+                        const et = data.editor_type;
+                        let tId = 'convite-principal';
+
+                        if (et.includes(',')) {
+                            const parts = et.split(',');
+                            if (parts[2]) tId = parts[2].trim();
+                        } else {
+                            tId = et.trim();
+                        }
+
+                        // Roteamento específico para cada template
+                        if (tId === 'premium-editorial') {
+                            window.location.replace('/templates/premium-editorial.html?slug=' + encodeURIComponent(slug));
+                            return;
+                        } else if (tId === 'royal-luxury') {
+                            window.location.replace('/templates/royal-luxury.html?slug=' + encodeURIComponent(slug));
+                            return;
+                        } else if (tId === 'minimalist-elegance') {
+                            window.location.replace('/templates/minimalist-elegance.html?slug=' + encodeURIComponent(slug));
+                            return;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("[Router] Erro ao identificar template do convite:", err);
+            }
+
+            // Destino Oficial Padrão (convite.html - Principal Clássico)
             window.location.replace('/pages/convite.html?slug=' + encodeURIComponent(slug));
         })();
     </script>

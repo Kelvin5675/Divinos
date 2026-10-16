@@ -7,9 +7,121 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/admin_invitation/css/jobie-admin.css?v=6">
+    <link rel="stylesheet" href="/admin_invitation/css/jobie-admin.css?v=7">
     <style>
         body { opacity: 0; transition: opacity 0.3s ease; }
+
+        /* Miniaturas da Galeria (Nossos Momentos) */
+        .gallery-thumbs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .gallery-thumb-card {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gallery-thumb-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .gallery-thumb-img-wrapper {
+            width: 100%;
+            height: 100px;
+            position: relative;
+            background: #f1f5f9;
+            overflow: hidden;
+        }
+
+        .gallery-thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: object-position 0.1s ease;
+        }
+
+        .thumb-delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 2;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .thumb-delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.15);
+        }
+
+        .thumb-crop-control {
+            padding: 6px 8px;
+            background: #fafafa;
+            border-top: 1px solid #edf2f7;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .thumb-crop-label {
+            font-size: 0.68rem;
+            color: #64748b;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .thumb-crop-slider {
+            width: 100%;
+            height: 4px;
+            accent-color: #c5a059;
+            cursor: pointer;
+        }
+
+        /* Card de Foto do Love Story */
+        .lovestory-photo-preview-box {
+            position: relative;
+            width: 100%;
+            max-width: 260px;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            margin-top: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .lovestory-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: object-position 0.1s ease;
+        }
     </style>
     <!-- Immediate Auth Guard -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -221,14 +333,34 @@
                     <div class="form-group"><label class="form-label">Nome do Noivo</label><input type="text" id="inv-groom-name" class="form-control" placeholder="Ex: Jalimo"></div>
                     <div class="form-group"><label class="form-label">Pais da Noiva</label><input type="text" id="inv-bride-parents" class="form-control" placeholder="Ex: João e Maria (Em memória)"></div>
                     <div class="form-group"><label class="form-label">Pais do Noivo</label><input type="text" id="inv-groom-parents" class="form-control" placeholder="Ex: Carlos e Ana"></div>
-                    <div class="form-group"><label class="form-label">Local Recepção</label><input type="text" id="inv-event-location" class="form-control" placeholder="Ex: Quinta de Santo António"></div>
-                    <div class="form-group"><label class="form-label">Hora Recepção</label><input type="time" id="inv-event-time" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Local Igreja (Opcional)</label><input type="text" id="inv-church-location" class="form-control" placeholder="Ex: Paróquia de São Paulo"></div>
-                    <div class="form-group"><label class="form-label">Local Registro Civil (Opcional)</label><input type="text" id="inv-civil-location" class="form-control" placeholder="Ex: 1º Cartório Notarial"></div>
+                    <!-- Registo Civil -->
+                    <div class="form-group"><label class="form-label">Local Registo Civil (Opcional)</label><input type="text" id="inv-civil-location" class="form-control" placeholder="Ex: 1º Cartório Notarial de Maputo"></div>
+                    <div class="form-group"><label class="form-label">Hora Registo Civil</label><input type="time" id="inv-civil-time" class="form-control"></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label class="form-label">Link do Mapa (Registo Civil - Opcional)</label><input type="url" id="inv-civil-map-url" class="form-control" placeholder="https://maps.google.com/?q=..."></div>
+
+                    <!-- Cerimónia Religiosa / Igreja -->
+                    <div class="form-group"><label class="form-label">Local Igreja / Templo (Opcional)</label><input type="text" id="inv-church-location" class="form-control" placeholder="Ex: Catedral de São Paulo"></div>
+                    <div class="form-group"><label class="form-label">Hora da Cerimónia Religiosa</label><input type="time" id="inv-church-time" class="form-control"></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label class="form-label">Link do Mapa (Igreja - Opcional)</label><input type="url" id="inv-church-map-url" class="form-control" placeholder="https://maps.google.com/?q=..."></div>
+
+                    <!-- Local da Recepção / Copo d'Água -->
+                    <div class="form-group"><label class="form-label">Local da Celebração / Recepção</label><input type="text" id="inv-event-location" class="form-control" placeholder="Ex: Quinta Real de Santo António"></div>
+                    <div class="form-group"><label class="form-label">Hora da Celebração / Recepção</label><input type="time" id="inv-event-time" class="form-control"></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label class="form-label">Link do Mapa (Recepção - Opcional)</label><input type="url" id="inv-event-map-url" class="form-control" placeholder="https://maps.google.com/?q=..."></div>
                 </div>
                 <div class="form-group" style="margin-top:1rem;">
                     <label class="form-label">Mensagem do Casal (Amor)</label>
                     <textarea id="inv-couple-message" class="form-control" rows="2" placeholder="O amor é o nosso bem maior..."></textarea>
+                </div>
+                <div class="form-grid" style="margin-top:1rem;">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label"><i class="fas fa-bible" style="color:var(--jobie-primary);"></i> Sagrada Escritura (Versículo Bíblico)</label>
+                        <textarea id="inv-bible-verse" class="form-control" rows="2" placeholder="Ex: O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. Tudo sofre, tudo crê..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Referência da Sagrada Escritura (Citação)</label>
+                        <input type="text" id="inv-bible-reference" class="form-control" placeholder="Ex: 1 Coríntios 13:4, 7-8">
+                    </div>
                 </div>
                 <hr style="margin:1.5rem 0; border:none; border-top:1px solid #ddd;">
                 <h4 style="margin-bottom:0.5rem; color:var(--jobie-primary);">Mídia (Upload)</h4>
@@ -282,11 +414,26 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top:1rem;">
-                    <label class="form-label">Fotos da Galeria (Nossos Momentos)</label>
-                    <input type="file" id="inv-gallery-files" class="form-control" accept="image/*" multiple style="margin-bottom:0.5rem;">
-                    <input type="text" id="inv-gallery-urls" class="form-control" placeholder="Ou cole links separados por vírgula...">
-                    <small style="color:#666; display:block; margin-top:0.3rem;">Pode selecionar várias fotos ao mesmo tempo para o carrossel.</small>
+                <div class="form-group" style="margin-top:1rem; background:#f9f9f9; padding:1.25rem; border-radius:15px; border:1px solid #eee;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                        <label class="form-label" style="margin:0; font-weight:700; color:var(--jobie-primary);">
+                            <i class="fas fa-images"></i> Fotos da Galeria (Nossos Momentos)
+                        </label>
+                        <span id="gallery-count-badge" style="font-size:0.75rem; background:#c5a059; color:#fff; padding:2px 8px; border-radius:12px; font-weight:600;">0 fotos</span>
+                    </div>
+                    <p style="font-size:0.8rem; color:#666; margin-bottom:0.75rem;">
+                        Faça upload de várias fotos ou cole links. Veja as miniaturas em tempo real, ajuste o enquadramento (cima/baixo) para não cortar o casal e apague no botão "X".
+                    </p>
+                    
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                        <input type="file" id="inv-gallery-files" class="form-control" accept="image/*" multiple style="flex:1; min-width:200px;" onchange="handleAdminGalleryFilesSelected(event)">
+                        <input type="text" id="inv-gallery-urls" class="form-control" placeholder="Ou cole links separados por vírgula e aperte Enter..." style="flex:1; min-width:200px;" onkeydown="handleAdminGalleryUrlEnter(event)">
+                    </div>
+
+                    <!-- Container de Miniaturas da Galeria com Botão X e Ajuste de Enquadramento -->
+                    <div id="admin-gallery-thumbnails" class="gallery-thumbs-grid">
+                        <!-- Miniaturas injetadas dinamicamente via JS -->
+                    </div>
                 </div>
 
                 <div class="form-group" style="margin-top:1rem; background:#f9f9f9; padding:1.5rem; border-radius:15px; border:1px solid #eee;" id="love-story-editor-container">
@@ -317,10 +464,106 @@
                 <div class="form-group" style="margin-top:1rem;">
                     <label class="form-label">Tipo Editor</label>
                     <select id="inv-editor-type" class="form-control" onchange="toggleCodeEditor()">
-                        <option value="template">Template</option>
+                        <option value="template">Template Automático</option>
                         <option value="manual">Manual (HTML)</option>
                     </select>
                 </div>
+                
+                <div class="form-group" id="template-selector-container" style="margin-top:1rem;">
+                    <label class="form-label">Escolher Template (Se Automático)</label>
+                    <select id="inv-template-id" class="form-control">
+                        <option value="premium-editorial" selected>Premium Editorial Cutout (Template Principal)</option>
+                        <option value="convite-principal">Convite Oficial Clássico (convite.html - Principal)</option>
+                        <option value="royal-luxury">Royal Luxury & Ouro Imperial (Novo Luxo Cerimonioso)</option>
+                        <option value="modelo-ouro-floral">Modelo Ouro Floral (Padrão)</option>
+                        <option value="minimalist-elegance">Minimalist Elegance</option>
+                        <option value="eternity-3d">Eternity 3D Luxury</option>
+                        <option value="exemplo-canva">Exemplo Canva (Básico)</option>
+                    </select>
+                </div>
+
+                <!-- Ativar / Desativar Chuva de Pétalas -->
+                <div class="form-group" id="petals-toggle-container" style="margin-top:1rem; background:#f9f9f9; padding:1rem 1.25rem; border-radius:12px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                    <div>
+                        <label class="form-label" for="inv-petals-enabled" style="margin-bottom:0.2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--jobie-text, #333);">
+                            <i class="fas fa-spa" style="color:#d88c80; font-size:1.1rem;"></i> Chuva de Pétalas Flutuantes
+                        </label>
+                        <small style="color:#666; display:block; font-size:0.8rem;">Adiciona pétalas de rosas caindo suavemente pela tela para um toque romântico no convite.</small>
+                    </div>
+                    <label style="position:relative; display:inline-block; width:50px; height:26px; margin:0; flex-shrink:0; cursor:pointer;">
+                        <input type="checkbox" id="inv-petals-enabled" checked style="opacity:0; width:0; height:0;">
+                        <span id="petals-switch-slider" style="position:absolute; cursor:pointer; inset:0; background-color:#c5a059; transition:0.3s; border-radius:34px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2);">
+                            <span id="petals-switch-knob" style="position:absolute; content:''; height:20px; width:20px; left:26px; bottom:3px; background-color:white; transition:0.3s; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Ativar / Desativar Anéis com Nomes Gravados -->
+                <div class="form-group" id="rings-toggle-container" style="margin-top:0.75rem; background:#f9f9f9; padding:1rem 1.25rem; border-radius:12px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                    <div>
+                        <label class="form-label" for="inv-rings-enabled" style="margin-bottom:0.2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--jobie-text, #333);">
+                            <i class="fas fa-ring" style="color:#c5a059; font-size:1.1rem;"></i> Anéis com Nomes Gravados
+                        </label>
+                        <small style="color:#666; display:block; font-size:0.8rem;">Exibe alianças de casamento com os nomes dos noivos gravados na seção de bênçãos do convite.</small>
+                    </div>
+                    <label style="position:relative; display:inline-block; width:50px; height:26px; margin:0; flex-shrink:0; cursor:pointer;">
+                        <input type="checkbox" id="inv-rings-enabled" checked style="opacity:0; width:0; height:0;">
+                        <span id="rings-switch-slider" style="position:absolute; cursor:pointer; inset:0; background-color:#c5a059; transition:0.3s; border-radius:34px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2);">
+                            <span id="rings-switch-knob" style="position:absolute; content:''; height:20px; width:20px; left:26px; bottom:3px; background-color:white; transition:0.3s; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Ativar / Desativar Programa Multi-Dias (Lobolo, Casamento, Xiguiane) -->
+                <div class="form-group" id="program-toggle-container" style="margin-top:0.75rem; background:#f9f9f9; padding:1.25rem; border-radius:12px; border:1px solid #eee;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                        <div>
+                            <label class="form-label" for="inv-program-enabled" style="margin-bottom:0.2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--jobie-text, #333);">
+                                <i class="fas fa-calendar-alt" style="color:#c5a059; font-size:1.1rem;"></i> Programa / Cronograma Multi-Dias
+                            </label>
+                            <small style="color:#666; display:block; font-size:0.8rem;">Exibe o cronograma em zigue-zague animado com dias de Lobolo, Casamento e Xiguiane. Desative para convites simples (ex: convite para amigos sem eventos tradicionais restritos à família).</small>
+                        </div>
+                        <label style="position:relative; display:inline-block; width:50px; height:26px; margin:0; flex-shrink:0; cursor:pointer;">
+                            <input type="checkbox" id="inv-program-enabled" checked style="opacity:0; width:0; height:0;">
+                            <span id="program-switch-slider" style="position:absolute; cursor:pointer; inset:0; background-color:#c5a059; transition:0.3s; border-radius:34px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2);">
+                                <span id="program-switch-knob" style="position:absolute; content:''; height:20px; width:20px; left:26px; bottom:3px; background-color:white; transition:0.3s; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Editor dinâmico de etapas do programa -->
+                    <div id="program-editor-details" style="margin-top:1.25rem; border-top:1px dashed #ddd; padding-top:1rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                            <span style="font-size:0.85rem; font-weight:600; color:#444;">Etapas / Dias do Cronograma</span>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="loadDefaultProgramSteps()" style="font-size:0.75rem; padding:4px 8px;">
+                                <i class="fas fa-magic"></i> Preencher Padrão (Lobolo, Casamento, Xiguiane)
+                            </button>
+                        </div>
+                        <div id="program-steps-list" style="display:flex; flex-direction:column; gap:0.75rem;">
+                            <!-- Etapas injetadas via JS -->
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:0.75rem; width:100%; border:1px dashed #ccc;" onclick="addProgramStep()">
+                            <i class="fas fa-plus"></i> Adicionar Etapa ao Cronograma
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ativar / Desativar Mural de Mensagens dos Convidados -->
+                <div class="form-group" id="messages-toggle-container" style="margin-top:0.75rem; background:#f9f9f9; padding:1rem 1.25rem; border-radius:12px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                    <div>
+                        <label class="form-label" for="inv-messages-enabled" style="margin-bottom:0.2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--jobie-text, #333);">
+                            <i class="fas fa-comments" style="color:#c5a059; font-size:1.1rem;"></i> Mural de Votos & Mensagens dos Convidados
+                        </label>
+                        <small style="color:#666; display:block; font-size:0.8rem;">Exibe o mural com as mensagens carinhosas deixadas pelos convidados. Desative se o cliente preferir um convite sem exibição de mensagens públicas.</small>
+                    </div>
+                    <label style="position:relative; display:inline-block; width:50px; height:26px; margin:0; flex-shrink:0; cursor:pointer;">
+                        <input type="checkbox" id="inv-messages-enabled" checked style="opacity:0; width:0; height:0;">
+                        <span id="messages-switch-slider" style="position:absolute; cursor:pointer; inset:0; background-color:#c5a059; transition:0.3s; border-radius:34px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2);">
+                            <span id="messages-switch-knob" style="position:absolute; content:''; height:20px; width:20px; left:26px; bottom:3px; background-color:white; transition:0.3s; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+                        </span>
+                    </label>
+                </div>
+
                 <div id="code-editor-container" style="display:none; margin-top:1rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
                         <label>HTML Personalizado</label>
@@ -346,15 +589,113 @@
     </div>
 
     <div class="modal-overlay" id="inviteLinksModal">
-        <div class="modal-box" style="text-align:center;">
-            <div class="modal-header"><h3>Links Gerados</h3><button class="modal-close" onclick="hideModal('inviteLinksModal')">&times;</button></div>
-            <div style="background:#f3f4f6; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                <label class="form-label">Código Acesso</label>
-                <div id="generated-access-code" style="font-size:1.5rem; font-weight:700; letter-spacing:3px;"></div>
+        <div class="modal-box" style="max-width:680px; width:95%; max-height:92vh; overflow-y:auto; padding:1.8rem; text-align:left;">
+            <div class="modal-header" style="margin-bottom:1.2rem; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:1.35rem; font-weight:700; color:#1f2937;">
+                    <i class="fas fa-link" style="color:var(--jobie-primary); margin-right:8px;"></i> Links do Convite & Acessos
+                </h3>
+                <button class="modal-close" onclick="hideModal('inviteLinksModal')">&times;</button>
             </div>
-            <div class="form-group" style="text-align:left;"><label class="form-label">Link Público</label><input type="text" id="generated-guest-link" readonly class="form-control"></div>
-            <div class="form-group" style="text-align:left;"><label class="form-label">Link Noivos</label><input type="text" id="generated-couple-link" readonly class="form-control"></div>
-            <button class="btn btn-primary" style="width:100%;" onclick="sendLinksViaWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar WhatsApp</button>
+
+            <!-- Código de Acesso Único -->
+            <div style="background:linear-gradient(135deg, #f8fafc 0%, #ede9fe 100%); padding:1.2rem 1.5rem; border-radius:14px; border:1px solid #ddd6fe; margin-bottom:1.4rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                    <label class="form-label" style="margin-bottom:4px; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:#6b21a8; font-weight:700;">
+                        <i class="fas fa-key"></i> Código de Acesso / Senha Única
+                    </label>
+                    <div id="generated-access-code" style="font-size:1.6rem; font-weight:800; letter-spacing:4px; color:#4c1d95; font-family:monospace;"></div>
+                    <small style="color:#64748b; font-size:0.8rem;">Esta mesma senha funciona no painel dos noivos em ambos os domínios.</small>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="copyAccessCode(this)" style="font-weight:600;">
+                    <i class="fas fa-copy"></i> Copiar Senha
+                </button>
+            </div>
+
+            <!-- Inputs legados ocultos para manter compatibilidade total com scripts existentes -->
+            <input type="hidden" id="generated-guest-link">
+            <input type="hidden" id="generated-couple-link">
+
+            <!-- Card 1: Domínio Principal -->
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:1.2rem; margin-bottom:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid #f1f5f9; padding-bottom:0.6rem;">
+                    <span style="font-weight:700; color:#0f172a; font-size:0.95rem;">
+                        <i class="fas fa-globe" style="color:#2563eb; margin-right:6px;"></i> Domínio Principal (DirectAdmin)
+                    </span>
+                    <span class="badge" style="background:#dbeafe; color:#1e40af; font-size:0.75rem; padding:4px 10px; border-radius:20px; font-weight:600;">divinosgraffic.co.mz</span>
+                </div>
+
+                <!-- Link Convidados Principal -->
+                <div class="form-group" style="margin-bottom:0.9rem;">
+                    <label class="form-label" style="font-size:0.82rem; font-weight:600; color:#475569;">
+                        <i class="fas fa-envelope-open-text" style="color:#059669; margin-right:5px;"></i> Link para Convidados (WhatsApp com Foto de Capa)
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="generated-guest-link-main" readonly class="form-control" style="background:#f8fafc; font-size:0.88rem;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="copyInputText('generated-guest-link-main', this)" style="white-space:nowrap; padding:0 14px;">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Link Noivos Principal -->
+                <div class="form-group" style="margin-bottom:0.2rem;">
+                    <label class="form-label" style="font-size:0.82rem; font-weight:600; color:#475569;">
+                        <i class="fas fa-user-lock" style="color:#7c3aed; margin-right:5px;"></i> Link do Painel dos Noivos
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="generated-couple-link-main" readonly class="form-control" style="background:#f8fafc; font-size:0.88rem;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="copyInputText('generated-couple-link-main', this)" style="white-space:nowrap; padding:0 14px;">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Domínio Reserva (Vercel) -->
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:1.2rem; margin-bottom:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid #f1f5f9; padding-bottom:0.6rem;">
+                    <span style="font-weight:700; color:#0f172a; font-size:0.95rem;">
+                        <i class="fas fa-shield-alt" style="color:#059669; margin-right:6px;"></i> Domínio de Reserva / Alternativo (Vercel Cloud)
+                    </span>
+                    <span class="badge" style="background:#dcfce7; color:#166534; font-size:0.75rem; padding:4px 10px; border-radius:20px; font-weight:600;">divinos.vercel.app</span>
+                </div>
+
+                <!-- Link Convidados Reserva -->
+                <div class="form-group" style="margin-bottom:0.9rem;">
+                    <label class="form-label" style="font-size:0.82rem; font-weight:600; color:#475569;">
+                        <i class="fas fa-envelope-open-text" style="color:#059669; margin-right:5px;"></i> Link para Convidados (WhatsApp com Foto de Capa)
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="generated-guest-link-backup" readonly class="form-control" style="background:#f8fafc; font-size:0.88rem;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="copyInputText('generated-guest-link-backup', this)" style="white-space:nowrap; padding:0 14px;">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Link Noivos Reserva -->
+                <div class="form-group" style="margin-bottom:0.2rem;">
+                    <label class="form-label" style="font-size:0.82rem; font-weight:600; color:#475569;">
+                        <i class="fas fa-user-lock" style="color:#7c3aed; margin-right:5px;"></i> Link do Painel dos Noivos
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="generated-couple-link-backup" readonly class="form-control" style="background:#f8fafc; font-size:0.88rem;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="copyInputText('generated-couple-link-backup', this)" style="white-space:nowrap; padding:0 14px;">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Envio via WhatsApp -->
+            <div class="invite-links-actions" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <button type="button" class="btn btn-primary" style="padding:0.85rem 1rem; font-weight:600; font-size:0.92rem;" onclick="sendLinksViaWhatsApp('couple')">
+                    <i class="fab fa-whatsapp"></i> Enviar aos Noivos
+                </button>
+                <button type="button" class="btn btn-secondary" style="padding:0.85rem 1rem; font-weight:600; font-size:0.92rem;" onclick="sendLinksViaWhatsApp('guests')">
+                    <i class="fab fa-whatsapp"></i> Enviar aos Convidados
+                </button>
+            </div>
         </div>
     </div>
 
@@ -452,6 +793,6 @@
         </div>
     </div>
 
-    <script src="/admin_invitation/js/app.js?v=56"></script>
+    <script src="/admin_invitation/js/app.js?v=57"></script>
 </body>
 </html>

@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel:wght@600;700&display=swap"
     rel="stylesheet" />
 
   <!-- Supabase -->
@@ -1109,6 +1109,221 @@
         font-size: 1rem;
         margin-top: 2.5rem;
         padding: 0 1rem;
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       PERGAMINHO IMPERIAL (SAGRADA ESCRITURA) & ANÉIS DE COMPROMISSO
+       ════════════════════════════════════════════════════════════════ */
+    .ceremonial-parchment-scroll {
+      position: relative;
+      max-width: 720px;
+      width: 100%;
+      margin: 3.5rem auto 0;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.98) 0%, rgba(252, 248, 240, 0.98) 60%, rgba(246, 239, 227, 0.98) 100%);
+      border-radius: 24px;
+      padding: 50px 48px 40px;
+      box-shadow: 
+        0 25px 60px -15px rgba(45, 38, 30, 0.12),
+        0 6px 20px rgba(197, 160, 89, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+        inset 0 0 35px rgba(197, 160, 89, 0.06);
+      border: 1px solid rgba(197, 160, 89, 0.38);
+      outline: 1px solid rgba(197, 160, 89, 0.2);
+      outline-offset: -9px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      text-align: center;
+    }
+
+    .ceremonial-parchment-scroll:hover {
+      transform: translateY(-4px);
+      box-shadow: 
+        0 32px 75px -15px rgba(45, 38, 30, 0.16),
+        0 10px 28px rgba(197, 160, 89, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .ceremonial-parchment-scroll::before,
+    .ceremonial-parchment-scroll::after {
+      content: '';
+      position: absolute;
+      width: 88%;
+      height: 10px;
+      left: 6%;
+      background: linear-gradient(90deg, transparent 0%, rgba(197, 160, 89, 0.38) 50%, transparent 100%);
+      border-radius: 50%;
+      filter: blur(1px);
+    }
+    .ceremonial-parchment-scroll::before { top: 5px; }
+    .ceremonial-parchment-scroll::after { bottom: 5px; }
+
+    .parchment-seal-wax {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #F0D59D 0%, #C5A059 65%, #8C6A28 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 1rem;
+      box-shadow: 0 8px 20px rgba(140, 106, 40, 0.38), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+      border: 2px solid #FFFFFF;
+      cursor: default;
+    }
+
+    .parchment-tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #9A7730;
+      margin-bottom: 20px;
+      margin-top: 8px;
+    }
+
+    .parchment-biblical-verse {
+      font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.2rem, 2.3vw, 1.5rem);
+      font-style: italic;
+      line-height: 1.72;
+      color: #2D2620;
+      margin-bottom: 20px;
+      padding: 0 16px;
+      position: relative;
+    }
+
+    .parchment-verse-quote-left,
+    .parchment-verse-quote-right {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      line-height: 0;
+      vertical-align: -0.28em;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+    .parchment-verse-quote-left { margin-right: 6px; }
+    .parchment-verse-quote-right { margin-left: 6px; }
+
+    .parchment-reference-citation {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #8A7B6D;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .parchment-vow-footnote {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: #A3844D;
+      border-top: 1px dashed rgba(197, 160, 89, 0.35);
+      padding-top: 14px;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .ceremonial-parchment-scroll {
+        padding: 38px 20px 28px;
+        border-radius: 18px;
+        outline-offset: -6px;
+        margin-top: 2.5rem;
+      }
+      .parchment-biblical-verse {
+        padding: 0 4px;
+        font-size: 1.15rem;
+        line-height: 1.6;
+      }
+    }
+
+    /* Anéis de Compromisso com Nomes Gravados */
+    .rings-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 4rem auto 0;
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      text-align: center;
+    }
+    .rings-container.rings-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .rings-wrapper {
+      position: relative;
+      width: 290px;
+      height: 290px;
+      max-width: 80vw;
+      margin: 0 auto;
+    }
+    .rings-wrapper img.rings-base-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 40px rgba(197, 160, 89, 0.35))
+              drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+    }
+    .rings-svg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .rings-engraved-text {
+      font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+      font-size: 70px;
+      font-weight: 700;
+      fill: #261302;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      filter: url(#ring-engraved-depth);
+    }
+    .rings-label-text {
+      margin-top: 18px;
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      opacity: 0.85;
+      text-align: center;
+    }
+    .rings-separator-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 12px auto 0;
+    }
+    @media (max-width: 768px) {
+      .rings-wrapper {
+        width: 250px;
+        height: 250px;
+      }
+      .rings-container {
+        margin-top: 2.5rem;
+      }
+      .rings-label-text {
+        font-size: 0.95rem;
       }
     }
 
@@ -2888,6 +3103,58 @@
           a testemunhar o seu elance Matrimonial
         </div>
       </div>
+
+      <!-- ═══ PERGAMINHO IMPERIAL (SAGRADA ESCRITURA) ═══ -->
+      <div class="ceremonial-parchment-scroll reveal delay-400">
+        <!-- Selo de Cera Dourado / Medalhão -->
+        <div class="parchment-seal-wax">
+          <i class="fa-solid fa-feather-pointed"></i>
+        </div>
+
+        <div class="parchment-tagline">
+          <i class="fa-solid fa-book-bible"></i>
+          <span>Sagrada Escritura</span>
+        </div>
+
+        <blockquote class="parchment-biblical-verse" id="parchment-verse-text">
+          <span class="parchment-verse-quote-left">“</span>O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. Tudo sofre, tudo crê, tudo espera, tudo suporta. O amor jamais acaba.<span class="parchment-verse-quote-right">”</span>
+        </blockquote>
+
+        <cite class="parchment-reference-citation" id="parchment-verse-ref">1 Coríntios 13:4, 7-8</cite>
+
+        <div class="parchment-vow-footnote">
+          <i class="fa-solid fa-heart" style="font-size:0.75rem;"></i>
+          <span>Unidos pelo amor, guiados pela fé e abençoados para sempre</span>
+        </div>
+      </div>
+
+      <!-- ═══ ANÉIS DE COMPROMISSO COM NOMES GRAVADOS ═══ -->
+      <div class="rings-container reveal delay-500" id="rings-container" style="display:none;">
+        <div class="rings-wrapper">
+          <img class="rings-base-image" src="../assets/images/aneis.png" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='/assets/images/aneis.png';}" alt="Alianças de Casamento">
+          <svg class="rings-svg-overlay" viewBox="0 0 2000 2000" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="ring-engraved-depth" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="2" dy="4" stdDeviation="1.5" flood-color="rgba(255, 250, 220, 0.8)" />
+                <feDropShadow dx="-1" dy="-2" stdDeviation="2" flood-color="rgba(0, 0, 0, 0.95)" />
+              </filter>
+              <!-- Curvas calibradas na face frontal dos anéis -->
+              <path id="leftRingPath" d="M 320 1180 Q 600 1260 880 1250" fill="none"/>
+              <path id="rightRingPath" d="M 1160 1250 Q 1380 1315 1580 1260" fill="none"/>
+            </defs>
+            <!-- Nome do Noivo gravado no anel esquerdo -->
+            <text class="rings-engraved-text">
+              <textPath href="#leftRingPath" startOffset="50%" text-anchor="middle" id="ring-groom-name">NOIVO</textPath>
+            </text>
+            <!-- Nome da Noiva gravado no anel direito -->
+            <text class="rings-engraved-text">
+              <textPath href="#rightRingPath" startOffset="50%" text-anchor="middle" id="ring-bride-name">NOIVA</textPath>
+            </text>
+          </svg>
+        </div>
+        <span class="rings-label-text">Unidos para Sempre</span>
+        <div class="rings-separator-line"></div>
+      </div>
     </section>
 
     <!-- ═══════════ LOVE STORY CAROUSEL ═══════════ -->
@@ -3947,6 +4214,12 @@
         `;
         document.head.appendChild(style);
 
+        // Inicializar Sagrada Escritura (Versículo Bíblico)
+        syncBiblicalVerseData();
+
+        // Inicializar Anéis de Compromisso com Nomes Gravados
+        initRings();
+
         // Inicializar Love Story se estiver ativada
         initLoveStory();
 
@@ -3954,6 +4227,78 @@
         logDebug("Erro Global em populateStaticData: " + globalErr.message);
         console.error(globalErr);
       }
+    }
+
+    // ═══════════ SAGRADA ESCRITURA (VERSÍCULO BÍBLICO) ═══════════
+    function syncBiblicalVerseData() {
+      try {
+        const det = (invData.details && invData.details[0]) ? invData.details[0] : (invData.details || {});
+        const tl = det.tables_layout || {};
+
+        const verseText = tl.bible_verse || det.bible_verse || invData.bible_verse;
+        const verseRef = tl.bible_reference || det.bible_reference || invData.bible_reference;
+
+        const textEl = document.getElementById("parchment-verse-text");
+        const refEl = document.getElementById("parchment-verse-ref");
+
+        if (textEl && verseText && verseText.trim() !== '') {
+          textEl.innerHTML = `<span class="parchment-verse-quote-left">“</span>${verseText.trim()}<span class="parchment-verse-quote-right">”</span>`;
+        }
+        if (refEl && verseRef && verseRef.trim() !== '') {
+          refEl.textContent = verseRef.trim();
+        }
+      } catch (e) {
+        logDebug("Erro em syncBiblicalVerseData: " + e.message);
+      }
+    }
+
+    // ═══════════ ANÉIS DE COMPROMISSO COM NOMES GRAVADOS ═══════════
+    function shouldEnableRings() {
+      const params = new URLSearchParams(window.location.search);
+      const rParam = params.get('rings');
+      if (rParam === '0' || rParam === 'false' || rParam === 'no') return false;
+      if (rParam === '1' || rParam === 'true' || rParam === 'yes') return true;
+
+      const det = (invData.details && invData.details[0]) ? invData.details[0] : (invData.details || {});
+      const tl = det.tables_layout || {};
+      if (typeof tl.rings_enabled !== 'undefined') return !!tl.rings_enabled;
+      if (typeof invData.rings_enabled !== 'undefined') return !!invData.rings_enabled;
+      return true; // Padrão: ativo
+    }
+
+    function updateRingNames() {
+      try {
+        const det = (invData.details && invData.details[0]) ? invData.details[0] : (invData.details || {});
+        const bride = invData.bride_name || det.bride_name;
+        const groom = invData.groom_name || det.groom_name;
+        const ringGroom = document.getElementById("ring-groom-name");
+        const ringBride = document.getElementById("ring-bride-name");
+
+        if (ringGroom) {
+          const gFirst = groom ? groom.trim().split(' ')[0].toUpperCase() : 'NOIVO';
+          ringGroom.textContent = gFirst;
+        }
+        if (ringBride) {
+          const bFirst = bride ? bride.trim().split(' ')[0].toUpperCase() : 'NOIVA';
+          ringBride.textContent = bFirst;
+        }
+      } catch (e) {
+        logDebug("Erro em updateRingNames: " + e.message);
+      }
+    }
+
+    function initRings() {
+      const container = document.getElementById("rings-container");
+      if (!container) return;
+      if (!shouldEnableRings()) {
+        container.style.display = "none";
+        return;
+      }
+      updateRingNames();
+      container.style.display = "flex";
+      setTimeout(() => {
+        container.classList.add("rings-visible");
+      }, 350);
     }
 
     // ═══════════ LOVE STORY ═══════════
@@ -3992,12 +4337,15 @@
 
       const cardsWrapper = document.getElementById("ls-cards-wrapper");
       if (cardsWrapper) {
-        cardsWrapper.innerHTML = renderArray.map((ch, idx) => `
+        cardsWrapper.innerHTML = renderArray.map((ch, idx) => {
+          const alignY = (typeof ch.photo_align !== 'undefined' && ch.photo_align !== null) ? ch.photo_align : 50;
+          return `
             <div class="ls-card ${idx === 1 ? "active" : ""}" data-original="${loveStoryData.findIndex(orig => orig.title === ch.title && orig.text === ch.text)}">
               <div class="img-shimmer" id="ls-shimmer-${idx}"></div>
-              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" />
+              <img src="${ch.photo_url || ""}" alt="${ch.title || ""}" style="object-position: center ${alignY}%;" />
             </div>
-          `).join('');
+          `;
+        }).join('');
 
         // Handle image loading manually to guarantee it fires
         const imgs = cardsWrapper.querySelectorAll('img');
@@ -4225,6 +4573,8 @@
         invData.details && invData.details[0]
           ? invData.details[0]
           : invData.details || {};
+      const tl = det.tables_layout || {};
+      const galleryAligns = tl.gallery_aligns || det.gallery_aligns || [];
       let images = [];
 
       // Use cover first
@@ -4232,7 +4582,8 @@
         invData.cover_photo_url || det.cover_photo_url || det.image_url;
       if (coverUrl) {
         logDebug("Cover Photo detectada: " + coverUrl);
-        images.push(coverUrl);
+        const coverAlign = window.innerWidth <= 768 ? (invData.cover_align_mobile ?? 50) : (invData.cover_align_desktop ?? 50);
+        images.push({ src: coverUrl, alignY: coverAlign });
 
         // Atualizar também a foto de fundo do Hero se existir
         const heroBg = document.getElementById("hero-bg");
@@ -4254,23 +4605,29 @@
 
         if (Array.isArray(gallery) && gallery.length > 0) {
           logDebug("Gallery URLs detectadas: " + gallery.length);
-          images = images.concat(gallery);
+          gallery.forEach((gItem, gIdx) => {
+            const src = typeof gItem === 'object' && gItem !== null ? gItem.url : gItem;
+            let alignY = 50;
+            if (typeof gItem === 'object' && gItem !== null && gItem.align_y !== undefined) {
+              alignY = gItem.align_y;
+            } else if (galleryAligns && galleryAligns[gIdx] !== undefined) {
+              alignY = galleryAligns[gIdx];
+            }
+            if (src) images.push({ src, alignY });
+          });
         }
       }
 
       // Fallback to stock photos ONLY if empty
       if (images.length === 0) {
         images = [
-          "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=500&h=700&fit=crop",
-          "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=700&fit=crop",
-          "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&h=700&fit=crop",
-          "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500&h=700&fit=crop",
-          "https://images.unsplash.com/photo-1583939411023-14783179e581?w=500&h=700&fit=crop",
-          "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=500&h=700&fit=crop",
+          { src: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=500&h=700&fit=crop", alignY: 50 },
+          { src: "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=700&fit=crop", alignY: 50 },
+          { src: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&h=700&fit=crop", alignY: 50 },
+          { src: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500&h=700&fit=crop", alignY: 50 },
+          { src: "https://images.unsplash.com/photo-1583939411023-14783179e581?w=500&h=700&fit=crop", alignY: 50 },
+          { src: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=500&h=700&fit=crop", alignY: 50 },
         ];
-      } else {
-        // Remove exact duplicates (e.g. cover photo also in gallery)
-        images = [...new Set(images)];
       }
 
       // Ensure we have enough items for a smooth infinite scroll loop
@@ -4282,7 +4639,7 @@
       // Duplicate for infinite scroll animation
       const allImages = [...displayImages, ...displayImages];
 
-      allImages.forEach((src, i) => {
+      allImages.forEach((imgObj, i) => {
         const item = document.createElement("div");
         item.className = "carousel-item";
         const shimmer = document.createElement("div");
@@ -4290,8 +4647,9 @@
         item.appendChild(shimmer);
         const img = document.createElement("img");
         img.onload = function() { shimmer.classList.add('loaded'); };
-        img.src = src;
+        img.src = imgObj.src;
         img.alt = "Momento";
+        img.style.objectPosition = `center ${imgObj.alignY}%`;
         if (img.complete) { shimmer.classList.add('loaded'); }
         item.appendChild(img);
         track.appendChild(item);
@@ -4397,6 +4755,7 @@
 
         // Ativar observador de revelação
         setTimeout(setupRevealObserver, 200);
+        setTimeout(initRings, 400);
 
         // Iniciar música
         const audio = document.getElementById("wedding-audio");
@@ -4441,6 +4800,7 @@
 
         // Ativar observador de revelação
         setTimeout(setupRevealObserver, 200);
+        setTimeout(initRings, 400);
 
         // Iniciar música
         const audio = document.getElementById("wedding-audio");
@@ -4490,6 +4850,7 @@
 
         // Ativar observador de revelação
         setTimeout(setupRevealObserver, 200);
+        setTimeout(initRings, 400);
 
         // Iniciar música
         const audio = document.getElementById("wedding-audio");

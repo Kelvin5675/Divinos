@@ -32,6 +32,7 @@ body {
     color: var(--jobie-text);
     display: flex;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
 }
 
@@ -551,6 +552,12 @@ tr:last-child td { border-bottom: none; }
 }
 
 /* Forms */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
 .form-group {
     margin-bottom: 1.5rem;
     text-align: left;
@@ -679,14 +686,252 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     background: #A7F3D0;
 }
 
-/* Responsive Dashboard Layout */
-@media (max-width: 1200px) {
-    .dashboard-grid { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+/* ========================================================
+   RESPONSIVIDADE COMPLETA E MOBILE DRAWER (TODOS OS DISPOSITIVOS)
+   ======================================================== */
+
+/* Botão Hambúrguer Mobile */
+.menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    color: var(--jobie-primary);
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
 }
 
+.menu-toggle:hover {
+    background: #EDE9FE;
+    color: #6D28D9;
+    border-color: #DDD6FE;
+}
+
+/* Overlay Escuro com Desfoque ao Abrir Menu Lateral */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(17, 24, 39, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Tabelas Fluidas com Rolagem Macia */
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+}
+
+table {
+    min-width: 580px;
+}
+
+/* 1. Telas Médias / Desktops Pequenos */
+@media (max-width: 1200px) {
+    .dashboard-grid { 
+        grid-template-columns: 1fr; 
+    }
+    .stats-grid { 
+        grid-template-columns: repeat(2, 1fr) !important; 
+    }
+}
+
+/* 2. Tablets / iPads (<= 992px) */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: inline-flex;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -290px;
+        top: 0;
+        bottom: 0;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 1000;
+        box-shadow: 10px 0 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .main-wrapper {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem;
+    }
+}
+
+/* 3. Celulares e Smartphones (<= 768px) */
 @media (max-width: 768px) {
-    .sidebar { position: fixed; left: -280px; }
-    .sidebar.active { left: 0; }
-    .stats-grid { grid-template-columns: 1fr; }
+    /* Topbar */
+    .topbar {
+        padding: 0.75rem 1rem;
+        height: auto;
+        min-height: 64px;
+        gap: 0.75rem;
+    }
+
+    .topbar-left {
+        gap: 0.75rem;
+    }
+
+    .topbar-left h1 {
+        font-size: 1.25rem;
+    }
+
+    .topbar-search {
+        max-width: 180px;
+        padding: 0 0.85rem;
+    }
+
+    .topbar-search input {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    .header-actions {
+        gap: 0.5rem;
+    }
+
+    .icon-badge {
+        width: 38px;
+        height: 38px;
+    }
+
+    .header-user {
+        padding-left: 0.75rem;
+        margin-left: 0.25rem;
+    }
+
+    .user-name {
+        font-size: 0.85rem;
+    }
+
+    .user-role {
+        display: none;
+    }
+
+    /* Área Principal */
+    .main-content {
+        padding: 1rem 0.75rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .stat-card {
+        padding: 1.15rem;
+        border-radius: 16px;
+        gap: 1rem;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+        border-radius: 10px;
+    }
+
+    .stat-info h3 {
+        font-size: 1.5rem;
+    }
+
+    /* Cards */
+    .card {
+        padding: 1.15rem;
+        border-radius: 18px;
+        margin-bottom: 1.15rem;
+    }
+
+    .card-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.15rem;
+    }
+
+    .card-header h3 {
+        font-size: 1.05rem;
+    }
+
+    /* Formulários e Modais */
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem;
+    }
+
+    .modal-box {
+        width: 95% !important;
+        max-width: 95% !important;
+        padding: 1.35rem !important;
+        border-radius: 18px !important;
+        max-height: 92vh !important;
+        max-height: 92dvh !important;
+    }
+
+    .modal-header {
+        margin-bottom: 1.25rem !important;
+    }
+
+    .modal-header h3 {
+        font-size: 1.15rem !important;
+    }
+
+    /* Botões */
+    .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.88rem;
+    }
+}
+
+/* 4. Celulares Pequenos (<= 520px) */
+@media (max-width: 520px) {
+    .topbar-search {
+        display: none;
+    }
+
+    .topbar-left h1 {
+        font-size: 1.1rem;
+    }
+
+    .modal-box {
+        padding: 1.1rem 0.9rem !important;
+    }
+
+    .invite-links-actions {
+        grid-template-columns: 1fr !important;
+    }
 }

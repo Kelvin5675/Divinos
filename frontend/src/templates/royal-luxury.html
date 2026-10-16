@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Boaventura &amp; Carla — Convite de Casamento Real | Royal Luxury</title>
+
+    <!-- Divinos Core / Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+
+    <!-- FontAwesome 6 Pro/Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tipografia Romântica & Real de Casamento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- LiveKit Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
+
+    <style>
+        /* ════════════════════════════════════════════════════════════════
+           PALETA DE CORES: OURO IMPERIAL & LINHO REAL (ZERO GENÉRICO)
+           ════════════════════════════════════════════════════════════════ */
+        :root {
+            --bg-parchment: #FAF7F2;
+            --bg-card: #FFFFFF;
+            --emerald-deep: #142820;
+            --emerald-card: #1C332A;
+            --emerald-soft: #2E4C3F;
+            
+            /* Ouro Real Metálico */
+            --gold-primary: #C5A059;
+            --gold-light: #E8D5A3;
+            --gold-dark: #8C6D31;
+            --gold-foil: linear-gradient(135deg, #ECC880 0%, #B88B4A 45%, #F5DEB3 70%, #9D742F 100%);
+            --gold-border: rgba(197, 160, 89, 0.45);
+            
+            /* Textos e Tipografia */
+            --text-title: #22201D;
+            --text-body: #555047;
+            --text-muted: #8F887D;
+            --text-light: #FCFBF7;
+
+            /* Tipografia */
+            --font-script: 'Great Vibes', cursive;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-royal: 'Cinzel Decorative', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            background-color: var(--bg-parchment);
+            color: var(--text-body);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
+        }
+
+        /* Bloqueio de scroll enquanto o envelope estiver fechado */
+        body.envelope-locked {
+            overflow: hidden !important;
+            height: 100vh;
+        }
+
+        /* ════════════════════════════════════════════════════════════════
+           1. ENVELOPE CERIMONIOSO REALISTA COM SELO DE CERA 3D
+           ════════════════════════════════════════════════════════════════ */
+        #envelope-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: radial-gradient(circle at center, #264336 0%, #112019 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+        }
+        #envelope-stage.opened {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .envelope-3d-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 1.45;
+            perspective: 1600px;
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+        }
+
+        /* Corpo do Envelope */
+        .envelope-body {
+            position: absolute;
+            inset: 0;
+            background: #F4EFE6;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(197, 160, 89, 0.35);
+        }
+
+        /* Textura sutil de papel de linho */
+        .envelope-body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(235,225,210,0.8) 100%);
+            pointer-events: none;
+        }
+
+        /* Abas laterais e inferiores do envelope */
+        .envelope-pocket {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            clip-path: polygon(0% 0%, 50% 50%, 100% 0%, 100% 100%, 0% 100%);
+            background: linear-gradient(180deg, #EFE8DC 0%, #E6DDCF 100%);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 2px solid var(--gold-border);
+        }
+
+        /* Cartão de Carta que sobe do envelope */
+        .envelope-letter {
+            position: absolute;
+            top: 8%;
+            left: 5%;
+            right: 5%;
+            bottom: 8%;
+            background: #FFFFFF;
+            border-radius: 8px;
+            border: 1px solid var(--gold-border);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .letter-monogram {
+            font-family: var(--font-royal);
+            font-size: 1.8rem;
+            color: var(--gold-primary);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .letter-couple-names {
+            font-family: var(--font-script);
+            font-size: 2.2rem;
+            color: var(--text-title);
+            line-height: 1.1;
+        }
+        .letter-wedding-date {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            color: var(--gold-dark);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* Aba Superior Dobrável */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            z-index: 10;
+            transform-origin: top center;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            background: linear-gradient(180deg, #F9F5EC 0%, #E9DFCFA0 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Estado Aberto do Envelope */
+        .envelope-3d-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        .envelope-3d-wrapper.open .envelope-letter {
+            transform: translateY(-40%);
+        }
+
+        /* Selo de Cera 3D em Ouro / Vinho */
+        .wax-seal-btn {
+            position: absolute;
+            top: 54%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #D4AF37 0%, #9D742F 70%, #5E4317 100%);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .wax-seal-btn::before {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px dashed rgba(212, 175, 55, 0.5);
+            animation: rotateSeal 20s linear infinite;
+        }
+        @keyframes rotateSeal {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .wax-seal-btn:hover {
+            transform: translate(-50%, -50%) scale(1.08);
+            box-shadow: 0 14px 40px rgba(212, 175, 55, 0.5);
+        }
+        .wax-initials {
+            font-family: var(--font-royal);
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+        }
+
+        .seal-touch-hint {
+            position: absolute;
+            bottom: -55px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulseHint 2s infinite ease-in-out;
+        }
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 1; transform: translateX(-50%) translateY(-3px); }
+        }
+
+        /* ════════════════════════════════════════════════════════════════
+           2. PÉTALAS EM QUEDA & BRILHO MÁGICO (PARTÍCULAS ROMÂNTICAS)
+           ════════════════════════════════════════════════════════════════ */
+        .petal {
+            position: fixed;
+            top: -30px;
+            z-index: 999;
+            width: 14px;
+            height: 20px;
+            background: linear-gradient(135deg, #FBE8E4 0%, #E8B9AF 60%, #D8A096 100%);
+            border-radius: 80% 20% 70% 30%;
+            opacity: 0.75;
+            pointer-events: none;
+            animation: petalDrift linear infinite;
+        }
+        @keyframes petalDrift {
+            0% {
+                transform: translateY(-30px) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            15% { opacity: 0.85; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(105vh) rotate(420deg) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════════
+           3. ESTRUTURA DO CONVITE: LUXO IMPERIAL & DETALHES DE OURO
+           ════════════════════════════════════════════════════════════════ */
+        .invitation-canvas {
+            position: relative;
+            max-width: 900px;
+            margin: 32px auto;
+            background: var(--bg-card);
+            border: 1px solid var(--gold-border);
+            border-radius: 28px;
+            box-shadow: 0 25px 80px rgba(35, 45, 40, 0.08), 0 4px 20px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            padding: 70px 48px;
+        }
+
+        @media (max-width: 768px) {
+            .invitation-canvas {
+                margin: 0;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                padding: 40px 18px 80px;
+                box-shadow: none;
+            }
+        }
+
+        /* Moldura Dupla Dourada nos Cantos */
+        .gold-frame-corner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .corner-tl { top: 16px; left: 16px; border-top: 2px solid var(--gold-primary); border-left: 2px solid var(--gold-primary); }
+        .corner-tr { top: 16px; right: 16px; border-top: 2px solid var(--gold-primary); border-right: 2px solid var(--gold-primary); }
+        .corner-bl { bottom: 16px; left: 16px; border-bottom: 2px solid var(--gold-primary); border-left: 2px solid var(--gold-primary); }
+        .corner-br { bottom: 16px; right: 16px; border-bottom: 2px solid var(--gold-primary); border-right: 2px solid var(--gold-primary); }
+
+        /* Brasão Nobre Central com Monograma */
+        .royal-crest-wrap {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .crest-svg-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 12px;
+            color: var(--gold-primary);
+        }
+        .crest-monogram-text {
+            font-family: var(--font-royal);
+            font-size: 2.2rem;
+            color: var(--gold-primary);
+            letter-spacing: 0.1em;
+            line-height: 1;
+        }
+
+        /* Versículo / Bênção Inicial */
+        .verse-box {
+            text-align: center;
+            max-width: 580px;
+            margin: 0 auto 36px;
+        }
+        .verse-quote {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .verse-ref {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gold-primary);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* Divisória com Alianças Entrelaçadas */
+        .rings-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 32px 0;
+        }
+        .divider-line {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+        .rings-icon {
+            color: var(--gold-primary);
+            font-size: 1.4rem;
+        }
+
+        /* Os Pais dos Noivos */
+        .parents-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            text-align: center;
+            margin: 28px 0;
+        }
+        @media (max-width: 600px) {
+            .parents-section { grid-template-columns: 1fr; gap: 16px; }
+        }
+        .parents-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--gold-primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .parents-names {
+            font-family: var(--font-serif);
+            font-size: 1.05rem;
+            color: var(--text-title);
+            font-weight: 500;
+        }
+
+        /* Introdução Solene */
+        .convite-solene-intro {
+            text-align: center;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.28em;
+            color: var(--text-muted);
+            margin: 36px 0 16px;
+            font-weight: 500;
+        }
+
+        /* Nomes dos Noivos em Caligrafia Real (Efeito Folha de Ouro) */
+        .couple-names-royal {
+            text-align: center;
+            margin: 12px 0 28px;
+        }
+        .groom-name-txt, .bride-name-txt {
+            font-family: var(--font-script);
+            font-size: clamp(3.2rem, 9vw, 5.8rem);
+            color: var(--text-title);
+            line-height: 0.95;
+            display: block;
+            text-shadow: 0 2px 10px rgba(197, 160, 89, 0.15);
+        }
+        .names-ampersand-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 8px 0;
+        }
+        .ampersand-sign {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 2.2rem;
+            color: var(--gold-primary);
+            line-height: 1;
+        }
+
+        /* Foto do Casal em Arco Catedral */
+        .cathedral-arch-wrapper {
+            position: relative;
+            max-width: 520px;
+            margin: 40px auto 48px;
+            padding: 10px;
+            border: 1px solid var(--gold-border);
+            border-radius: 260px 260px 24px 24px;
+        }
+        .cathedral-photo {
+            width: 100%;
+            aspect-ratio: 0.85;
+            object-fit: cover;
+            border-radius: 250px 250px 20px 20px;
+            display: block;
+            box-shadow: 0 18px 45px rgba(35, 45, 40, 0.14);
+        }
+
+        /* Data Nobre e Horário */
+        .wedding-date-block {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .date-day-large {
+            font-family: var(--font-serif);
+            font-size: clamp(2.4rem, 6vw, 3.8rem);
+            font-weight: 600;
+            color: var(--emerald-deep);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .date-month-year {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--gold-dark);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Contagem Regressiva em Medalhões */
+        .countdown-medallions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin: 32px 0 48px;
+            flex-wrap: wrap;
+        }
+        .cd-medallion {
+            width: 72px;
+            height: 82px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9F6F0 100%);
+            border: 1px solid var(--gold-border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(197, 160, 89, 0.1);
+        }
+        .cd-num-val {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--emerald-deep);
+            line-height: 1;
+        }
+        .cd-txt-lbl {
+            font-size: 0.58rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--gold-dark);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Seção Locais: Cerimónia Religiosa e Recepção */
+        .ceremony-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 48px 0;
+        }
+        @media (max-width: 768px) {
+            .ceremony-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+        .ceremony-card {
+            background: linear-gradient(180deg, #FCFBF7 0%, #F8F4EB 100%);
+            border: 1px solid var(--gold-border);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .ceremony-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(197, 160, 89, 0.15);
+        }
+        .ceremony-icon-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 1px solid var(--gold-border);
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+        .ceremony-card-title {
+            font-family: var(--font-serif);
+            font-size: 1.45rem;
+            color: var(--emerald-deep);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .ceremony-card-time {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--gold-dark);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .ceremony-card-place {
+            font-size: 0.95rem;
+            color: var(--text-title);
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+        .ceremony-card-address {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .gold-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gold-foil);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 11px 24px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: 0 6px 20px rgba(197, 160, 89, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gold-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(197, 160, 89, 0.45);
+        }
+
+        /* Linha do Tempo Cerimoniosa (O Cortejo do Grande Dia) */
+        .timeline-section-wrap {
+            margin: 60px 0;
+            text-align: center;
+        }
+        .section-header-title {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--emerald-deep);
+            margin-bottom: 8px;
+        }
+        .section-header-sub {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gold-primary);
+            font-weight: 600;
+            margin-bottom: 36px;
+        }
+        .wedding-timeline-steps {
+            position: relative;
+            max-width: 620px;
+            margin: 0 auto;
+            padding-left: 20px;
+            text-align: left;
+        }
+        .wedding-timeline-steps::before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            bottom: 15px;
+            left: 38px;
+            width: 1px;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-primary), var(--gold-light));
+        }
+        .timeline-step-row {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .timeline-icon-box {
+            position: relative;
+            z-index: 2;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.15);
+            flex-shrink: 0;
+        }
+        .timeline-content-box h4 {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            color: var(--text-title);
+            margin-bottom: 2px;
+        }
+        .timeline-time-tag {
+            font-size: 0.72rem;
+            color: var(--gold-dark);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .timeline-content-box p {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Dress Code com Ilustração */
+        .dresscode-card-wrap {
+            background: #FAF7F0;
+            border: 1px solid var(--gold-border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: center;
+            margin: 48px 0;
+        }
+        .dresscode-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            font-size: 2rem;
+            color: var(--gold-primary);
+            margin-bottom: 16px;
+        }
+
+        /* Lista de Presentes & Quotas */
+        .gifts-pouch-card {
+            background: linear-gradient(180deg, #FFFFFF 0%, #FDFBF7 100%);
+            border: 1px dashed var(--gold-primary);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            margin: 48px 0;
+        }
+        .iban-highlight-code {
+            font-family: monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--emerald-deep);
+            background: #F4EFE6;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin: 14px auto;
+            display: inline-block;
+            word-break: break-all;
+        }
+
+        /* Galeria Romântica */
+        .wedding-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin: 40px 0;
+        }
+        @media (max-width: 650px) {
+            .wedding-gallery-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .gallery-photo-thumb {
+            aspect-ratio: 0.85;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--gold-border);
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease;
+        }
+        .gallery-photo-thumb:hover {
+            transform: scale(1.03);
+        }
+        .gallery-photo-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Formulário de Confirmação de Presença (RSVP) */
+        .rsvp-parchment-box {
+            background: linear-gradient(180deg, #F9F5EC 0%, #F3ECDD 100%);
+            border: 1px solid var(--gold-primary);
+            border-radius: 24px;
+            padding: 44px 32px;
+            text-align: center;
+            margin: 50px 0;
+            box-shadow: 0 14px 40px rgba(197, 160, 89, 0.12);
+        }
+        @media (max-width: 600px) {
+            .rsvp-parchment-box { padding: 30px 18px; }
+        }
+        .rsvp-form-royal {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 480px;
+            margin: 28px auto 0;
+            text-align: left;
+        }
+        .royal-input {
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 0.92rem;
+            color: var(--text-title);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .royal-input:focus {
+            border-color: var(--gold-primary);
+        }
+        .royal-radio-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .royal-radio-label {
+            flex: 1;
+            min-width: 140px;
+            background: #FFFFFF;
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.84rem;
+        }
+        .royal-radio-label input { accent-color: var(--gold-primary); }
+
+        /* Mural de Mensagens */
+        .blessings-wall-section {
+            margin: 50px 0;
+            text-align: center;
+        }
+        .blessings-cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 24px;
+            text-align: left;
+        }
+        .blessing-card-item {
+            background: #FAF7F0;
+            border: 1px solid var(--gold-border);
+            border-radius: 14px;
+            padding: 20px 22px;
+            position: relative;
+        }
+        .blessing-msg-txt {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--text-title);
+            line-height: 1.5;
+        }
+        .blessing-author-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* Rodapé Nobre */
+        .royal-footer-wrap {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--gold-border);
+            margin-top: 50px;
+        }
+        .footer-closing-names {
+            font-family: var(--font-script);
+            font-size: 3.2rem;
+            color: var(--text-title);
+            line-height: 1;
+        }
+        .footer-gratitude-text {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin: 12px 0 24px;
+        }
+        .divinos-credit-tag {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--gold-dark);
+        }
+
+        /* Botão Flutuante de Música */
+        .music-float-seal {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--gold-foil);
+            color: #FFFFFF;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 25px rgba(197, 160, 89, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .music-float-seal:hover { transform: scale(1.1); }
+        .music-float-seal.playing { animation: pulseMusic 2.4s infinite; }
+        @keyframes pulseMusic {
+            0%, 100% { box-shadow: 0 8px 25px rgba(197, 160, 89, 0.4); }
+            50% { box-shadow: 0 8px 35px rgba(197, 160, 89, 0.8); }
+        }
+
+        /* Toast Feedback */
+        .royal-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--emerald-deep);
+            color: #FFFFFF;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            border: 1px solid var(--gold-primary);
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+        .royal-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="envelope-locked">
+
+    <!-- ╔═══════════════════════════════════════════════════════════════╗
+         ║    1. ENVELOPE 3D REALISTA COM SELO DE CERA PERSONALIZADO    ║
+         ╚═══════════════════════════════════════════════════════════════╝ -->
+    <div id="envelope-stage">
+        <div class="envelope-3d-wrapper" id="envelope-card">
+            
+            <div class="envelope-body">
+                <!-- Carta Interior -->
+                <div class="envelope-letter">
+                    <div class="letter-monogram">B &amp; C</div>
+                    <div class="letter-couple-names">
+                        <span data-invite="groom-name">{{GROOM_NAME}}</span> &amp; <span data-invite="bride-name">{{BRIDE_NAME}}</span>
+                    </div>
+                    <div class="letter-wedding-date" data-invite="wedding-date">{{EVENT_DATE_EXTENDED}}</div>
+                </div>
+
+                <!-- Bolso Frontal do Envelope -->
+                <div class="envelope-pocket"></div>
+            </div>
+
+            <!-- Aba Superior Dobrável -->
+            <div class="envelope-flap"></div>
+
+            <!-- Selo de Cera Dourado / Em relevo -->
+            <button class="wax-seal-btn" id="open-seal-btn" title="Toque para abrir">
+                <span class="wax-initials">B&amp;C</span>
+            </button>
+
+            <!-- Dica Flutuante -->
+            <div class="seal-touch-hint">
+                <i class="fa-solid fa-hand-pointer"></i>
+                <span>Toque no selo para abrir o convite</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ╔═══════════════════════════════════════════════════════════════╗
+         ║         2. O CONVITE SAGRADO (TELA PRINCIPAL)                 ║
+         ╚═══════════════════════════════════════════════════════════════╝ -->
+    <main class="invitation-canvas" id="invitation-main">
+        
+        <!-- Cantos em Filete de Ouro Duplo -->
+        <div class="gold-frame-corner corner-tl"></div>
+        <div class="gold-frame-corner corner-tr"></div>
+        <div class="gold-frame-corner corner-bl"></div>
+        <div class="gold-frame-corner corner-br"></div>
+
+        <!-- Brasão Real do Casal -->
+        <div class="royal-crest-wrap">
+            <svg class="crest-svg-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                <!-- Grinalda de Louros / Brasão Nobre -->
+                <path d="M50 15 C45 22, 35 25, 30 35 C25 45, 25 60, 35 72 C42 80, 50 85, 50 85 C50 85, 58 80, 65 72 C75 60, 75 45, 70 35 C65 25, 55 22, 50 15 Z" stroke-width="1.5" stroke-dasharray="2 2"/>
+                <path d="M40 28 C35 38, 35 55, 45 68 C50 74, 50 74, 50 74 C50 74, 50 74, 55 68 C65 55, 65 38, 60 28" stroke-width="1.2"/>
+                <circle cx="50" cy="50" r="18" stroke-width="1.5"/>
+            </svg>
+            <div class="crest-monogram-text">B &bull; C</div>
+        </div>
+
+        <!-- Versículo Bíblico / Citação Romântica -->
+        <div class="verse-box">
+            <p class="verse-quote font-serif">
+                &ldquo;Assim já não são dois, mas uma só carne. O que Deus uniu, ninguém separe.&rdquo;
+            </p>
+            <p class="verse-ref">Mateus 19:6</p>
+        </div>
+
+        <!-- Divisória com Alianças Douradas -->
+        <div class="rings-divider">
+            <div class="divider-line"></div>
+            <div class="rings-icon">
+                <i class="fa-solid fa-ring"></i>
+            </div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Com a Bênção de Nossos Pais -->
+        <div class="parents-section">
+            <div>
+                <p class="parents-label">Com a bênção dos Pais da Noiva</p>
+                <p class="parents-names" data-bind="bride_parents">Sr. &amp; Sra. Fernandes</p>
+            </div>
+            <div>
+                <p class="parents-label">Com a bênção dos Pais do Noivo</p>
+                <p class="parents-names" data-bind="groom_parents">Sr. &amp; Sra. Boaventura</p>
+            </div>
+        </div>
+
+        <p class="convite-solene-intro">Têm a honra de convidar para o matrimónio de seus filhos</p>
+
+        <!-- Nomes dos Noivos em Caligrafia Real -->
+        <div class="couple-names-royal">
+            <span class="groom-name-txt" data-invite="groom-name">{{GROOM_NAME}}</span>
+            <div class="names-ampersand-wrap">
+                <div class="divider-line" style="width:50px;"></div>
+                <span class="ampersand-sign">&amp;</span>
+                <div class="divider-line" style="width:50px;"></div>
+            </div>
+            <span class="bride-name-txt" data-invite="bride-name">{{BRIDE_NAME}}</span>
+        </div>
+
+        <!-- Fotografia do Casal em Arco Catedral -->
+        <div class="cathedral-arch-wrapper">
+            <img class="cathedral-photo" src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop" alt="Foto do Casal">
+        </div>
+
+        <!-- Data do Casamento -->
+        <div class="wedding-date-block">
+            <div class="date-day-large" data-invite="wedding-date">
+                {{EVENT_DATE_EXTENDED}}
+            </div>
+            <div class="date-month-year">
+                Às <span data-bind="ceremony_time">{{EVENT_TIME}}</span> Horas
+            </div>
+        </div>
+
+        <!-- Contagem Regressiva em Medalhões de Ouro -->
+        <div class="countdown-medallions">
+            <div class="cd-medallion">
+                <div class="cd-num-val" id="royal-cd-days">--</div>
+                <div class="cd-txt-lbl">Dias</div>
+            </div>
+            <div class="cd-medallion">
+                <div class="cd-num-val" id="royal-cd-hours">--</div>
+                <div class="cd-txt-lbl">Horas</div>
+            </div>
+            <div class="cd-medallion">
+                <div class="cd-num-val" id="royal-cd-mins">--</div>
+                <div class="cd-txt-lbl">Minutos</div>
+            </div>
+            <div class="cd-medallion">
+                <div class="cd-num-val" id="royal-cd-secs">--</div>
+                <div class="cd-txt-lbl">Segundos</div>
+            </div>
+        </div>
+
+        <!-- Divisória com Alianças -->
+        <div class="rings-divider">
+            <div class="divider-line"></div>
+            <div class="rings-icon">
+                <i class="fa-solid fa-champagne-glasses"></i>
+            </div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Cerimónia Religiosa e Copo d'Água -->
+        <div class="ceremony-grid">
+            
+            <!-- Cerimónia Religiosa -->
+            <div class="ceremony-card">
+                <div class="ceremony-icon-circle">
+                    <i class="fa-solid fa-church"></i>
+                </div>
+                <h3 class="ceremony-card-title">Cerimónia Religiosa</h3>
+                <div class="ceremony-card-time"><span data-bind="ceremony_time">{{EVENT_TIME}}</span></div>
+                <div class="ceremony-card-place" data-bind="church_location">Catedral da Sé / Paróquia Central</div>
+                <div class="ceremony-card-address" data-bind="event_location">{{LOCATION}}</div>
+                <a href="https://maps.google.com" target="_blank" class="gold-action-btn">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Ver Localização</span>
+                </a>
+            </div>
+
+            <!-- Recepção / Copo d'Água -->
+            <div class="ceremony-card">
+                <div class="ceremony-icon-circle">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <h3 class="ceremony-card-title">Copo d'Água &amp; Festa</h3>
+                <div class="ceremony-card-time">17:00 Horas</div>
+                <div class="ceremony-card-place" data-bind="civil_location">Quinta dos Sonhos &bull; Salão Nobre</div>
+                <div class="ceremony-card-address">Jardins Principais &bull; Maputo</div>
+                <button class="gold-action-btn" onclick="copyText('{{LOCATION}}', 'Endereço da recepção copiado com sucesso!')">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copiar Morada</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Linha do Tempo (Cronograma das Emoções) -->
+        <div class="timeline-section-wrap">
+            <h3 class="section-header-title">Momentos do Grande Dia</h3>
+            <p class="section-header-sub">O Cortejo Nupcial</p>
+
+            <div class="wedding-timeline-steps">
+                
+                <div class="timeline-step-row">
+                    <div class="timeline-icon-box"><i class="fa-solid fa-bell"></i></div>
+                    <div class="timeline-content-box">
+                        <span class="timeline-time-tag">14:30</span>
+                        <h4>Chegada dos Convidados</h4>
+                        <p>Welcome drink e acolhimento nos jardins da igreja.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step-row">
+                    <div class="timeline-icon-box"><i class="fa-solid fa-heart"></i></div>
+                    <div class="timeline-content-box">
+                        <span class="timeline-time-tag">15:00</span>
+                        <h4>A Bênção Nupcial</h4>
+                        <p>Entrada da noiva, troca de alianças e bênção das alianças.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step-row">
+                    <div class="timeline-icon-box"><i class="fa-solid fa-camera-retro"></i></div>
+                    <div class="timeline-content-box">
+                        <span class="timeline-time-tag">17:00</span>
+                        <h4>Brinde &amp; Fotos</h4>
+                        <p>Brinde de honra com os noivos e sessão fotográfica com os padrinhos.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step-row">
+                    <div class="timeline-icon-box"><i class="fa-solid fa-cake-candles"></i></div>
+                    <div class="timeline-content-box">
+                        <span class="timeline-time-tag">19:30</span>
+                        <h4>Jantar &amp; Corte do Bolo</h4>
+                        <p>Banquete solene, discurso dos padrinhos e corte do bolo com espumante.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step-row">
+                    <div class="timeline-icon-box"><i class="fa-solid fa-music"></i></div>
+                    <div class="timeline-content-box">
+                        <span class="timeline-time-tag">21:00</span>
+                        <h4>Primeira Dança &amp; Abertura da Pista</h4>
+                        <p>A primeira valsa do casal e celebração até ao amanhecer.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Dress Code / Traje Recomendado -->
+        <div class="dresscode-card-wrap">
+            <div class="dresscode-icons">
+                <i class="fa-solid fa-vest"></i>
+                <i class="fa-solid fa-person-dress"></i>
+            </div>
+            <h3 class="section-header-title">Dress Code</h3>
+            <p style="font-size:0.92rem; color:var(--gold-dark); font-weight:700; text-transform:uppercase; letter-spacing:0.14em; margin-bottom:8px;" data-bind="dress_code">
+                Traje Formal / Passeio Completo
+            </p>
+            <p style="font-size:0.86rem; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.6;">
+                Agradecemos a deferência de reservar os tons brancos, marfim e pérola exclusivamente para o deslumbre da nossa querida noiva.
+            </p>
+        </div>
+
+        <!-- Lista de Presentes & Bênção / Quota -->
+        <div class="gifts-pouch-card">
+            <div style="font-size:1.8rem; color:var(--gold-primary); margin-bottom:8px;">
+                <i class="fa-solid fa-gift"></i>
+            </div>
+            <h3 class="section-header-title">Lista de Presentes</h3>
+            <p style="font-size:0.88rem; color:var(--text-muted); max-width:520px; margin:8px auto; line-height:1.6;">
+                A vossa presença e afeto são a nossa maior bênção. Caso desejem agraciar os noivos com uma contribuição para a nossa nova vida e lua de mel:
+            </p>
+            <div class="iban-highlight-code">
+                IBAN / M-Pesa: MZ59 0001 0000 0012 3456 7890 1
+            </div>
+            <div>
+                <button class="gold-action-btn" onclick="copyText('MZ59 0001 0000 0012 3456 7890 1', 'Dados para transferência copiados!')">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copiar Dados Bancários</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Galeria de Momentos do Amor -->
+        <div style="margin: 50px 0; text-align:center;">
+            <h3 class="section-header-title">Nossos Momentos</h3>
+            <p class="section-header-sub">O Caminho até ao Altar</p>
+
+            <div class="wedding-gallery-grid">
+                <div class="gallery-photo-thumb">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop" alt="Foto">
+                </div>
+                <div class="gallery-photo-thumb">
+                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop" alt="Foto">
+                </div>
+                <div class="gallery-photo-thumb">
+                    <img src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=800&auto=format&fit=crop" alt="Foto">
+                </div>
+                <div class="gallery-photo-thumb">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" alt="Foto">
+                </div>
+                <div class="gallery-photo-thumb">
+                    <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=800&auto=format&fit=crop" alt="Foto">
+                </div>
+                <div class="gallery-photo-thumb">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop" alt="Foto">
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmação de Presença (RSVP Cerimonioso) -->
+        <div class="rsvp-parchment-box" id="rsvp-section">
+            <h3 class="section-header-title">Confirmar Presença</h3>
+            <p style="font-size:0.88rem; color:var(--text-muted); max-width:440px; margin:8px auto; line-height:1.6;">
+                Por favor, confirme a sua graciosa presença até ao dia 20 de Outubro de 2026 para que possamos recebê-lo com todo o conforto.
+            </p>
+
+            <form class="rsvp-form-royal" id="royal-rsvp-form" onsubmit="handleRoyalRsvp(event)">
+                <input type="text" id="royal-name" required placeholder="Seu Nome Completo" class="royal-input">
+                
+                <div class="royal-radio-row">
+                    <label class="royal-radio-label">
+                        <input type="radio" name="royal-presence" value="yes" checked>
+                        <span>Sim, confirmo com alegria!</span>
+                    </label>
+                    <label class="royal-radio-label">
+                        <input type="radio" name="royal-presence" value="no">
+                        <span>Infelizmente não poderei ir</span>
+                    </label>
+                </div>
+
+                <input type="number" id="royal-guests" min="1" max="6" value="1" placeholder="Número de Pessoas" class="royal-input" style="max-width:180px;">
+                
+                <textarea id="royal-message" rows="3" placeholder="Mensagem de carinho para os noivos..." class="royal-input" style="resize:none;"></textarea>
+
+                <button type="submit" id="btn-royal-submit" class="gold-action-btn" style="width:100%; justify-content:center; padding:15px;" data-invite="rsvp-trigger">
+                    <i class="fa-solid fa-feather"></i>
+                    <span>Confirmar Presença no Matrimónio</span>
+                </button>
+            </form>
+
+            <div id="royal-rsvp-success" style="display:none; padding:24px 0;">
+                <div style="font-size:2.2rem; color:var(--gold-primary); margin-bottom:10px;">
+                    <i class="fa-solid fa-scroll"></i>
+                </div>
+                <h4 style="font-family:var(--font-serif); font-size:1.6rem; color:var(--emerald-deep);">Bênção Registada!</h4>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-top:6px;">
+                    A sua confirmação foi gravada com sucesso. Esperamos por si com o coração aberto!
+                </p>
+            </div>
+        </div>
+
+        <!-- Mural de Bênçãos & Mensagens -->
+        <div class="blessings-wall-section" id="mural-section">
+            <h3 class="section-header-title">Mural de Bênçãos</h3>
+            <p class="section-header-sub">Votos de Carinho</p>
+
+            <div class="blessings-cards-list" id="mural-grid">
+                <div class="blessing-card-item">
+                    <p class="blessing-msg-txt">
+                        &ldquo;Que a paz, a sabedoria e o amor eterno reinem no vosso novo lar. Vocês são um casal abençoado!&rdquo;
+                    </p>
+                    <p class="blessing-author-name">Família Santos &bull; Padrinhos</p>
+                </div>
+                <div class="blessing-card-item">
+                    <p class="blessing-msg-txt">
+                        &ldquo;Um dia grandioso para celebrar uma união perfeita. Estaremos lá com todo o nosso coração para brindar convosco!&rdquo;
+                    </p>
+                    <p class="blessing-author-name">Dra. Teresa &amp; Dr. Jorge Mendes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transmissão ao Vivo (Se aplicável) -->
+        <div style="display:none;" data-invite="livestream-player"></div>
+
+        <!-- Rodapé Nobre -->
+        <footer class="royal-footer-wrap">
+            <div class="footer-closing-names">
+                <span data-invite="groom-name">{{GROOM_NAME}}</span> &amp; <span data-invite="bride-name">{{BRIDE_NAME}}</span>
+            </div>
+            <p class="footer-gratitude-text">
+                &ldquo;Agradecemos a Deus e a todos os nossos amigos e familiares que fazem parte da nossa história.&rdquo;
+            </p>
+            <p class="divinos-credit-tag">
+                Criado com amor por <a href="https://divinosgraffic.co.mz" target="_blank" style="color:var(--gold-primary); text-decoration:none;">Divinos Graffic</a> &bull; Todos os direitos reservados
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- Botão Flutuante de Música (Selo Clave de Sol) -->
+    <button class="music-float-seal" id="music-seal-btn" title="Ligar/Desligar Música">
+        <i class="fa-solid fa-music"></i>
+    </button>
+    <audio id="wedding-audio" loop preload="auto" src="{{MUSIC_URL}}"></audio>
+
+    <!-- Toast Feedback -->
+    <div class="royal-toast" id="royal-toast">
+        <i class="fa-solid fa-circle-check" style="color:var(--gold-light);"></i>
+        <span id="toast-text">Ação concluída com sucesso!</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCRIPTS: ENVELOPE 3D, PÉTALAS, MÚSICA & INTEGRAÇÃO
+         ═══════════════════════════════════════════════════════════════ -->
+    <script>
+        // ── 0. LIMPEZA SEGURA DE TAGS PARA PREVIEW DIRETO ──
+        (function() {
+            try {
+                const defaults = {
+                    '{{GROOM_NAME}}': 'Boaventura',
+                    '{{BRIDE_NAME}}': 'Carla',
+                    '{{COUPLE_NAMES}}': 'Boaventura & Carla',
+                    '{{EVENT_TITLE}}': 'O Nosso Casamento',
+                    '{{EVENT_DATE_EXTENDED}}': '08 de Novembro de 2026',
+                    '{{EVENT_DATE_NUMBERS}}': '08 • 11 • 2026',
+                    '{{EVENT_TIME}}': '15:00',
+                    '{{LOCATION}}': 'Palácio dos Casamentos & Jardins da Quinta, Maputo',
+                    '{{MUSIC_URL}}': 'https://in.limintso.com/wp-content/uploads/2025/07/All-for-Love.Michael-Bolton.mp3'
+                };
+                const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                let node;
+                while (node = walk.nextNode()) {
+                    for (const [key, val] of Object.entries(defaults)) {
+                        if (node.nodeValue.includes(key)) {
+                            node.nodeValue = node.nodeValue.replaceAll(key, val);
+                        }
+                    }
+                }
+                const audioEl = document.getElementById('wedding-audio');
+                if (audioEl && audioEl.getAttribute('src') === '{{MUSIC_URL}}') {
+                    audioEl.src = defaults['{{MUSIC_URL}}'];
+                }
+            } catch(e) { console.warn('Preview cleaner:', e); }
+        })();
+
+        // ── 1. ABERTURA DO ENVELOPE 3D COM SELO DE CERA ──
+        const openBtn = document.getElementById('open-seal-btn');
+        const envelopeCard = document.getElementById('envelope-card');
+        const envelopeStage = document.getElementById('envelope-stage');
+        const audio = document.getElementById('wedding-audio');
+        const musicBtn = document.getElementById('music-seal-btn');
+        let isMusicPlaying = false;
+
+        if (openBtn) {
+            openBtn.addEventListener('click', () => {
+                // Passo 1: Abre a aba e sobe a carta
+                envelopeCard.classList.add('open');
+                
+                // Passo 2: Tocar música nupcial
+                if (audio) {
+                    audio.play().then(() => {
+                        isMusicPlaying = true;
+                        if (musicBtn) musicBtn.classList.add('playing');
+                    }).catch(err => console.warn('Autoplay bloqueado:', err));
+                }
+
+                // Iniciar chuva de pétalas
+                startPetalShower();
+
+                // Passo 3: Após a animação (1.4s), desvanece o envelope e liberta o scroll
+                setTimeout(() => {
+                    envelopeStage.classList.add('opened');
+                    document.body.classList.remove('envelope-locked');
+                }, 1300);
+            });
+        }
+
+        // ── 2. CHUVA DE PÉTALAS ROMÂNTICAS ──
+        function startPetalShower() {
+            const numPetals = 18;
+            for (let i = 0; i < numPetals; i++) {
+                createPetal(i);
+            }
+        }
+
+        function createPetal(index) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = (Math.random() * 95) + 'vw';
+            petal.style.animationDuration = (7 + Math.random() * 8) + 's';
+            petal.style.animationDelay = (index * 0.4 + Math.random() * 2) + 's';
+            petal.style.width = (10 + Math.random() * 8) + 'px';
+            petal.style.height = (14 + Math.random() * 10) + 'px';
+            document.body.appendChild(petal);
+        }
+
+        // ── 3. CONTROLE DE MÚSICA MANUAL ──
+        if (musicBtn && audio) {
+            musicBtn.addEventListener('click', () => {
+                if (isMusicPlaying) {
+                    audio.pause();
+                    isMusicPlaying = false;
+                    musicBtn.classList.remove('playing');
+                    showRoyalToast('Música pausada');
+                } else {
+                    audio.play().then(() => {
+                        isMusicPlaying = true;
+                        musicBtn.classList.add('playing');
+                        showRoyalToast('A tocar trilha nupcial');
+                    });
+                }
+            });
+        }
+
+        // ── 4. CONTAGEM REGRESSIVA PRECISA ──
+        (function() {
+            const targetDate = new Date('2026-11-08T15:00:00');
+            function updateCd() {
+                const diff = targetDate - new Date();
+                if (diff <= 0) return;
+                
+                const d = Math.floor(diff / 86400000);
+                const h = Math.floor((diff / 3600000) % 24);
+                const m = Math.floor((diff / 60000) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+
+                const elD = document.getElementById('royal-cd-days');
+                const elH = document.getElementById('royal-cd-hours');
+                const elM = document.getElementById('royal-cd-mins');
+                const elS = document.getElementById('royal-cd-secs');
+
+                if (elD) elD.textContent = d;
+                if (elH) elH.textContent = String(h).padStart(2, '0');
+                if (elM) elM.textContent = String(m).padStart(2, '0');
+                if (elS) elS.textContent = String(s).padStart(2, '0');
+            }
+            updateCd();
+            setInterval(updateCd, 1000);
+        })();
+
+        // ── 5. COPIAR TEXTO / IBAN ──
+        function copyText(txt, msg) {
+            navigator.clipboard.writeText(txt).then(() => {
+                showRoyalToast(msg || 'Copiado para a área de transferência!');
+            }).catch(() => {
+                showRoyalToast('Erro ao copiar');
+            });
+        }
+
+        function showRoyalToast(msg) {
+            const toast = document.getElementById('royal-toast');
+            const txt = document.getElementById('toast-text');
+            txt.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3200);
+        }
+
+        // ── 6. CONFIRMAÇÃO DE PRESENÇA (RSVP) ──
+        async function handleRoyalRsvp(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-royal-submit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A gravar bênção...';
+
+            const name = document.getElementById('royal-name').value.trim();
+            const presence = document.querySelector('input[name="royal-presence"]:checked').value;
+            const msg = document.getElementById('royal-message').value.trim();
+            const guests = parseInt(document.getElementById('royal-guests').value) || 1;
+
+            if (window.divinosEngine && window.divinosEngine.invitationId && window.supabaseClient) {
+                try {
+                    await window.supabaseClient.from('invitations_rsvp').insert({
+                        invitation_id: window.divinosEngine.invitationId,
+                        guest_name: name,
+                        is_attending: presence === 'yes',
+                        message: msg,
+                        adult_count: presence === 'yes' ? guests : 0
+                    });
+                } catch(err) { console.warn('RSVP Supabase:', err); }
+            }
+
+            setTimeout(() => {
+                document.getElementById('royal-rsvp-form').style.display = 'none';
+                document.getElementById('royal-rsvp-success').style.display = 'block';
+                showRoyalToast('Presença confirmada com sucesso!');
+            }, 800);
+        }
+    </script>
+
+    <!-- Motor Divinos (Injeta dados reais do Supabase se houver ?slug=...) -->
+    <script src="/js/invite-engine.js"></script>
+
+</body>
+</html>

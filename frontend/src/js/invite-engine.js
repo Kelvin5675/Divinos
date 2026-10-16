@@ -175,9 +175,85 @@ class DivinosInviteEngine {
 
         document.querySelectorAll('[data-invite="bride-name"]').forEach(el => el.textContent = brideData);
         document.querySelectorAll('[data-invite="groom-name"]').forEach(el => el.textContent = groomData);
+
+        // Parents (opcional se fornecido no banco)
+        const brideParents = this.invitationData.details?.[0]?.bride_parents;
+        if (brideParents) {
+            document.querySelectorAll('[data-invite="bride-parents"]').forEach(el => el.innerHTML = brideParents);
+        }
+        const groomParents = this.invitationData.details?.[0]?.groom_parents;
+        if (groomParents) {
+            document.querySelectorAll('[data-invite="groom-parents"]').forEach(el => el.innerHTML = groomParents);
+        }
         
         const dateData = this.invitationData.event_date ? new Date(this.invitationData.event_date).toLocaleDateString('pt-PT') : 'Data Indefinida';
         document.querySelectorAll('[data-invite="wedding-date"]').forEach(el => el.textContent = dateData);
+
+        // Obter configurações adicionais de tables_layout (se existirem)
+        const tl = this.invitationData.details?.[0]?.tables_layout || {};
+
+        // 1. Registo Civil
+        const civilLoc = this.invitationData.civil_location || tl.civil_location;
+        const civilTime = this.invitationData.civil_time || tl.civil_time;
+        const civilMap = tl.civil_map_url || (civilLoc ? `https://maps.google.com/maps?q=${encodeURIComponent(civilLoc)}&t=&z=15&ie=UTF8&iwloc=&output=embed` : null);
+        if (civilLoc) {
+            document.querySelectorAll('[data-bind="civil_location"]').forEach(el => el.textContent = civilLoc);
+        }
+        if (civilTime) {
+            document.querySelectorAll('[data-bind="civil_time"]').forEach(el => el.textContent = civilTime);
+        }
+        if (civilMap) {
+            document.querySelectorAll('iframe[data-map-for="civil"]').forEach(el => el.src = civilMap.includes('embed') ? civilMap : `https://maps.google.com/maps?q=${encodeURIComponent(civilLoc || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
+            document.querySelectorAll('a[data-map-link="civil"]').forEach(el => el.href = tl.civil_map_url || `https://maps.google.com/?q=${encodeURIComponent(civilLoc || '')}`);
+        }
+
+        // 2. Igreja / Cerimónia Religiosa
+        const churchLoc = this.invitationData.church_location || tl.church_location;
+        const churchTime = this.invitationData.church_time || tl.church_time;
+        const churchMap = tl.church_map_url || (churchLoc ? `https://maps.google.com/maps?q=${encodeURIComponent(churchLoc)}&t=&z=15&ie=UTF8&iwloc=&output=embed` : null);
+        if (churchLoc) {
+            document.querySelectorAll('[data-bind="church_location"]').forEach(el => el.textContent = churchLoc);
+        }
+        if (churchTime) {
+            document.querySelectorAll('[data-bind="church_time"]').forEach(el => el.textContent = churchTime);
+        }
+        if (churchMap) {
+            document.querySelectorAll('iframe[data-map-for="church"]').forEach(el => el.src = churchMap.includes('embed') ? churchMap : `https://maps.google.com/maps?q=${encodeURIComponent(churchLoc || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
+            document.querySelectorAll('a[data-map-link="church"]').forEach(el => el.href = tl.church_map_url || `https://maps.google.com/?q=${encodeURIComponent(churchLoc || '')}`);
+        }
+
+        // 3. Recepção / Copo d'Água
+        const eventLoc = this.invitationData.event_location || tl.event_location;
+        const eventTime = this.invitationData.event_time || tl.event_time;
+        const eventMap = tl.event_map_url || (eventLoc ? `https://maps.google.com/maps?q=${encodeURIComponent(eventLoc)}&t=&z=15&ie=UTF8&iwloc=&output=embed` : null);
+        if (eventLoc) {
+            document.querySelectorAll('[data-bind="event_location"]').forEach(el => el.textContent = eventLoc);
+        }
+        if (eventTime) {
+            document.querySelectorAll('[data-bind="event_time"]').forEach(el => el.textContent = eventTime);
+        }
+        if (eventMap) {
+            document.querySelectorAll('iframe[data-map-for="event"]').forEach(el => el.src = eventMap.includes('embed') ? eventMap : `https://maps.google.com/maps?q=${encodeURIComponent(eventLoc || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
+            document.querySelectorAll('a[data-map-link="event"]').forEach(el => el.href = tl.event_map_url || `https://maps.google.com/?q=${encodeURIComponent(eventLoc || '')}`);
+        }
+
+        // 4. Programa Multi-Dias em Zigue-zague (Lobolo, Casamento, Xiguiane)
+        const programSection = document.getElementById('program-zigzag-section');
+        const isProgramEnabled = tl.program_enabled !== false;
+        const programSteps = Array.isArray(tl.event_program) ? tl.event_program : null;
+
+        if (programSection) {
+            if (!isProgramEnabled) {
+                programSection.style.display = 'none';
+            } else {
+                programSection.style.display = '';
+                if (programSteps && programSteps.length > 0 && typeof window.renderTemplateProgramSteps === 'function') {
+                    window.renderTemplateProgramSteps(programSteps);
+                } else if (typeof initZigzagTimelineAnimation === 'function') {
+                    initZigzagTimelineAnimation();
+                }
+            }
+        }
     }
 
     bindEvents() {

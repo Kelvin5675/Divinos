@@ -1,8 +1,36 @@
 window.templatesCatalog = [
     {
+        id: "premium-editorial",
+        name: "Premium Editorial Cutout (Principal)",
+        thumbnail: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=400&auto=format&fit=crop",
+        description: "Design contemporâneo de altíssimo nível com recortes (Framed UI / Cutouts), glassmorphism, tipografia editorial e experiência refinada.",
+        path: "../templates/premium-editorial.html"
+    },
+    {
+        id: "royal-luxury",
+        name: "Royal Luxury & Ouro Imperial",
+        thumbnail: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=400&auto=format&fit=crop",
+        description: "Convite cerimonioso de altíssimo luxo com envelope 3D realista, selo de cera com brasão, chuva de pétalas, filigrana dourada e arco catedral.",
+        path: "../templates/royal-luxury.html"
+    },
+    {
+        id: "convite-principal",
+        name: "Convite Oficial Clássico (convite.html - Principal)",
+        thumbnail: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=400&auto=format&fit=crop",
+        description: "Design clássico oficial com brasão dourado, abertura animada, timeline interativa, carrossel de fotos e RSVP integrado.",
+        path: "../pages/convite.html"
+    },
+    {
+        id: "modelo-ouro-floral",
+        name: "Modelo Ouro Floral (Padrão)",
+        thumbnail: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=400&auto=format&fit=crop",
+        description: "Design clássico floral dourado com música de fundo, mapa interativo e contagem regressiva.",
+        path: "../pages/convite.html"
+    },
+    {
         id: "minimalist-elegance",
         name: "Minimalist Elegance",
-        thumbnail: "https://in.limintso.com/wp-content/uploads/2024/10/Black-and-White-Minimalist-Wedding-Monogram-Logo.png", // Imagem temporária baseada na referência
+        thumbnail: "https://in.limintso.com/wp-content/uploads/2024/10/Black-and-White-Minimalist-Wedding-Monogram-Logo.png",
         description: "Um design sofisticado com temas escuros, animações suaves e player de música elegante.",
         path: "../templates/minimalist-elegance.html"
     }
@@ -40,7 +68,9 @@ window.generateTemplateHtml = async function (templateId, formData) {
         '{{EVENT_DATE_NUMBERS}}': formattedDayMonth,
         '{{EVENT_TIME}}': formData.event_time || '16H00',
         '{{LOCATION}}': formData.location || 'Local do Evento',
-        '{{MUSIC_URL}}': formData.music_url || 'https://in.limintso.com/wp-content/uploads/2025/07/All-for-Love.Michael-Bolton.mp3'
+        '{{MUSIC_URL}}': formData.music_url || 'https://in.limintso.com/wp-content/uploads/2025/07/All-for-Love.Michael-Bolton.mp3',
+        '{{BIBLE_VERSE}}': formData.bible_verse || 'O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. Tudo sofre, tudo crê, tudo espera, tudo suporta. O amor jamais acaba.',
+        '{{BIBLE_REF}}': formData.bible_reference || '1 Coríntios 13:4, 7-8'
     };
 
     // Replace All occurrences in the string
