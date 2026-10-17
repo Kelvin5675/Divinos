@@ -18,6 +18,8 @@ if ($content === FALSE) {
     // Correção mágica: O backend tem a URL da Vercel "hardcoded". 
     // Em vez de alterar o backend, nós reescrevemos a URL aqui no proxy antes de entregar ao cliente!
     $content = str_replace("https://divinos.vercel.app", "https://divinosgraffic.co.mz", $content);
+    // Encaminhar para o roteador inteligente, que abre o template escolhido no admin
+    $content = str_replace(array("/pages/convite.html?slug=", "/pages/convite?slug="), "/invitation/?slug=", $content);
     echo $content;
 }
 ?>

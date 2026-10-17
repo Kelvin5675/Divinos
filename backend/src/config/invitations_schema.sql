@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS public.invitations (
     event_date TIMESTAMP,
     status VARCHAR(50) DEFAULT 'pending_approval', -- pending, active, inactive, draft
     plan_id UUID REFERENCES public.invitation_plans(id),
-    editor_type VARCHAR(50) DEFAULT 'manual', -- ia, manual, code
+    editor_type TEXT DEFAULT 'manual', -- template, animation, template_id, petals...
     couple_token VARCHAR(255) UNIQUE, -- Token para acesso ao dashboard dos noivos
     custom_html TEXT, -- Para o modo 'importação de código'
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())

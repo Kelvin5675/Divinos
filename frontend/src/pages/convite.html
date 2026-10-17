@@ -30,6 +30,53 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/supabase-config.js"></script>
 
+  <!-- Guarda de Roteamento de Template: se o convite foi criado com outro template
+       (ex: Premium Editorial), redireciona para ele mantendo todos os parâmetros da URL.
+       Convites com o template clássico continuam a abrir aqui normalmente. -->
+  <script>
+    (function () {
+      var reveal = function () {
+        var s = document.getElementById("tpl-route-guard");
+        if (s) s.remove();
+      };
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var slug = params.get("slug");
+        var sb = window.supabaseClient;
+        if (!slug || !sb || params.get("noroute") === "1") return;
+
+        var routes = {
+          "premium-editorial": "/templates/premium-editorial.html",
+          "royal-luxury": "/templates/royal-luxury.html",
+          "minimalist-elegance": "/templates/minimalist-elegance.html"
+        };
+
+        // Oculta a página por instantes para não "piscar" o template clássico
+        var hideStyle = document.createElement("style");
+        hideStyle.id = "tpl-route-guard";
+        hideStyle.textContent = "html{visibility:hidden !important}";
+        document.head.appendChild(hideStyle);
+        var timer = setTimeout(reveal, 2500); // segurança: nunca bloquear a página
+
+        sb.from("invitations").select("editor_type").eq("slug", slug).maybeSingle().then(function (res) {
+          var et = res && res.data && res.data.editor_type ? String(res.data.editor_type) : "";
+          var tId = et.indexOf(",") > -1 ? (et.split(",")[2] || "").trim() : et.trim();
+          if (routes[tId]) {
+            window.location.replace(routes[tId] + window.location.search + window.location.hash);
+            return;
+          }
+          clearTimeout(timer);
+          reveal();
+        }, function () {
+          clearTimeout(timer);
+          reveal();
+        });
+      } catch (e) {
+        reveal();
+      }
+    })();
+  </script>
+
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 

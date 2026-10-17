@@ -18,8 +18,8 @@ export default async function handler(req, res) {
             // Garantir que a URL de destino e og:url usem o domínio atual da requisição (Vercel)
             html = html.replace(/https:\/\/divinosgraffic\.co\.mz/g, `https://${host}`);
             html = html.replace(/https:\/\/divinos\.vercel\.app/g, `https://${host}`);
-            // Garantir redirecionamento preciso para o arquivo do convite
-            html = html.replace(/\/pages\/convite\?slug=/g, '/pages/convite.html?slug=');
+            // Encaminhar para o roteador inteligente, que abre o template escolhido no admin
+            html = html.replace(/\/pages\/convite(\.html)?\?slug=/g, '/invitation/?slug=');
 
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
             res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

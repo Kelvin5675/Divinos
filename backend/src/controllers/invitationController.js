@@ -164,7 +164,8 @@ const getInvitationMetaPage = async (req, res) => {
             }
         }
         
-        const targetUrl = `https://divinos.vercel.app/pages/convite?slug=${slug}`;
+        // Roteador inteligente: abre o template escolhido no admin (premium, clássico, etc.)
+        const targetUrl = `https://divinos.vercel.app/invitation/?slug=${encodeURIComponent(slug)}`;
 
         const html = `<!DOCTYPE html>
 <html lang="pt">
