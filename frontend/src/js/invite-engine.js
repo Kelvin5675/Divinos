@@ -181,6 +181,19 @@ class DivinosInviteEngine {
         const brideData = this.invitationData.bride_name || this.invitationData.details?.[0]?.bride_name || 'Noiva';
         const groomData = this.invitationData.groom_name || this.invitationData.details?.[0]?.groom_name || 'Noivo';
 
+        // Função para formatar Primeiro Nome e Apelido (Último Sobrenome)
+        const formatShort = (full) => {
+            if (!full) return '';
+            const parts = full.trim().split(/\s+/);
+            if (parts.length <= 2) return full.trim();
+            return `${parts[0]} ${parts[parts.length - 1]}`;
+        };
+
+        // Hero (Página Inicial): Apenas Primeiro Nome e Apelido
+        document.querySelectorAll('[data-invite="hero-bride-name"]').forEach(el => el.textContent = formatShort(brideData));
+        document.querySelectorAll('[data-invite="hero-groom-name"]').forEach(el => el.textContent = formatShort(groomData));
+
+        // Restantes seções: Nome completo
         document.querySelectorAll('[data-invite="bride-name"]').forEach(el => el.textContent = brideData);
         document.querySelectorAll('[data-invite="groom-name"]').forEach(el => el.textContent = groomData);
 
