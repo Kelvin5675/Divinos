@@ -127,10 +127,18 @@ class DivinosInviteEngine {
             this.invitationData = data;
             this.invitationId = data.id;
 
-            console.log('[Divinos Engine] Convite carregado com sucesso:', data.title);
+            // Disponibilizar globalmente para templates
+            window.invData = data;
+            window.invitationData = data;
+            window.invitationId = data.id;
+
+            console.log('[Divinos Engine] Convite carregado com sucesso:', data.title || data.slug);
             
-            // Applica o Feature Gating após carregar
+            // Aplica o Feature Gating após carregar
             this.applyFeatureGating();
+
+            // Dispara evento global notificando que o convite foi carregado com sucesso
+            window.dispatchEvent(new CustomEvent('divinos:invite-loaded', { detail: data }));
 
         } catch (err) {
             console.error('[Divinos Engine] Erro ao carregar convite:', err);
@@ -169,23 +177,51 @@ class DivinosInviteEngine {
     bindDataAttributes() {
         if (!this.invitationData) return;
 
-        // Names
-        const brideData = this.invitationData.details?.[0]?.bride_name || 'Noiva';
-        const groomData = this.invitationData.details?.[0]?.groom_name || 'Noivo';
+        // Names (procurar na raiz de invitations e com fallback em details)
+        const brideData = this.invitationData.bride_name || this.invitationData.details?.[0]?.bride_name || 'Noiva';
+        const groomData = this.invitationData.groom_name || this.invitationData.details?.[0]?.groom_name || 'Noivo';
 
         document.querySelectorAll('[data-invite="bride-name"]').forEach(el => el.textContent = brideData);
         document.querySelectorAll('[data-invite="groom-name"]').forEach(el => el.textContent = groomData);
 
-        // Parents (opcional se fornecido no banco)
-        const brideParents = this.invitationData.details?.[0]?.bride_parents;
+        // Parents
+        const brideParents = this.invitationData.bride_parents || this.invitationData.details?.[0]?.bride_parents;
         if (brideParents) {
-            document.querySelectorAll('[data-invite="bride-parents"]').forEach(el => el.innerHTML = brideParents);
+            document.querySelectorAll('[data-invite="bride-parents"]').forEach(el => {
+                const formatted = brideParents.includes('&') ? brideParents.replace(/&/g, '<br>&amp; ') : brideParents;
+                el.innerHTML = formatted;
+            });
         }
-        const groomParents = this.invitationData.details?.[0]?.groom_parents;
+        const groomParents = this.invitationData.groom_parents || this.invitationData.details?.[0]?.groom_parents;
         if (groomParents) {
-            document.querySelectorAll('[data-invite="groom-parents"]').forEach(el => el.innerHTML = groomParents);
+            document.querySelectorAll('[data-invite="groom-parents"]').forEach(el => {
+                const formatted = groomParents.includes('&') ? groomParents.replace(/&/g, '<br>&amp; ') : groomParents;
+                el.innerHTML = formatted;
+            });
         }
         
+        // Anéis Gravados (Alianças)
+        const ringGroom = document.getElementById('ring-groom-name');
+        const ringBride = document.getElementById('ring-bride-name');
+        if (ringGroom && groomData && groomData !== 'Noivo') {
+            ringGroom.textContent = groomData.trim().split(' ')[0].toUpperCase();
+        }
+        if (ringBride && brideData && brideData !== 'Noiva') {
+            ringBride.textContent = brideData.trim().split(' ')[0].toUpperCase();
+        }
+
+        // Foto de Capa (Hero)
+        if (this.invitationData.cover_photo_url) {
+            const heroBgImg = document.getElementById('hero-bg-img');
+            if (heroBgImg) {
+                heroBgImg.src = this.invitationData.cover_photo_url;
+                const alignDesktop = this.invitationData.cover_align_desktop ?? 50;
+                const alignMobile = this.invitationData.cover_align_mobile ?? 50;
+                const isMobile = window.innerWidth <= 768;
+                heroBgImg.style.objectPosition = `center ${isMobile ? alignMobile : alignDesktop}%`;
+            }
+        }
+
         const dateData = this.invitationData.event_date ? new Date(this.invitationData.event_date).toLocaleDateString('pt-PT') : 'Data Indefinida';
         document.querySelectorAll('[data-invite="wedding-date"]').forEach(el => el.textContent = dateData);
 

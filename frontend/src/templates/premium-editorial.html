@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Boaventura &amp; Carla — Convite de Casamento | Premium Editorial</title>
+    <title>Convite de Casamento | Premium Editorial</title>
     
     <!-- Divinos Core / Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -666,22 +666,44 @@
             }
         }
 
-        /* Badge Flutuante Top-Left — Acabamento Suave e Translúcido */
+        /* Mini Cartão Top-Left (União Sagrada) — Removido a pedido do cliente para foto limpa */
         .hero-cutout-top-left {
-            position: absolute;
-            top: 24px;
-            left: 24px;
-            background: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            padding: 10px 22px;
-            border-radius: var(--radius-pill);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: none !important;
+        }
+
+        /* Estado Vazio Acolhedor do Mural de Afetos */
+        .mural-empty-card {
+            text-align: center;
+            padding: 3.5rem 2rem;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+            max-width: 580px;
+            margin: 0 auto;
+            border: 1px solid #f1ece1;
+            transition: transform 0.3s ease;
+        }
+        .mural-empty-card:hover {
+            transform: translateY(-2px);
+        }
+        .mural-empty-icon {
+            font-size: 2.6rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.25rem;
+        }
+        .mural-empty-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .mural-empty-desc {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         .cutout-badge-text {
             font-size: 0.72rem;
@@ -4449,13 +4471,7 @@
                         <div id="hearts-container" class="live-hearts-container"></div>
                     </div>
 
-                    <!-- Recorte 1: Top-Left Notch -->
-                    <div class="hero-cutout-top-left">
-                        <div class="cutout-badge-text">
-                            <i class="fa-solid fa-sun"></i>
-                            <span>União Sagrada &bull; <span data-invite="wedding-date">{{EVENT_DATE_NUMBERS}}</span></span>
-                        </div>
-                    </div>
+                    <!-- Mini cartão União Sagrada removido a pedido para foto limpa -->
 
                     <!-- Recorte 2: Left Vertical Date Tab (Desktop) -->
                     <div class="hero-cutout-vertical-tab">
@@ -4534,9 +4550,7 @@
                     <!-- Pais da Noiva -->
                     <div class="parents-card parents-bride">
                         <span class="parents-role-tag">Pais da Noiva</span>
-                        <div class="parents-names-text" data-invite="bride-parents">
-                            Manuel Antunes da Silva<br>&amp; Maria Helena Silva
-                        </div>
+                        <div class="parents-names-text" data-invite="bride-parents"></div>
                     </div>
 
                     <!-- Emblema Central de União / Aliança -->
@@ -4547,9 +4561,7 @@
                     <!-- Pais do Noivo -->
                     <div class="parents-card parents-groom">
                         <span class="parents-role-tag">Pais do Noivo</span>
-                        <div class="parents-names-text" data-invite="groom-parents">
-                            António José Fernandes<br>&amp; Teresa Carvalho Fernandes
-                        </div>
+                        <div class="parents-names-text" data-invite="groom-parents"></div>
                     </div>
 
                 </div>
@@ -4614,11 +4626,11 @@
                             </defs>
                             <!-- Nome do Noivo gravado no anel esquerdo (maior) -->
                             <text class="rings-engraved-text">
-                                <textPath href="#leftRingPath" startOffset="50%" text-anchor="middle" id="ring-groom-name">{{GROOM_NAME}}</textPath>
+                                <textPath href="#leftRingPath" startOffset="50%" text-anchor="middle" id="ring-groom-name"></textPath>
                             </text>
                             <!-- Nome da Noiva gravado no anel direito (menor) -->
                             <text class="rings-engraved-text">
-                                <textPath href="#rightRingPath" startOffset="50%" text-anchor="middle" id="ring-bride-name">{{BRIDE_NAME}}</textPath>
+                                <textPath href="#rightRingPath" startOffset="50%" text-anchor="middle" id="ring-bride-name"></textPath>
                             </text>
                         </svg>
                     </div>
@@ -5058,73 +5070,32 @@
                 <h2 class="font-display section-title-large">Mural de Afetos</h2>
             </div>
 
-            <!-- Grid de 3 Cartões em Rotação com Efeito Flor Brotando -->
-            <div class="mural-cards-grid" id="mural-grid">
-                <!-- Slot 0 -->
-                <div class="mural-card-slot" id="mural-slot-0">
-                    <div class="mural-chat-bubble bubble-incoming">
-                        <div class="chat-bubble-header">
-                            <div class="chat-author-wrapper">
-                                <div class="chat-author-avatar">MS</div>
-                                <div class="chat-author-meta">
-                                    <span class="chat-author-name">Dra. Maria Santos</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-bubble-body">
-                            &ldquo;Que Deus ilumine cada passo desta linda união. Vocês nasceram um para o outro! Parabéns Carla e Boaventura! 🙏✨&rdquo;
-                        </div>
-                        <div class="chat-bubble-footer">
-                            <span class="chat-time">16:19</span>
-                            <span class="chat-status-checks"><i class="fa-solid fa-check-double"></i></span>
-                        </div>
-                    </div>
+            <!-- Container do Mural de Afetos: Grid Dinâmico ou Estado Vazio Acolhedor -->
+            <div id="mural-content-wrap">
+                <!-- Grid de Cartões Reais (oculto quando vazio) -->
+                <div class="mural-cards-grid" id="mural-grid" style="display:none;">
+                    <div class="mural-card-slot" id="mural-slot-0"></div>
+                    <div class="mural-card-slot" id="mural-slot-1"></div>
+                    <div class="mural-card-slot" id="mural-slot-2"></div>
                 </div>
 
-                <!-- Slot 1 -->
-                <div class="mural-card-slot" id="mural-slot-1">
-                    <div class="mural-chat-bubble bubble-outgoing">
-                        <div class="chat-bubble-header">
-                            <div class="chat-author-wrapper">
-                                <div class="chat-author-avatar">AS</div>
-                                <div class="chat-author-meta">
-                                    <span class="chat-author-name">Eng. António Silva</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-bubble-body">
-                            &ldquo;Um brinde à felicidade eterna dos dois! Que o companheirismo e o respeito sejam sempre o vosso alicerce mais forte. Felicidades! 🥂&rdquo;
-                        </div>
-                        <div class="chat-bubble-footer">
-                            <span class="chat-time">16:21</span>
-                            <span class="chat-status-checks"><i class="fa-solid fa-check-double"></i></span>
-                        </div>
+                <!-- Estado Vazio Acolhedor (Exibido quando ainda não há mensagens) -->
+                <div id="mural-empty-state" class="mural-empty-card" style="display:block;">
+                    <div class="mural-empty-icon">
+                        <i class="fa-solid fa-feather-pointed"></i>
                     </div>
-                </div>
-
-                <!-- Slot 2 -->
-                <div class="mural-card-slot" id="mural-slot-2">
-                    <div class="mural-chat-bubble bubble-incoming">
-                        <div class="chat-bubble-header">
-                            <div class="chat-author-wrapper">
-                                <div class="chat-author-avatar">CM</div>
-                                <div class="chat-author-meta">
-                                    <span class="chat-author-name">Carla &amp; Jorge Mendes</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-bubble-body">
-                            &ldquo;Contando os dias para celebrar e dançar convosco nesta festa grandiosa. Vocês merecem todo o amor deste mundo! ❤️🎉&rdquo;
-                        </div>
-                        <div class="chat-bubble-footer">
-                            <span class="chat-time">16:23</span>
-                            <span class="chat-status-checks"><i class="fa-solid fa-check-double"></i></span>
-                        </div>
-                    </div>
+                    <h3 class="mural-empty-title">Seja o primeiro a deixar uma mensagem! ✨</h3>
+                    <p class="mural-empty-desc">
+                        Este mural foi preparado com muito carinho para acolher os vossos votos, bênçãos e orações para celebrar a união dos noivos.
+                    </p>
+                    <a href="#rsvp-section" class="btn-mural-action" style="display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-pen-fancy"></i>
+                        <span>Deixar a Primeira Mensagem</span>
+                    </a>
                 </div>
             </div>
 
-            <div style="text-align:center; margin-top:48px;">
+            <div id="mural-action-footer" style="text-align:center; margin-top:48px; display:none;">
                 <a href="#rsvp-section" class="btn-mural-action">
                     <i class="fa-solid fa-pen-fancy"></i>
                     <span>Deixar Mensagem no Mural</span>
@@ -5222,6 +5193,11 @@
         // ── 0. LIMPEZA SEGURA DE TAGS PARA PREVIEW DIRETO ──
         (function() {
             try {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('slug') || params.get('id')) {
+                    // Se for um convite real com slug/id, aborta para não injetar nomes de mock
+                    return;
+                }
                 const defaults = {
                     '{{GROOM_NAME}}': 'Boaventura',
                     '{{BRIDE_NAME}}': 'Carla',
@@ -5435,12 +5411,110 @@
             }
         }
 
+        async function syncEditorialDataFromSupabase() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const slug = params.get('slug');
+                const id = params.get('id');
+                if (!slug && !id && !window.invitationData && !window.invData) return;
+
+                let data = window.invitationData || window.invData || window.divinosEngine?.invitationData;
+                
+                if (!data && window.supabaseClient) {
+                    let query = window.supabaseClient.from('invitations').select('*, plan:invitation_plans(*), details:invitations_details(*)');
+                    if (id) {
+                        query = query.eq('id', id);
+                    } else if (slug) {
+                        query = query.eq('slug', slug);
+                    }
+                    const res = await query.maybeSingle();
+                    if (res && res.data) {
+                        data = res.data;
+                        window.invitationData = data;
+                        window.invData = data;
+                        window.invitationId = data.id;
+                    }
+                }
+
+                if (!data) return;
+
+                const groom = data.groom_name || data.details?.[0]?.groom_name;
+                const bride = data.bride_name || data.details?.[0]?.bride_name;
+                const groomParents = data.groom_parents || data.details?.[0]?.groom_parents;
+                const brideParents = data.bride_parents || data.details?.[0]?.bride_parents;
+
+                // Nomes dos Noivos (Título, Hero, Cerimonial e Rodapé)
+                if (groom) {
+                    document.querySelectorAll('[data-invite="groom-name"]').forEach(el => el.textContent = groom);
+                }
+                if (bride) {
+                    document.querySelectorAll('[data-invite="bride-name"]').forEach(el => el.textContent = bride);
+                }
+                if (groom && bride) {
+                    document.title = `${groom} & ${bride} — Convite de Casamento | Premium Editorial`;
+                }
+
+                // Nomes dos Pais dos Noivos
+                if (brideParents) {
+                    document.querySelectorAll('[data-invite="bride-parents"]').forEach(el => {
+                        el.innerHTML = brideParents.includes('&') ? brideParents.replace(/&/g, '<br>&amp; ') : brideParents;
+                    });
+                }
+                if (groomParents) {
+                    document.querySelectorAll('[data-invite="groom-parents"]').forEach(el => {
+                        el.innerHTML = groomParents.includes('&') ? groomParents.replace(/&/g, '<br>&amp; ') : groomParents;
+                    });
+                }
+
+                // Alianças (Nomes gravados com elegância em letras maiúsculas na curvatura dos anéis)
+                const ringGroom = document.getElementById('ring-groom-name');
+                const ringBride = document.getElementById('ring-bride-name');
+                if (ringGroom && groom) {
+                    ringGroom.textContent = groom.trim().split(' ')[0].toUpperCase();
+                }
+                if (ringBride && bride) {
+                    ringBride.textContent = bride.trim().split(' ')[0].toUpperCase();
+                }
+
+                // Iniciais nos Selos de Cera (Envelope de Palácio, Vertical e 3D)
+                if (groom && bride) {
+                    const initials = `${groom.trim().charAt(0).toUpperCase()}&${bride.trim().charAt(0).toUpperCase()}`;
+                    document.querySelectorAll('#env-seal-initials, #env-v-seal-initials, #env-3d-seal-initials').forEach(el => {
+                        el.textContent = initials;
+                    });
+                }
+
+                // Foto de Capa (Hero) e enquadramento personalizado
+                if (data.cover_photo_url) {
+                    const heroBgImg = document.getElementById('hero-bg-img');
+                    if (heroBgImg) {
+                        heroBgImg.src = data.cover_photo_url;
+                        const alignDesktop = data.cover_align_desktop ?? 50;
+                        const alignMobile = data.cover_align_mobile ?? 50;
+                        heroBgImg.style.objectPosition = `center ${window.innerWidth <= 768 ? alignMobile : alignDesktop}%`;
+                    }
+                }
+
+                // Data e Horário
+                if (data.event_date) {
+                    const d = new Date(data.event_date);
+                    const dateFormatted = d.toLocaleDateString('pt-PT', { day: '2-digit', month: 'long', year: 'numeric' });
+                    document.querySelectorAll('[data-invite="wedding-date"]').forEach(el => el.textContent = dateFormatted);
+                }
+
+            } catch (err) {
+                console.warn('[SyncEditorial] Erro ao sincronizar dados:', err);
+            }
+        }
+
         window.addEventListener('load', () => {
+            syncEditorialDataFromSupabase();
             initOpeningType();
             syncLocationCardsData();
             if (typeof syncBiblicalVerseData === 'function') syncBiblicalVerseData();
         });
         window.addEventListener('divinos:invite-loaded', () => {
+            syncEditorialDataFromSupabase();
             initOpeningType();
             syncLocationCardsData();
             if (typeof syncBiblicalVerseData === 'function') syncBiblicalVerseData();
@@ -6192,30 +6266,30 @@
 
         function updateRingNames() {
             try {
-                const groomEl = document.querySelector('[data-invite="groom-name"]');
-                const brideEl = document.querySelector('[data-invite="bride-name"]');
                 const ringGroom = document.getElementById('ring-groom-name');
                 const ringBride = document.getElementById('ring-bride-name');
-                
-                if (ringGroom) {
-                    let gText = ringGroom.textContent.trim();
-                    if ((!gText || gText.includes('{{')) && groomEl) {
-                        gText = groomEl.textContent.trim();
-                    }
-                    if (gText && !gText.includes('{{')) {
-                        const firstName = gText.split(' ')[0].toUpperCase();
-                        ringGroom.textContent = firstName;
-                    }
+                const inv = window.invitationData || window.invData || window.divinosEngine?.invitationData || null;
+                const det = inv?.details?.[0] || {};
+
+                // 1. Prioridade: dados reais do banco
+                let gText = (inv?.groom_name || det.groom_name || '').trim();
+                let bText = (inv?.bride_name || det.bride_name || '').trim();
+
+                // 2. Fallback: texto já renderizado nos spans do convite
+                if (!gText) {
+                    const groomEl = document.querySelector('[data-invite="groom-name"]');
+                    gText = groomEl ? groomEl.textContent.trim() : '';
                 }
-                if (ringBride) {
-                    let bText = ringBride.textContent.trim();
-                    if ((!bText || bText.includes('{{')) && brideEl) {
-                        bText = brideEl.textContent.trim();
-                    }
-                    if (bText && !bText.includes('{{')) {
-                        const firstName = bText.split(' ')[0].toUpperCase();
-                        ringBride.textContent = firstName;
-                    }
+                if (!bText) {
+                    const brideEl = document.querySelector('[data-invite="bride-name"]');
+                    bText = brideEl ? brideEl.textContent.trim() : '';
+                }
+
+                if (ringGroom && gText && !gText.includes('{{')) {
+                    ringGroom.textContent = gText.split(' ')[0].toUpperCase();
+                }
+                if (ringBride && bText && !bText.includes('{{')) {
+                    ringBride.textContent = bText.split(' ')[0].toUpperCase();
                 }
             } catch (e) {
                 console.warn('Erro ao sincronizar nomes nos anéis:', e);
@@ -6993,69 +7067,10 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 16. MURAL DE AFETOS INFINITO COM ANIMAÇÃO FLOR BROTANDO (BLOOM)
+        // 16. MURAL DE AFETOS COM SUPORTE A ESTADO VAZIO & MENSAGENS REAIS
         // ════════════════════════════════════════════════════════════════
-        const defaultMuralMessagesPool = [
-            {
-                name: "Dra. Maria Santos",
-                role: "Madrinha",
-                message: "Que Deus ilumine cada passo desta linda união. Vocês nasceram um para o outro! Parabéns Carla e Boaventura! 🙏✨",
-                time: "16:19",
-                isOutgoing: false
-            },
-            {
-                name: "Eng. António Silva",
-                role: "Amigo da Família",
-                message: "Um brinde à felicidade eterna dos dois! Que o companheirismo e o respeito mútuo sejam sempre o vosso alicerce mais forte. Felicidades! 🥂",
-                time: "16:21",
-                isOutgoing: true
-            },
-            {
-                name: "Carla & Jorge Mendes",
-                role: "Primos",
-                message: "Contando os dias para celebrar e dançar convosco nesta festa grandiosa. Vocês merecem todo o amor deste mundo! ❤️🎉",
-                time: "16:23",
-                isOutgoing: false
-            },
-            {
-                name: "Tia Helena & Família",
-                role: "Família",
-                message: "Ver o vosso amor florescer assim enche os nossos corações de orgulho e alegria. Que a bênção divina reine sempre no vosso lar! 🕊️💍",
-                time: "16:26",
-                isOutgoing: true
-            },
-            {
-                name: "Mateus Ribeiro",
-                role: "Padrinho",
-                message: "Grande amigo Boaventura e querida Carla, que início de vida a dois espetacular! Estarei sempre aqui ao lado de vocês. Viva os noivos! 🍾",
-                time: "16:30",
-                isOutgoing: false
-            },
-            {
-                name: "Beatriz Oliveira",
-                role: "Amiga de Infância",
-                message: "O casal mais carinhoso e verdadeiro que conheço. Que esse brilho no olhar se multiplique a cada novo amanhecer! Amo vocês! 💖✨",
-                time: "16:34",
-                isOutgoing: true
-            },
-            {
-                name: "Pr. Samuel & Esposa",
-                role: "Bênção Pastoral",
-                message: "O amor jamais acaba. Que a presença do Criador seja a rocha inabalável do vosso casamento hoje e sempre. Amém! 📖🕊️",
-                time: "16:40",
-                isOutgoing: false
-            },
-            {
-                name: "Lucas & Sofia Ramos",
-                role: "Amigos",
-                message: "Vocês são a prova viva de que o amor verdadeiro é leve, nobre e transformador. Parabéns por essa festa inesquecível! 🥂✨",
-                time: "16:45",
-                isOutgoing: true
-            }
-        ];
-
-        let muralMessagesData = [...defaultMuralMessagesPool];
-        let currentMuralNextIndex = 3; // Slots 0, 1 e 2 começam com os 3 primeiros
+        let muralMessagesData = [];
+        let currentMuralNextIndex = 3;
         let muralRotationInterval = null;
         let isMuralHovered = false;
         let activeSlotToRotate = 0;
@@ -7069,7 +7084,7 @@
         }
 
         function shouldEnableMural() {
-            // 1. Controle por Query Parameter (útil para testes na URL ?messages=0 ou ?mural=false)
+            // 1. Controle por Query Parameter
             const params = new URLSearchParams(window.location.search);
             const mParam = params.get('messages') || params.get('mural') || params.get('has_messages');
             if (mParam === '0' || mParam === 'false' || mParam === 'no') return false;
@@ -7144,7 +7159,7 @@
                     filter: "blur(0px)",
                     duration: 0.8,
                     delay: delay,
-                    ease: "back.out(1.55)", // Animação flor desabrochando / brotando
+                    ease: "back.out(1.55)",
                     clearProps: "transform,filter"
                 });
             }
@@ -7188,6 +7203,106 @@
             activeSlotToRotate = (activeSlotToRotate + 1) % 3;
         }
 
+        function updateMuralUI() {
+            const grid = document.getElementById('mural-grid');
+            const emptyState = document.getElementById('mural-empty-state');
+            const footerBtn = document.getElementById('mural-action-footer');
+
+            if (!grid || !emptyState) return;
+
+            if (muralMessagesData.length === 0) {
+                // SEM MENSAGENS: Mostra apenas o belo card convidando a ser o primeiro a deixar mensagem
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                if (footerBtn) footerBtn.style.display = 'none';
+                if (muralRotationInterval) {
+                    clearInterval(muralRotationInterval);
+                    muralRotationInterval = null;
+                }
+            } else {
+                // COM MENSAGENS: Oculta o estado vazio e exibe o grid com os cartões
+                emptyState.style.display = 'none';
+                grid.style.display = 'grid';
+                if (footerBtn) footerBtn.style.display = 'block';
+
+                for (let i = 0; i < 3; i++) {
+                    const slot = document.getElementById(`mural-slot-${i}`);
+                    if (!slot) continue;
+                    slot.innerHTML = '';
+                    if (muralMessagesData[i]) {
+                        const bubble = createChatBubbleElement(muralMessagesData[i]);
+                        slot.appendChild(bubble);
+                    }
+                }
+
+                if (muralMessagesData.length > 3) {
+                    currentMuralNextIndex = 3;
+                    if (muralRotationInterval) clearInterval(muralRotationInterval);
+                    muralRotationInterval = setInterval(triggerNextMuralStep, 4500);
+                } else {
+                    if (muralRotationInterval) {
+                        clearInterval(muralRotationInterval);
+                        muralRotationInterval = null;
+                    }
+                }
+            }
+        }
+
+        async function loadRealMuralMessages() {
+            try {
+                const invId = window.invitationId || window.invData?.id || window.divinosEngine?.invitationId;
+                const sb = window.supabaseClient;
+                if (!invId || !sb) {
+                    updateMuralUI();
+                    return;
+                }
+
+                // 1. Mensagens deixadas na confirmação de presença (invitations_rsvp)
+                const { data: rsvpMessages } = await sb
+                    .from('invitations_rsvp')
+                    .select('guest_name, message, created_at')
+                    .eq('invitation_id', invId)
+                    .not('message', 'is', null)
+                    .neq('message', '')
+                    .order('created_at', { ascending: false });
+
+                // 2. Mensagens do mural direto (invitations_messages) se existirem
+                let directMessages = [];
+                try {
+                    const { data: dMsg } = await sb
+                        .from('invitations_messages')
+                        .select('guest_name, message, created_at')
+                        .eq('invitation_id', invId)
+                        .order('created_at', { ascending: false });
+                    if (dMsg) directMessages = dMsg;
+                } catch(e) {}
+
+                const allCombined = [...(rsvpMessages || []), ...directMessages];
+                const validList = allCombined.filter(m => m.message && m.message.trim().length > 0);
+
+                if (validList.length > 0) {
+                    muralMessagesData = validList.map((m, idx) => {
+                        const d = m.created_at ? new Date(m.created_at) : new Date();
+                        const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                        return {
+                            name: m.guest_name || 'Convidado',
+                            message: m.message,
+                            time: timeStr,
+                            isOutgoing: idx % 2 === 1
+                        };
+                    });
+                } else {
+                    muralMessagesData = [];
+                }
+
+                updateMuralUI();
+            } catch (err) {
+                console.warn('[Mural] Erro ao carregar mensagens:', err);
+                muralMessagesData = [];
+                updateMuralUI();
+            }
+        }
+
         function addNewMuralMessage(name, message, role = 'Convidado') {
             const now = new Date();
             const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -7200,15 +7315,14 @@
             };
 
             muralMessagesData.unshift(newMsg);
-            // Imediatamente faz brotar no primeiro slot com animação
+            updateMuralUI();
             rotateSingleMuralSlot(0, newMsg);
         }
 
-        function initMuralInfiniteBloomCarousel() {
+        async function initMuralInfiniteBloomCarousel() {
             const muralSec = document.getElementById('mural-section');
             if (!muralSec) return;
 
-            // Se o recurso estiver desativado no convite, oculta seção e links
             if (!shouldEnableMural()) {
                 muralSec.style.display = 'none';
                 document.querySelectorAll('a[href="#mural-section"]').forEach(link => {
@@ -7217,49 +7331,16 @@
                 return;
             }
 
-            if (isMuralInitialized) return;
             const grid = document.getElementById('mural-grid');
             if (!grid) return;
-            isMuralInitialized = true;
 
-            // Pausa no hover para leitura agradável
-            grid.addEventListener('mouseenter', () => { isMuralHovered = true; });
-            grid.addEventListener('mouseleave', () => { isMuralHovered = false; });
-
-            // Efeito flor brotando nos 3 slots quando a seção entra em visão
-            const initialBubbles = grid.querySelectorAll('.mural-chat-bubble');
-            if (initialBubbles.length > 0 && typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
-                gsap.set(initialBubbles, {
-                    scale: 0.2,
-                    opacity: 0,
-                    rotation: -4,
-                    filter: "blur(4px)"
-                });
-
-                ScrollTrigger.create({
-                    trigger: grid,
-                    start: "top 78%",
-                    once: true,
-                    onEnter: () => {
-                        initialBubbles.forEach((bubble, idx) => {
-                            gsap.to(bubble, {
-                                scale: 1,
-                                opacity: 1,
-                                rotation: 0,
-                                filter: "blur(0px)",
-                                duration: 0.82,
-                                delay: idx * 0.18,
-                                ease: "back.out(1.5)",
-                                clearProps: "transform,filter"
-                            });
-                        });
-                    }
-                });
+            if (!isMuralInitialized) {
+                isMuralInitialized = true;
+                grid.addEventListener('mouseenter', () => { isMuralHovered = true; });
+                grid.addEventListener('mouseleave', () => { isMuralHovered = false; });
             }
 
-            // Inicia o ciclo infinito a cada 4.5 segundos
-            if (muralRotationInterval) clearInterval(muralRotationInterval);
-            muralRotationInterval = setInterval(triggerNextMuralStep, 4500);
+            await loadRealMuralMessages();
         }
 
         window.addEventListener('load', () => {
